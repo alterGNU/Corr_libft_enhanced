@@ -22,7 +22,7 @@ BSL_DIR="${PARENT_DIR}/src/BSL"                            # ☒ Path to BSL fol
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 HOMEMADE_FUNUSED=( )                                       # ☒ List of user created function in libft.a
 BUILTIN_FUNUSED=( )                                        # ☒ List of build-in function in libft.a
-EXCLUDE_NORMI_FOLD=( "${PARENT_DIR}" )                     # ☒ List of folder to be ignore by norminette
+EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )        # ☒ List of folder to be ignore by norminette
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                    # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
@@ -122,3 +122,4 @@ for obj in ${LIBFT_A};do
 done
 echo "AFTER:HOMEMADE_FUNUSED=${HOMEMADE_FUNUSED[@]}"
 echo "AFTER:BUILTIN_FUNUSED=${BUILTIN_FUNUSED[@]}"
+echo "AFTER:EXCLUDE_NORMI_FOLD=${EXCLUDE_NORMI_FOLD[@]}"
