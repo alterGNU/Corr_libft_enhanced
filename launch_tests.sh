@@ -12,8 +12,6 @@
 #   - 7: if detected, launch test for get_next_line() tests (bonus too, auto)
 # ============================================================================================================
  
- 
-
 # =[ VARIABLES ]==============================================================================================
 # -[ PATH/FOLDER/FILE ]---------------------------------------------------------------------------------------
 SCRIPTNAME=${0##*\/}                                       # ☒ Script's name (no path)
@@ -39,6 +37,7 @@ G0="\033[0;37m"                            # ☒ START GREY
 GU="\033[4;37m"                            # ☒ START GREY
 # =[ SOURCES ]================================================================================================
 source ${BSL_DIR}/src/check42_norminette.sh
+source ${BSL_DIR}/src/check42_funused.sh
 source ${BSL_DIR}/src/print.sh
 # =[ FUNCTIONS ]==============================================================================================
 # -[ USAGE ]--------------------------------------------------------------------------------------------------
@@ -61,19 +60,44 @@ script_usage()
     echo -e "    ${B0}‣ ${R0}9${E}: Display a resume."
     exit ${2}
 }
+# -[ EXEC_ANIM_IN_BOX ]---------------------------------------------------------------------------------------
+# Takes 2args: arg1:<cmd> [arg2:<title>]
+# exec command passed as arg1 while displaying animation, return result in a box colored red if cmd failed, green else
+exec_anim_in_box()
+{
+    [[ ( ${#} -gt 2 ) ]] && { echo -e "\033[1;31mWRONG USAGE of:\033[1;36mexec_anim()\033[1;31m, this function take 2 arguments max.\033[0m" && exit 3 ; }
+    local frames=( 🕛  🕒  🕕  🕘 )
+    local delay=0.15
+    local cmd="${1}"
+    [[ ${#} -eq 2 ]] && local boxtitle="${2}" || local boxtitle="${cmd}"
+    local tmpfile=$(mktemp "${TMPDIR:-/tmp}/exec_anim_${cmd%% *}_XXXXXX")
+    trap '[[ -f "${tmpfile}" ]] && rm -f "${tmpfile}"' EXIT RETURN
+    ${1} > "${tmpfile}" 2>&1 &
+    local pid=${!}
+    while kill -0 ${pid} 2>/dev/null; do
+        for frame in "${frames[@]}"; do printf "${frame} \033[1;40mwaiting for cmd:${1}\033[0m\r" && sleep ${delay} ; done
+    done
+    printf "\r\033[K" && wait ${pid}
+    local exit_code=${?}
+    [[ ${exit_code} -eq 0 ]] && local color="green" || local color="red"
+    print_box_title -t 1 -c ${color} "${boxtitle}"
+    while IFS= read -r line; do
+        echol -i 0 -c ${color} -t 1 "${line}"
+    done < "${tmpfile}"
+    print_last -t 1 -c ${color}
+    return ${exit_code}
+}
 
 # ============================================================================================================
 # MAIN
 # ============================================================================================================
-echo "SCRIPTNAME=${SCRIPTNAME}"
-echo "PARENT_DIR=${PARENT_DIR}"
-echo "LIBFT_DIR=${LIBFT_DIR}"
-echo "LOG_DIR=${LOG_DIR}"
-echo "BSL_DIR=${BSL_DIR}"
-check42_norminette ${PARENT_DIR}
 # =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
 LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")
 echo "LIBFT_A=${LIBFT_A}"
 [[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${B0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
+# =[ CHECK NORMINETTE ]=======================================================================================
+exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette" ; pause
+# =[ CHECK FORBIDDEN FUNCTION ]===============================================================================
+exec_anim_in_box "check42_lst_funused ${LIBFT_A}" "List all function used" ; pause
