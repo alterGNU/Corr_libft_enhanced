@@ -93,11 +93,12 @@ exec_anim_in_box()
 # ============================================================================================================
 # =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
 LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")
-echo "LIBFT_A=${LIBFT_A}"
 [[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${B0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ CHECK NORMINETTE ]=======================================================================================
 exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette" ; pause
 # =[ CHECK FORBIDDEN FUNCTION ]===============================================================================
-exec_anim_in_box "check42_lst_funused ${LIBFT_A}" "List all function used" ; pause
+echo "LIBFT_DIR=${LIBFT_DIR}"
+echo "LIBFT_A=${LIBFT_A}"
+exec_anim_in_box "check42_lst_funused ${LIBFT_DIR} ${LIBFT_A}" "List all function used" ; pause
