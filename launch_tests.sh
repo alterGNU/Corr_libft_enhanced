@@ -22,22 +22,21 @@ BSL_DIR="${PARENT_DIR}/src/BSL"                            # ☒ Path to BSL fol
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                    # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
-E="\033[0m"                                # ☒ END color balise
-N0="\033[0;30m"                            # ☒ START BLACK
-R0="\033[0;31m"                            # ☒ START RED
-RU="\033[4;31m"                            # ☒ START RED UNDERSCORED
-V0="\033[0;32m"                            # ☒ START GREEN
-M0="\033[0;33m"                            # ☒ START BROWN
-Y0="\033[0;93m"                            # ☒ START YELLOW
-B0="\033[0;34m"                            # ☒ START BLUE
-BU="\033[4;34m"                            # ☒ START BLUE
-BC0="\033[0;36m"                           # ☒ START AZURE
-P0="\033[0;35m"                            # ☒ START PINK
-G0="\033[0;37m"                            # ☒ START GREY
-GU="\033[4;37m"                            # ☒ START GREY
+E="\033[0m"                                                # ☒ END color balise
+N0="\033[0;30m"                                            # ☒ START BLACK
+R0="\033[0;31m"                                            # ☒ START RED
+RU="\033[4;31m"                                            # ☒ START RED UNDERSCORED
+V0="\033[0;32m"                                            # ☒ START GREEN
+M0="\033[0;33m"                                            # ☒ START BROWN
+Y0="\033[0;93m"                                            # ☒ START YELLOW
+B0="\033[0;34m"                                            # ☒ START BLUE
+BU="\033[4;34m"                                            # ☒ START BLUE
+BC0="\033[0;36m"                                           # ☒ START AZURE
+P0="\033[0;35m"                                            # ☒ START PINK
+G0="\033[0;37m"                                            # ☒ START GREY
+GU="\033[4;37m"                                            # ☒ START GREY
 # =[ SOURCES ]================================================================================================
 source ${BSL_DIR}/src/check42_norminette.sh
-source ${BSL_DIR}/src/check42_funused.sh
 source ${BSL_DIR}/src/print.sh
 # =[ FUNCTIONS ]==============================================================================================
 # -[ USAGE ]--------------------------------------------------------------------------------------------------
@@ -98,7 +97,3 @@ LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ CHECK NORMINETTE ]=======================================================================================
 exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette" ; pause
-# =[ CHECK FORBIDDEN FUNCTION ]===============================================================================
-echo "LIBFT_DIR=${LIBFT_DIR}"
-echo "LIBFT_A=${LIBFT_A}"
-exec_anim_in_box "check42_lst_funused ${LIBFT_DIR} ${LIBFT_A}" "List all function used" ; pause
