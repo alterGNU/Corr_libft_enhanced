@@ -18,10 +18,13 @@ Use `nm` command to list all fun. of libft.a, then, when a test file exist, test
 - 3: `make -C Corr_libft_enhanced` to launch all tests.
 
 ## Details
-- 1: check norminette (since tests do not respect the 42-norm, will exclude the Corr_libft_enhanced folder)
-- 2: list all **built-in** function founded in libft.a
-- 3: list all **home-made** function founded in libft.a
-- 4: for all **home-made** function found in libft.a, search if a test exist, then launch it.
-- 5: display resume
+- This project use my **BashScriptLib** repo as submodule (like a libft in bash).
+
+- STEPS:
+    - 1: check norminette (since tests do not respect the 42-norm, will exclude the Corr_libft_enhanced folder)
+    - 2: list all **built-in** function founded in libft.a
+    - 3: list all **home-made** function founded in libft.a
+    - 4: for all **home-made** function found in libft.a, search if a test exist, then launch it.
+    - 5: display resume
 
 - For each instance of test, a folder is created where all log-file are stored.
