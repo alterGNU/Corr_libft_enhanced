@@ -13,14 +13,16 @@
 # ============================================================================================================
  
 # =[ VARIABLES ]==============================================================================================
-HOMEMADE_FUNUSED=( )                                       # ☒ List of user created function in libft.a
-BUILTIN_FUNUSED=( )                                        # ☒ List of build-in function in libft.a
 # -[ PATH/FOLDER/FILE ]---------------------------------------------------------------------------------------
 SCRIPTNAME=${0##*\/}                                       # ☒ Script's name (no path)
 PARENT_DIR=$(dirname $(realpath ${0}))                     # ☒ Name of parent directory
 LIBFT_DIR=$(dirname ${PARENT_DIR})                         # ☒ Name of libft_enhanced (grandparent folder)
 LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"    # ☒ Name of the log folder
 BSL_DIR="${PARENT_DIR}/src/BSL"                            # ☒ Path to BSL folder
+# -[ LISTS ]--------------------------------------------------------------------------------------------------
+HOMEMADE_FUNUSED=( )                                       # ☒ List of user created function in libft.a
+BUILTIN_FUNUSED=( )                                        # ☒ List of build-in function in libft.a
+EXCLUDE_NORMI_FOLD=( "${PARENT_DIR}" )                     # ☒ List of folder to be ignore by norminette
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                    # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
@@ -98,7 +100,7 @@ LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ CHECK NORMINETTE ]=======================================================================================
-#exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
 # =[ LST_FUNUSED ]============================================================================================
 for obj in ${LIBFT_A};do 
     if [[ -f ${obj} ]];then
