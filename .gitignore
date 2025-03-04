@@ -1,0 +1,22 @@
+# Fichiers de swap de Vim
+*.swp
+*.swo
+*.swx
+
+# Fichiers de sauvegarde de Vim
+*~
+
+# Fichiers de temporisation de Vim
+*.tmp
+
+# Fichiers de sauvegarde non numérotés de Vim
+*.un~
+
+# Autres fichiers temporaires de Vim
+*.netrwhist
+
+# Fichiers log du projet
+*.log
+
+# Ignore folder
+ignore/*
