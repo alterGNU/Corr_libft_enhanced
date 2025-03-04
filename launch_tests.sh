@@ -86,6 +86,28 @@ exec_anim_in_box()
     print_last -t 1 -c ${color}
     return ${exit_code}
 }
+# -[ LST_FUNUSED() ]------------------------------------------------------------------------------------------
+# Check list of all fun used
+lst_funused()
+{
+    for obj in ${@};do 
+        if [[ -f ${project}/${obj} ]];then
+            #if file "${project}/${obj}" | grep -qE 'relocatable|executable|shared object|ar archive';then
+            #    echo -e "\033[4;33m- Functions Used by ${obj}:\033[m"
+            #    local all_fun=$(nm -g "${project}/${obj}" | grep -E " [UT] " | awk '{ print $NF }' | sort | uniq)
+            #    echo -e "  - \033[4;29mHomemade:\033[m"
+            #    for fun in ${all_fun};do [[ ${fun} == *"ft_"* ]] && echo -e "    ${fun/-/-\ }";done
+            #    echo -e "  - \033[4;29mOther:\033[m"
+            #    for fun in ${all_fun};do [[ ( ${fun} == "main" ) || ( ${fun} == "_"* ) || ( ${fun} == "ft_"*  ) ]] || echo -e "    ${fun/-/-\ }";done
+            #else
+            #    echo -e "\033[4;31m${project}/${obj} is not an object file\033[m"
+            #fi
+            echo -e "${B0}${obj}${E} is a file\033[m"
+        else
+            echo -e "${B0}${obj}${E} is not a file\033[m"
+        fi
+    done
+} 
 
 # ============================================================================================================
 # MAIN
@@ -96,4 +118,7 @@ LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ CHECK NORMINETTE ]=======================================================================================
-exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette" ; pause
+exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+# =[ LST_FUNUSED ]============================================================================================
+exec_anim_in_box "lst_funused ${LIBFT_A}" "List all function used"
+
