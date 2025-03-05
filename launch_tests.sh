@@ -23,6 +23,13 @@ BSL_DIR="${PARENT_DIR}/src/BSL"                            # ☒ Path to BSL fol
 HOMEMADE_FUNUSED=( )                                       # ☒ List of user created function in libft.a
 BUILTIN_FUNUSED=( )                                        # ☒ List of build-in function in libft.a
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )        # ☒ List of folder to be ignore by norminette
+LIBFT_MANDA=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "ft_strlen" "ft_memset" \
+    "ft_bzero" "ft_memcpy" "ft_memmove" "ft_strlcpy" "ft_strlcat" "ft_toupper" "ft_tolower" "ft_strchr" \
+    "ft_strrchr" "ft_strncmp" "ft_memchr" "ft_memcmp" "ft_strnstr" "ft_atoi" "ft_calloc" "ft_strdup" \
+    "ft_substr" "ft_strjoin" "ft_strtrim" "ft_split" "ft_itoa" "ft_strmapi" "ft_striteri" "ft_putchar_fd" \
+    "ft_putstr_fd" "ft_putendl_fd" "ft_putnbr_fd" )
+LIBFT_BONUS=( "ft_lstnew" "ft_lstadd_front" "ft_lstsize" "ft_lstlast" "ft_lstadd_back" "ft_lstdelone" \
+    "ft_lstclear" "ft_lstiter" "ft_lstmap" )
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                    # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
@@ -91,6 +98,12 @@ exec_anim_in_box()
     return ${exit_code}
 }
 
+# -[ LAUNCH_TEST_LIBFT_MANDATORY() ]--------------------------------------------------------------------------
+# Launch test for all mandatory function needed for libft
+launch_test_libft_mandatory()
+{
+}
+
 # ============================================================================================================
 # MAIN
 # ============================================================================================================
@@ -102,6 +115,7 @@ LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")
 # =[ CHECK NORMINETTE ]=======================================================================================
 exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
 # =[ LST_FUNUSED ]============================================================================================
+# -[ SET LISTS HOMEMADE_FUNUSED BUILTIN_FUNUSED ]-------------------------------------------------------------
 for obj in ${LIBFT_A};do 
     if [[ -f ${obj} ]];then
         if file "${obj}" | grep -qE 'relocatable|executable|shared object|ar archive';then
@@ -120,6 +134,4 @@ for obj in ${LIBFT_A};do
         echo -e "${B0}${obj}${E} is not a file\033[m"
     fi
 done
-echo "AFTER:HOMEMADE_FUNUSED=${HOMEMADE_FUNUSED[@]}"
-echo "AFTER:BUILTIN_FUNUSED=${BUILTIN_FUNUSED[@]}"
-echo "AFTER:EXCLUDE_NORMI_FOLD=${EXCLUDE_NORMI_FOLD[@]}"
+exec_anim_in_box "launch_test_libft_mandatory" "Tests libft mandatory functions"
