@@ -102,6 +102,9 @@ exec_anim_in_box()
 # Launch test for all mandatory function needed for libft
 launch_test_libft_mandatory()
 {
+    for fun in ${LIBFT_MANDA[@]};do
+        echo "fun=${fun}"
+    done
 }
 
 # ============================================================================================================
