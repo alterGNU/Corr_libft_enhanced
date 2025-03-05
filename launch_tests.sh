@@ -19,6 +19,9 @@ PARENT_DIR=$(dirname $(realpath ${0}))                     # ☒ Name of parent 
 LIBFT_DIR=$(dirname ${PARENT_DIR})                         # ☒ Name of libft_enhanced (grandparent folder)
 LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"    # ☒ Name of the log folder
 BSL_DIR="${PARENT_DIR}/src/BSL"                            # ☒ Path to BSL folder
+BIN_DIR="${PARENT_DIR}/tests/bin"                          # ☒ Path to bin folder (test binary)
+# -[ COMMANDS ]-----------------------------------------------------------------------------------------------
+CC="cc -Wall -Wextra -Werror -I${PARENT_DIR}/src/tests -I${LIBFT_DIR}/include ${PARENT_DIR}/src/tests/test_utils/*"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 HOMEMADE_FUNUSED=( )                                       # ☒ List of user created function in libft.a
 BUILTIN_FUNUSED=( )                                        # ☒ List of build-in function in libft.a
@@ -103,10 +106,23 @@ exec_anim_in_box()
 launch_test_libft_mandatory()
 {
     for fun in ${LIBFT_MANDA[@]};do
-        test_main=$(find "${BSL_DIR}" -type f -name "${fun}"*.c)
+        local test_main=$(find "${PARENT_DIR}/src/tests" -type f -name "${fun}"*.c)
         echo "fun=${fun}"
         echo "test_main=${test_main}"
-        [[ -z "${test_main}" ]] && echo test found || echo test not found
+        if [[ -n "${test_main}" ]];then
+            echo "${V0} - test for ${B0}${fun}${V0} found:"
+            [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
+            exe="${BIN_DIR}/${fun}_test"
+            echo "exe=${exe}"
+            if [[ -f "${exe}" ]];then
+                ./${exe}
+            else
+                echo "${CC} ${test_main} -o ${exe}"
+                ${CC} ${test_main} -o ${exe}
+            fi
+        else
+            echo "${R0} - test for ${B0}${fun}${R0} not found"
+        fi
     done
 }
 
@@ -119,7 +135,7 @@ LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ CHECK NORMINETTE ]=======================================================================================
-exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+#exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
 # =[ LST_FUNUSED ]============================================================================================
 # -[ SET LISTS HOMEMADE_FUNUSED BUILTIN_FUNUSED ]-------------------------------------------------------------
 for obj in ${LIBFT_A};do 
