@@ -14,18 +14,21 @@
  
 # =[ VARIABLES ]==============================================================================================
 # -[ PATH/FOLDER/FILE ]---------------------------------------------------------------------------------------
-SCRIPTNAME=${0##*\/}                                       # ☒ Script's name (no path)
-PARENT_DIR=$(dirname $(realpath ${0}))                     # ☒ Name of parent directory
-LIBFT_DIR=$(dirname ${PARENT_DIR})                         # ☒ Name of libft_enhanced (grandparent folder)
-LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"    # ☒ Name of the log folder
-BSL_DIR="${PARENT_DIR}/src/BSL"                            # ☒ Path to BSL folder
-BIN_DIR="${PARENT_DIR}/bin"                                # ☒ Path to bin folder (test binary)
+SCRIPTNAME=${0##*\/}                                              # ☒ Script's name (no path)
+PARENT_DIR=$(dirname $(realpath ${0}))                            # ☒ Name of parent directory
+LIBFT_DIR=$(dirname ${PARENT_DIR})                                # ☒ Name of libft_enhanced (grandparent folder)
+LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"           # ☒ Name of the log folder
+BSL_DIR="${PARENT_DIR}/src/BSL"                                   # ☒ Path to BSL folder
+BIN_DIR="${PARENT_DIR}/bin"                                       # ☒ Path to bin folder (test binary)
+LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")              # ☒ static library name libft.a 
+LIBFT_INC=$(dirname $(find ${LIBFT_DIR} -type f -name "libft.h")) # ☒ Folder that contains to libft.h HEADER
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
-CC="cc -Wall -Wextra -Werror -I${PARENT_DIR}/src/tests -I${LIBFT_DIR}/include ${PARENT_DIR}/src/tests/test_utils/*"
+CC="cc -Wall -Wextra -Werror -I${LIBFT_INC}"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
-HOMEMADE_FUNUSED=( )                                       # ☒ List of user created function in libft.a
-BUILTIN_FUNUSED=( )                                        # ☒ List of build-in function in libft.a
-EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )        # ☒ List of folder to be ignore by norminette
+HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in libft.a
+BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function in libft.a
+EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
+LIBFT_SHORT=( "ft_bzero" "ft_calloc" "ft_memset" "ft_memcpy" "ft_memmove"  "ft_memchr" "ft_memcmp" )
 LIBFT_MANDA=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "ft_strlen" "ft_memset" \
     "ft_bzero" "ft_memcpy" "ft_memmove" "ft_strlcpy" "ft_strlcat" "ft_toupper" "ft_tolower" "ft_strchr" \
     "ft_strrchr" "ft_strncmp" "ft_memchr" "ft_memcmp" "ft_strnstr" "ft_atoi" "ft_calloc" "ft_strdup" \
@@ -34,21 +37,21 @@ LIBFT_MANDA=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "
 LIBFT_BONUS=( "ft_lstnew" "ft_lstadd_front" "ft_lstsize" "ft_lstlast" "ft_lstadd_back" "ft_lstdelone" \
     "ft_lstclear" "ft_lstiter" "ft_lstmap" )
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
-LEN=100                                                    # ☑ Width of the box
+LEN=100                                                            # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
-E="\033[0m"                                                # ☒ END color balise
-N0="\033[0;30m"                                            # ☒ START BLACK
-R0="\033[0;31m"                                            # ☒ START RED
-RU="\033[4;31m"                                            # ☒ START RED UNDERSCORED
-V0="\033[0;32m"                                            # ☒ START GREEN
-M0="\033[0;33m"                                            # ☒ START BROWN
-Y0="\033[0;93m"                                            # ☒ START YELLOW
-B0="\033[0;34m"                                            # ☒ START BLUE
-BU="\033[4;34m"                                            # ☒ START BLUE
-BC0="\033[0;36m"                                           # ☒ START AZURE
-P0="\033[0;35m"                                            # ☒ START PINK
-G0="\033[0;37m"                                            # ☒ START GREY
-GU="\033[4;37m"                                            # ☒ START GREY
+E="\033[0m"                                                        # ☒ END color balise
+N0="\033[0;30m"                                                    # ☒ START BLACK
+R0="\033[0;31m"                                                    # ☒ START RED
+RU="\033[4;31m"                                                    # ☒ START RED UNDERSCORED
+V0="\033[0;32m"                                                    # ☒ START GREEN
+M0="\033[0;33m"                                                    # ☒ START BROWN
+Y0="\033[0;93m"                                                    # ☒ START YELLOW
+B0="\033[0;34m"                                                    # ☒ START BLUE
+BU="\033[4;34m"                                                    # ☒ START BLUE
+BC0="\033[0;36m"                                                   # ☒ START AZURE
+P0="\033[0;35m"                                                    # ☒ START PINK
+G0="\033[0;37m"                                                    # ☒ START GREY
+GU="\033[4;37m"                                                    # ☒ START GREY
 # =[ SOURCES ]================================================================================================
 source ${BSL_DIR}/src/check42_norminette.sh
 source ${BSL_DIR}/src/print.sh
@@ -105,32 +108,42 @@ exec_anim_in_box()
 # Launch test for all mandatory function needed for libft
 launch_test_libft_mandatory()
 {
-    for fun in ${LIBFT_MANDA[@]};do
-        local test_main=$(find "${PARENT_DIR}/src/tests" -type f -name "${fun}"*.c)
-        echo "fun=${fun}"
-        echo "test_main=${test_main}"
+    local LOG_LIBFT_MANDA="${LOG_DIR}/libft_mandatory"
+    [[ ! -d ${LOG_LIBFT_MANDA} ]] && mkdir -p ${LOG_LIBFT_MANDA}
+    local nb_err=0
+    #for fun in ${LIBFT_MANDA[@]};do
+    for fun in ${LIBFT_SHORT[@]};do
+        local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
         if [[ -n "${test_main}" ]];then
-            echo "${V0} - test for ${B0}${fun}${V0} found:"
-            [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
-            exe="${BIN_DIR}/${fun}_test"
-            echo "exe=${exe}"
-            if [[ -f "${exe}" ]];then
-                ./${exe}
+            if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
+                [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
+                exe="${BIN_DIR}/test_${fun}"
+                [[ ! -f "${exe}" ]] && ${CC} ${test_main} ${LIBFT_A} -o ${exe}
+                if [[ -f "${exe}" ]];then
+                    ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
+                    local res=$?
+                    nb_err=$((nb_err + res))
+                    [[ ${res} -eq 0 ]] && echo "${V0} - Tests ${B0}${fun}()${V0} PASS.${E}" || echo "${R0} -
+                    Tests ${B0}${fun}()${R0} FAIL. ${Y0}check -->${B0}${E}"
+                else
+                    echo "${R0} - Compilation FAIL: no binary ${B0}${exe}${R0} found${E}"
+                fi
             else
-                echo "${CC} ${test_main} -o ${exe}"
-                ${CC} ${test_main} -o ${exe}
+                echo "${R0} - Mandatory libft function ${B0}${fun}${R0} not found in static lib ${V0}libft.a${E}"
+                nb_err=$((nb_err + 1))
             fi
-        else
-            echo "${R0} - test for ${B0}${fun}${R0} not found"
-        fi
-    done
+            else
+                echo "${R0} - test for ${B0}${fun}${R0} not found"
+            fi
+        done
+        echo "nb_err=${nb_err}"
+        return ${nb_err}
 }
 
 # ============================================================================================================
 # MAIN
 # ============================================================================================================
 # =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
-LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")
 [[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${B0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
