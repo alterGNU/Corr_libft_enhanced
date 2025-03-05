@@ -103,7 +103,10 @@ exec_anim_in_box()
 launch_test_libft_mandatory()
 {
     for fun in ${LIBFT_MANDA[@]};do
+        test_main=$(find "${BSL_DIR}" -type f -name "${fun}"*.c)
         echo "fun=${fun}"
+        echo "test_main=${test_main}"
+        [[ -z "${test_main}" ]] && echo test found || echo test not found
     done
 }
 
