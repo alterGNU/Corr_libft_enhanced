@@ -19,7 +19,7 @@ PARENT_DIR=$(dirname $(realpath ${0}))                     # ☒ Name of parent 
 LIBFT_DIR=$(dirname ${PARENT_DIR})                         # ☒ Name of libft_enhanced (grandparent folder)
 LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"    # ☒ Name of the log folder
 BSL_DIR="${PARENT_DIR}/src/BSL"                            # ☒ Path to BSL folder
-BIN_DIR="${PARENT_DIR}/tests/bin"                          # ☒ Path to bin folder (test binary)
+BIN_DIR="${PARENT_DIR}/bin"                                # ☒ Path to bin folder (test binary)
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
 CC="cc -Wall -Wextra -Werror -I${PARENT_DIR}/src/tests -I${LIBFT_DIR}/include ${PARENT_DIR}/src/tests/test_utils/*"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ CHECK NORMINETTE ]=======================================================================================
-#exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
 # =[ LST_FUNUSED ]============================================================================================
 # -[ SET LISTS HOMEMADE_FUNUSED BUILTIN_FUNUSED ]-------------------------------------------------------------
 for obj in ${LIBFT_A};do 
