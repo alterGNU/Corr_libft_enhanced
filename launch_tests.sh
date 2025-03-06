@@ -128,7 +128,7 @@ launch_tests_libft_mandatory()
                     echo -en "☑️ ${B0}Not needed.\n${E}"
                 fi
                 if [[ -f "${exe}" ]];then
-                    echo -en "  - 🚀${GU}Execution:${E}"
+                    echo -en "  - 🚀${GU}Execution  :${E}"
                     ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
                     local res_tests=$?
                     nb_err=$((nb_err + res_tests))
