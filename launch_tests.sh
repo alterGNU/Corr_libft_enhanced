@@ -119,7 +119,7 @@ launch_tests_libft_mandatory()
             if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
                 exe="${BIN_DIR}/test_${fun}"
-                echo -en "${GU}  - ⚙️ Compilation:${E}"
+                echo -en "  - ⚙️ ${GU}Compilation:${E}"
                 if [[ ! -f "${exe}" ]];then
                     ${CC} ${test_main} ${LIBFT_A} -o ${exe}
                     local res_compile=${?}
@@ -128,7 +128,7 @@ launch_tests_libft_mandatory()
                     echo -en "☑️ ${B0}Not needed.\n${E}"
                 fi
                 if [[ -f "${exe}" ]];then
-                    echo -en "${GU}  - 🚀Execution:${E}"
+                    echo -en "  - 🚀${GU}Execution:${E}"
                     ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
                     local res_tests=$?
                     nb_err=$((nb_err + res_tests))
