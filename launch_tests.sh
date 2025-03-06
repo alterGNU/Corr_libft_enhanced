@@ -114,7 +114,8 @@ launch_tests_libft_mandatory()
     #for fun in ${LIBFT_MANDA[@]};do
     for fun in ${LIBFT_SHORT[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
-        echo " - ${BU}${fun}():${E}"
+        #echo " - ${BU}${fun}():${E}"
+        echol -i 1 "${BU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
             if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
@@ -125,23 +126,23 @@ launch_tests_libft_mandatory()
                     local res_compile=${?}
                     [[ "${res_compile}" -eq 0 ]] && echo -en "✅${V0} Successfull.${E}\n" || echo "❌${R0}compilation failed.${E}\n"
                 else
-                    echo -en "☑️ ${B0}Not needed.\n${E}"
+                    echo -en "☑️ ${BC0}Not needed.\n${E}"
                 fi
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀${GU}Execution  :${E}"
                     ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
                     local res_tests=$?
                     nb_err=$((nb_err + res_tests))
-                    [[ ${res_tests} -eq 0 ]] && echo -en "✅${V0} ${res_tests} errors detected.${E}\n" || echo -en "❌${R0}${res_tests} errors detected${Y0}check log file-->${B0}${LOG_LIBFT_MANDA}/${fun}.log${E}\n"
+                    [[ ${res_tests} -eq 0 ]] && echo -en "✅${V0} ${res_tests} errors detected.${E}\n" || echo -en "❌${R0}${res_tests} errors detected${Y0}check log file-->${BC0}${LOG_LIBFT_MANDA}/${fun}.log${E}\n"
                 else
                     echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
                 fi
             else
-                echo "${R0}  - Mandatory libft function ${B0}${fun}${R0} not found in static lib ${V0}libft.a${E}"
+                echo "${R0}  - Mandatory libft function ${BC0}${fun}${R0} not found in static lib ${V0}libft.a${E}"
                 nb_err=$((nb_err + 1))
             fi
             else
-                echo "${R0}  - Tests for ${B0}${fun}${R0} not found"
+                echo "${R0}  - Tests for ${BC0}${fun}${R0} not found"
             fi
         done
         return ${nb_err}
@@ -151,7 +152,7 @@ launch_tests_libft_mandatory()
 # MAIN
 # ============================================================================================================
 # =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
-[[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${B0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
+[[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${BC0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ CHECK NORMINETTE ]=======================================================================================
@@ -170,10 +171,10 @@ for obj in ${LIBFT_A};do
                 fi
             done
         else
-            echo -e "${B0}${obj}${E} is not an object file\033[m"
+            echo -e "${BC0}${obj}${E} is not an object file\033[m"
         fi
     else
-        echo -e "${B0}${obj}${E} is not a file\033[m"
+        echo -e "${BC0}${obj}${E} is not a file\033[m"
     fi
 done
 # -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
