@@ -28,7 +28,6 @@ CC="cc -Wall -Wextra -Werror -I${LIBFT_INC}"
 HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in libft.a
 BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function in libft.a
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
-LIBFT_SHORT=( "ft_bzero" "ft_calloc" "ft_memset" "ft_memcpy" "ft_memmove"  "ft_memchr" "ft_memcmp" )
 LIBFT_MANDA=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "ft_strlen" "ft_memset" \
     "ft_bzero" "ft_memcpy" "ft_memmove" "ft_strlcpy" "ft_strlcat" "ft_toupper" "ft_tolower" "ft_strchr" \
     "ft_strrchr" "ft_strncmp" "ft_memchr" "ft_memcmp" "ft_strnstr" "ft_atoi" "ft_calloc" "ft_strdup" \
@@ -112,8 +111,7 @@ launch_tests_libft_mandatory()
     local LOG_LIBFT_MANDA="${LOG_DIR}/libft_mandatory"
     [[ ! -d ${LOG_LIBFT_MANDA} ]] && mkdir -p ${LOG_LIBFT_MANDA}
     local nb_err=0
-    #for fun in ${LIBFT_MANDA[@]};do
-    for fun in ${LIBFT_SHORT[@]};do
+    for fun in ${LIBFT_MANDA[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
         echo "🔹${BCU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
