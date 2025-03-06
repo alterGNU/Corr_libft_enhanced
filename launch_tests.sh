@@ -106,7 +106,7 @@ exec_anim_in_box()
 
 # -[ LAUNCH_TEST_LIBFT_MANDATORY() ]--------------------------------------------------------------------------
 # Launch test for all mandatory function needed for libft
-launch_test_libft_mandatory()
+launch_tests_libft_mandatory()
 {
     local LOG_LIBFT_MANDA="${LOG_DIR}/libft_mandatory"
     [[ ! -d ${LOG_LIBFT_MANDA} ]] && mkdir -p ${LOG_LIBFT_MANDA}
@@ -118,15 +118,22 @@ launch_test_libft_mandatory()
             if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
                 exe="${BIN_DIR}/test_${fun}"
-                [[ ! -f "${exe}" ]] && ${CC} ${test_main} ${LIBFT_A} -o ${exe}
-                if [[ -f "${exe}" ]];then
-                    ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
-                    local res=$?
-                    nb_err=$((nb_err + res))
-                    [[ ${res} -eq 0 ]] && echo "${V0} - Tests ${B0}${fun}()${V0} PASS.${E}" || echo "${R0} -
-                    Tests ${B0}${fun}()${R0} FAIL. ${Y0}check -->${B0}${E}"
+                echo -en " - ⚙️Compilation:"
+                if [[ ! -f "${exe}" ]];then
+                    ${CC} ${test_main} ${LIBFT_A} -o ${exe}
+                    local res_compile=${?}
+                    [[ "${res_compile}" -eq 0 ]] && echo -en "✅${V0} Successfull.${E}\n" || echo "❌${R0}compilation failed.${E}\n"
                 else
-                    echo "${R0} - Compilation FAIL: no binary ${B0}${exe}${R0} found${E}"
+                    echo -en "☑️. ${B0}Not needed.\n${E}"
+                fi
+                if [[ -f "${exe}" ]];then
+                    echo -en " - 🚀Execution:"
+                    ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
+                    local res_tests=$?
+                    nb_err=$((nb_err + res_tests))
+                    [[ ${res_tests} -eq 0 ]] && echo -en "✅${V0} ${res_tests} errors detected.${E}\n" || echo -en "❌${R0}${res_tests} errors detected${Y0}check log file-->${B0}${LOG_LIBFT_MANDA}/${fun}.log${E}\n"
+                else
+                    echo "${R0} - no binary ${B0}${exe}${R0} found${E}"
                 fi
             else
                 echo "${R0} - Mandatory libft function ${B0}${fun}${R0} not found in static lib ${V0}libft.a${E}"
@@ -136,7 +143,6 @@ launch_test_libft_mandatory()
                 echo "${R0} - test for ${B0}${fun}${R0} not found"
             fi
         done
-        echo "nb_err=${nb_err}"
         return ${nb_err}
 }
 
@@ -169,4 +175,5 @@ for obj in ${LIBFT_A};do
         echo -e "${B0}${obj}${E} is not a file\033[m"
     fi
 done
-exec_anim_in_box "launch_test_libft_mandatory" "Tests libft mandatory functions"
+# -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
+exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
