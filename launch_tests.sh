@@ -23,7 +23,7 @@ BIN_DIR="${PARENT_DIR}/bin"                                       # ☒ Path to 
 LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")              # ☒ static library name libft.a 
 LIBFT_INC=$(dirname $(find ${LIBFT_DIR} -type f -name "libft.h")) # ☒ Folder that contains to libft.h HEADER
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
-CC="cc -Wall -Wextra -Werror -lbsd -I${LIBFT_INC}"
+CC="cc -Wall -Wextra -Werror -I${LIBFT_INC}"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in libft.a
 BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function in libft.a
@@ -120,7 +120,7 @@ launch_tests_libft_mandatory()
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en "  - ⚙️ ${GU}Compilation:${E}"
                 if [[ ! -f "${exe}" ]];then
-                    ${CC} ${test_main} ${LIBFT_A} -o ${exe}
+                    ${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd
                     local res_compile=${?}
                     [[ "${res_compile}" -eq 0 ]] && echo -en "✅${V0} Successfull.${E}\n" || echo "❌${R0}compilation failed.${E}\n"
                 else
