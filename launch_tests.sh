@@ -49,6 +49,7 @@ Y0="\033[0;93m"                                                    # ☒ START Y
 B0="\033[0;34m"                                                    # ☒ START BLUE
 BU="\033[4;34m"                                                    # ☒ START BLUE
 BC0="\033[0;36m"                                                   # ☒ START AZURE
+BCU="\033[4;36m"                                                   # ☒ START AZURE UNDERSCORED
 P0="\033[0;35m"                                                    # ☒ START PINK
 G0="\033[0;37m"                                                    # ☒ START GREY
 GU="\033[4;37m"                                                    # ☒ START GREY
@@ -114,8 +115,7 @@ launch_tests_libft_mandatory()
     #for fun in ${LIBFT_MANDA[@]};do
     for fun in ${LIBFT_SHORT[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
-        #echo " - ${BU}${fun}():${E}"
-        echol -i 1 "${BU}${fun}():${E}"
+        echo "🔹${BCU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
             if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
@@ -133,7 +133,12 @@ launch_tests_libft_mandatory()
                     ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
                     local res_tests=$?
                     nb_err=$((nb_err + res_tests))
-                    [[ ${res_tests} -eq 0 ]] && echo -en "✅${V0} ${res_tests} errors detected.${E}\n" || echo -en "❌${R0}${res_tests} errors detected${Y0}check log file-->${BC0}${LOG_LIBFT_MANDA}/${fun}.log${E}\n"
+                    if [[ ${res_tests} -eq 0 ]];then
+                        echo -en "✅${V0} ${res_tests} errors detected.${E}\n"
+                    else
+                        echo -en "❌${R0}${res_tests} errors detected\n"
+                        echo "    🔸${Y0}check log file 👉 ${M0}${LOG_LIBFT_MANDA}/${fun}.log${E}"
+                    fi
                 else
                     echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
                 fi
