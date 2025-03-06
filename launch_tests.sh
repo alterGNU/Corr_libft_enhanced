@@ -114,33 +114,34 @@ launch_tests_libft_mandatory()
     #for fun in ${LIBFT_MANDA[@]};do
     for fun in ${LIBFT_SHORT[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
+        echo -en " - ${BU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
             if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
                 exe="${BIN_DIR}/test_${fun}"
-                echo -en " - ⚙️Compilation:"
+                echo -en "${GU}  - ⚙️ Compilation:${E}"
                 if [[ ! -f "${exe}" ]];then
                     ${CC} ${test_main} ${LIBFT_A} -o ${exe}
                     local res_compile=${?}
                     [[ "${res_compile}" -eq 0 ]] && echo -en "✅${V0} Successfull.${E}\n" || echo "❌${R0}compilation failed.${E}\n"
                 else
-                    echo -en "☑️. ${B0}Not needed.\n${E}"
+                    echo -en "☑️ ${B0}Not needed.\n${E}"
                 fi
                 if [[ -f "${exe}" ]];then
-                    echo -en " - 🚀Execution:"
+                    echo -en "${GU}  - 🚀Execution:${E}"
                     ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
                     local res_tests=$?
                     nb_err=$((nb_err + res_tests))
                     [[ ${res_tests} -eq 0 ]] && echo -en "✅${V0} ${res_tests} errors detected.${E}\n" || echo -en "❌${R0}${res_tests} errors detected${Y0}check log file-->${B0}${LOG_LIBFT_MANDA}/${fun}.log${E}\n"
                 else
-                    echo "${R0} - no binary ${B0}${exe}${R0} found${E}"
+                    echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
                 fi
             else
-                echo "${R0} - Mandatory libft function ${B0}${fun}${R0} not found in static lib ${V0}libft.a${E}"
+                echo "${R0}  - Mandatory libft function ${B0}${fun}${R0} not found in static lib ${V0}libft.a${E}"
                 nb_err=$((nb_err + 1))
             fi
             else
-                echo "${R0} - test for ${B0}${fun}${R0} not found"
+                echo "${R0}  - Tests for ${B0}${fun}${R0} not found"
             fi
         done
         return ${nb_err}
