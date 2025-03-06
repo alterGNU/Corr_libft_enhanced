@@ -1,3 +1,4 @@
 [submodule "src/BSL"]
 	path = src/BSL
 	url = git@github.com:alterGNU/BashScriptLib.git
+    update = merge
