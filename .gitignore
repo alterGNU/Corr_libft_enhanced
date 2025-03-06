@@ -21,3 +21,4 @@
 # Ignore folder
 ignore/*
 log/*
+bin/*
