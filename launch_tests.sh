@@ -157,6 +157,53 @@ launch_tests_libft_mandatory()
         return ${nb_err}
 }
 
+# -[ LAUNCH_TEST_LIBFT_BONUS() ]------------------------------------------------------------------------------
+# Launch test for all bonus function needed for libft
+launch_tests_libft_bonus()
+{
+    local LOG_LIBFT_BONUS="${LOG_DIR}/libft_bonus"
+    [[ ! -d ${LOG_LIBFT_BONUS} ]] && mkdir -p ${LOG_LIBFT_BONUS}
+    local nb_err=0
+    for fun in ${LIBFT_BONUS[@]};do
+        local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
+        echo "🔹${BCU}${fun}():${E}"
+        if [[ -n "${test_main}" ]];then
+            if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " ${fun} " ]];then
+                [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
+                exe="${BIN_DIR}/test_${fun}"
+                echo -en "  - ⚙️ ${GU}Compilation:${E}"
+                if [[ ! -f "${exe}" ]];then
+                    ${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd
+                    local res_compile=${?}
+                    [[ "${res_compile}" -eq 0 ]] && echo -en "✅${V0} Successfull.${E}\n" || echo "❌${R0}compilation failed.${E}\n"
+                else
+                    echo -en "☑️ ${BC0}Not needed.\n${E}"
+                fi
+                if [[ -f "${exe}" ]];then
+                    echo -en "  - 🚀${GU}Execution  :${E}"
+                    ${exe} > "${LOG_LIBFT_BONUS}/${fun}.log" 2>&1
+                    local res_tests=$?
+                    if [[ ${res_tests} -eq 0 ]];then
+                        echo -en "✅${V0} ${res_tests} errors detected.${E}\n"
+                    else
+                        echo -en "❌${R0}${res_tests} errors detected\n"
+                        echo "    🔸${Y0}check log file 👉 ${M0}${LOG_LIBFT_BONUS}/${fun}.log${E}"
+                    fi
+                    nb_err=$((nb_err + res_tests))
+                else
+                    echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
+                fi
+            else
+                echo "${R0}  - Bonus libft function ${BC0}${fun}${R0} not found in static lib ${V0}libft.a${E}"
+                nb_err=$((nb_err + 1))
+            fi
+            else
+                echo "${R0}  - Tests for ${BC0}${fun}${R0} not found"
+            fi
+        done
+        return ${nb_err}
+}
+
 # ============================================================================================================
 # MAIN
 # ============================================================================================================
@@ -186,5 +233,13 @@ for obj in ${LIBFT_A};do
         echo -e "${BC0}${obj}${E} is not a file\033[m"
     fi
 done
-# -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
-exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
+## -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
+#exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
+# -[ LAUNCH_TESTS_LIBFT_BONUS() ]-----------------------------------------------------------------------------
+for fun in ${HOMEMADE_FUNUSED[@]};do
+    echo fun=${fun}
+    if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+        exec_anim_in_box "launch_tests_libft_bonus" "Tests libft bonus functions"
+        break
+    fi
+done
