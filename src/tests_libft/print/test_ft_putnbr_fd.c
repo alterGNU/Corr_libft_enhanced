@@ -104,14 +104,12 @@ int	main(int ac, char **av)
 	strcpy(ft, av[2]);
 	strcat(ft, ft_fname);
 	free(ft_fname);
-	if (!str)
-		return (free(real), free(ft), perror("ERROR:strdup():"), 1);
 	if (create_file(ft, nb))
-		return (free(str), free(real), free(ft), perror("Error:create_file(ft)"), 1);
+		return (free(real), free(ft), perror("Error:create_file(ft)"), 1);
 	if (!is_a_file(ft))
-		return (fprintf(stderr, "ERROR:\"%s\" Not created\n%s", ft, USAGE), free(str), free(ft), free(real), 1);
-	nb_err = compare_files(ft,real);
-	return (free(str), free(ft), free(real), nb_err);
+		return (fprintf(stderr, "ERROR:\"%s\" Not created\n%s", ft, USAGE), free(ft), free(real), 1);
+	nb_err = compare_files(ft, real);
+	return (free(ft), free(real), nb_err);
 }
 
 //int	main()
