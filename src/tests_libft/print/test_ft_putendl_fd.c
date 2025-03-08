@@ -68,6 +68,7 @@ static int compare_files(const char *file1, const char *file2)
 
 int	main(int ac, char **av)
 {
+	char	*str;
 	char	*rl_fname;
 	char	*real;
 	char	*ft_fname;
@@ -97,14 +98,17 @@ int	main(int ac, char **av)
 		return (perror("ERROR:strdup():"), 1);
 	ft = calloc(strlen(av[1]) + strlen(ft_fname) + 1, 1);
 	if (!ft)
-		return (free(ft_fname), perror("ERROR:calloc():"), 1);
+		return (free(real), free(ft_fname), perror("ERROR:calloc():"), 1);
 	strcpy(ft, av[2]);
 	strcat(ft, ft_fname);
 	free(ft_fname);
-	if (create_file(ft, "Le gras c'est la vie"))
-		return (free(real), free(ft), perror("Error:create_file(ft)"), 1);
+	str = strdup("Le gras c'est la vie");
+	if (!str)
+		return (free(real), free(ft), perror("ERROR:strdup():"), 1);
+	if (create_file(ft, str))
+		return (free(str), free(real), free(ft), perror("Error:create_file(ft)"), 1);
 	if (!is_a_file(ft))
-		return (fprintf(stderr, "ERROR:\"%s\" Not created\n%s", ft, USAGE), free(ft), free(real), 1);
+		return (fprintf(stderr, "ERROR:\"%s\" Not created\n%s", ft, USAGE), free(str), free(ft), free(real), 1);
 	nb_err = compare_files(ft,real);
-	return (free(ft), free(real), nb_err);
+	return (free(str), free(ft), free(real), nb_err);
 }
