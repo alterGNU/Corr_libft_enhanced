@@ -25,7 +25,7 @@ static int	is_a_file(const char *path)
 	return (0);
 }
 
-static int	create_file(const char *filename, const char *txt)
+static int	create_file(const char *filename, char *txt)
 {
 	FILE *file = fopen(filename, "w");
 	if (!file)
