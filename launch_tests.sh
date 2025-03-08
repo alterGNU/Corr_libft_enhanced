@@ -131,18 +131,18 @@ launch_tests_libft_mandatory()
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀${GU}Execution  :${E}"
                     if [ "${fun}" == "ft_put"*"_fd" ];then
-                        ${exe} "${PARENT_DIR}/src/tests_libft/print" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
+                        ${exe} "${PARENT_DIR}/src/tests_libft/print" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.log"
                     else
-                        ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
+                        ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
                     fi
                     local res_tests=$?
-                    nb_err=$((nb_err + res_tests))
                     if [[ ${res_tests} -eq 0 ]];then
                         echo -en "✅${V0} ${res_tests} errors detected.${E}\n"
                     else
                         echo -en "❌${R0}${res_tests} errors detected\n"
                         echo "    🔸${Y0}check log file 👉 ${M0}${LOG_LIBFT_MANDA}/${fun}.log${E}"
                     fi
+                    nb_err=$((nb_err + res_tests))
                 else
                     echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
                 fi

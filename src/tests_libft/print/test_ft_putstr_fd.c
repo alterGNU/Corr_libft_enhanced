@@ -1,4 +1,4 @@
-#include "libft.h"    // ft_putchar_fd
+#include "libft.h"    // ft_putstr_fd
 #include <fcntl.h>    // open, close
 #include <stdio.h>    // fprintf, printf
 #include <errno.h>    // perror, errno
@@ -82,7 +82,7 @@ int	main(int ac, char **av)
 	if (!is_a_folder(av[2]))
 		return (fprintf(stderr, USAGE), 0);
 
-	rl_fname = strdup("/ft_putendl_fd_real.txt");
+	rl_fname = strdup("/ft_putstr_fd_real.txt");
 	if (!rl_fname)
 		return (perror("ERROR:strdup():"), 1);
 	real = calloc(strlen(av[1]) + strlen(rl_fname) + 1, 1);
@@ -93,7 +93,7 @@ int	main(int ac, char **av)
 	free(rl_fname);
 	if (!is_a_file(real))
 		return (fprintf(stderr, "ERROR:\"%s\" Not found\n%s", real, USAGE), free(real), 1);
-	ft_fname = strdup("/ft_putendl_fd_ft.txt");
+	ft_fname = strdup("/ft_putstr_fd_ft.txt");
 	if (!ft_fname)
 		return (perror("ERROR:strdup():"), 1);
 	ft = calloc(strlen(av[1]) + strlen(ft_fname) + 1, 1);

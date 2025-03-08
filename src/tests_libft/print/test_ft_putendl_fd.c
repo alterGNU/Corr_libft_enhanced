@@ -1,4 +1,4 @@
-#include "libft.h"    // ft_putchar_fd
+#include "libft.h"    // ft_putendl_fd
 #include <fcntl.h>    // open, close
 #include <stdio.h>    // fprintf, printf
 #include <errno.h>    // perror, errno
