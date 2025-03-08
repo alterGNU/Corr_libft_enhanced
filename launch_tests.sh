@@ -24,6 +24,7 @@ LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")              # ☒ static l
 LIBFT_INC=$(dirname $(find ${LIBFT_DIR} -type f -name "libft.h")) # ☒ Folder that contains to libft.h HEADER
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
 CC="cc -Wall -Wextra -Werror -I${LIBFT_INC}"
+VALGRIND="valgrind --leak-check=full --track-fds=yes"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
 HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in libft.a
 BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function in libft.a
@@ -139,10 +140,23 @@ launch_tests_libft_mandatory()
                     if [[ ${res_tests} -eq 0 ]];then
                         echo -en "✅${V0} ${res_tests} errors detected.${E}\n"
                     else
-                        echo -en "❌${R0}${res_tests} errors detected\n"
+                        echo -en "❌${R0} ${res_tests} errors detected\n"
                         echo "    🔸${Y0}check log file 👉 ${M0}${LOG_LIBFT_MANDA}/${fun}.log${E}"
                     fi
                     nb_err=$((nb_err + res_tests))
+                    echo -en "  - 🚰${GU}Valgrind   :${E}"
+                    if [[ "${fun}" == "ft_put"* ]];then
+                        ${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1
+                    else
+                        ${VALGRIND} ${exe} > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1
+                    fi
+                    local res_tests=$?
+                    if [[ ${res_tests} -eq 0 ]];then
+                        echo -en "✅${V0} ${res_tests} leak detected.${E}\n"
+                    else
+                        echo -en "❌${R0} ${res_tests} leak detected\n"
+                        echo "    🔸${Y0}check log file 👉 ${M0}${LOG_LIBFT_MANDA}/${fun}.log${E}"
+                    fi
                 else
                     echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
                 fi
@@ -186,10 +200,23 @@ launch_tests_libft_bonus()
                     if [[ ${res_tests} -eq 0 ]];then
                         echo -en "✅${V0} ${res_tests} errors detected.${E}\n"
                     else
-                        echo -en "❌${R0}${res_tests} errors detected\n"
+                        echo -en "❌${R0} ${res_tests} errors detected\n"
                         echo "    🔸${Y0}check log file 👉 ${M0}${LOG_LIBFT_BONUS}/${fun}.log${E}"
                     fi
                     nb_err=$((nb_err + res_tests))
+                    echo -en "  - 🚰${GU}Valgrind   :${E}"
+                    if [[ "${fun}" == "ft_put"* ]];then
+                        ${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_BONUS}" > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1
+                    else
+                        ${VALGRIND} ${exe} > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1
+                    fi
+                    local res_tests=$?
+                    if [[ ${res_tests} -eq 0 ]];then
+                        echo -en "✅${V0} ${res_tests} leak detected.${E}\n"
+                    else
+                        echo -en "❌${R0} ${res_tests} leak detected\n"
+                        echo "    🔸${Y0}check log file 👉 ${M0}${LOG_LIBFT_BONUS}/${fun}.log${E}"
+                    fi
                 else
                     echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
                 fi
@@ -233,11 +260,10 @@ for obj in ${LIBFT_A};do
         echo -e "${BC0}${obj}${E} is not a file\033[m"
     fi
 done
-## -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
-#exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
+# -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
+exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
 # -[ LAUNCH_TESTS_LIBFT_BONUS() ]-----------------------------------------------------------------------------
 for fun in ${HOMEMADE_FUNUSED[@]};do
-    echo fun=${fun}
     if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
         exec_anim_in_box "launch_tests_libft_bonus" "Tests libft bonus functions"
         break
