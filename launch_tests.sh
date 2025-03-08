@@ -110,6 +110,8 @@ launch_tests_libft_mandatory()
 {
     local LOG_LIBFT_MANDA="${LOG_DIR}/libft_mandatory"
     [[ ! -d ${LOG_LIBFT_MANDA} ]] && mkdir -p ${LOG_LIBFT_MANDA}
+    local DOC_LIBFT_MANDA="${LOG_LIBFT_MANDA}/files"
+    [[ ! -d ${DOC_LIBFT_MANDA} ]] && mkdir -p ${DOC_LIBFT_MANDA}
     local nb_err=0
     for fun in ${LIBFT_MANDA[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
@@ -129,7 +131,7 @@ launch_tests_libft_mandatory()
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀${GU}Execution  :${E}"
                     if [ "${fun}" == "ft_put"*"_fd" ];then
-                        ${exe} "${PARENT_DIR}/src/tests_libft/print" "${BIN_DIR}" > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
+                        ${exe} "${PARENT_DIR}/src/tests_libft/print" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
                     else
                         ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
                     fi
