@@ -26,7 +26,7 @@ static int	is_a_file(const char *path)
 	return (0);
 }
 
-int	create_file(const char *filename, int nb)
+static int	create_file(const char *filename, int nb)
 {
 	FILE *file = fopen(filename, "w");
 	if (!file)
@@ -67,14 +67,52 @@ static int compare_files(const char *file1, const char *file2)
 	return (fclose(f1), fclose(f2), 0);
 }
 
-int	main(int ac, char **av)
+static int	test(const char *find, const char *create, const char *name, int n)
 {
 	char	*rl_fname;
 	char	*real;
 	char	*ft_fname;
 	char	*ft;
 	int		nb_err;
-	int		nb;
+
+	rl_fname = calloc(23 + strlen(name) + 1, 1);
+	if (!rl_fname)
+		return (perror("ERROR:calloc():"), 1);
+	strcpy(rl_fname, "/ft_putnbr_fd_");
+	strcat(rl_fname, name);
+	strcat(rl_fname, "_real.txt");
+	real = calloc(strlen(find) + strlen(rl_fname) + 1, 1);
+	if (!real)
+		return (free(rl_fname), perror("ERROR:calloc():"), 1);
+	strcpy(real, find);
+	strcat(real, rl_fname);
+	free(rl_fname);
+	if (!is_a_file(real))
+		return (fprintf(stderr, "ERROR:\"%s\" Not found\n%s", real, USAGE), free(real), 1);
+	ft_fname = calloc(21 + strlen(name) + 1, 1);
+	if (!ft_fname)
+		return (perror("ERROR:calloc():"), 1);
+	strcpy(ft_fname, "/ft_putnbr_fd_");
+	strcat(ft_fname, name);
+	strcat(ft_fname, "_ft.txt");
+	ft = calloc(strlen(create) + strlen(ft_fname) + 1, 1);
+	if (!ft)
+		return (free(ft_fname), perror("ERROR:calloc():"), 1);
+	strcpy(ft, create);
+	strcat(ft, ft_fname);
+	free(ft_fname);
+	printf("find='%s'\ncreate='%s'\n", real, ft);
+	if (create_file(ft, n))
+		return (free(real), free(ft), perror("Error:create_file(ft)"), 1);
+	if (!is_a_file(ft))
+		return (fprintf(stderr, "ERROR:\"%s\" Not created\n%s", ft, USAGE), free(ft), free(real), 1);
+	nb_err = compare_files(ft, real);
+	return (free(ft), free(real), nb_err);
+}
+
+int	main(int ac, char **av)
+{
+	int		nb_err;
 
 	if (ac != 3)
 		return (fprintf(stderr, USAGE), 0);
@@ -82,34 +120,10 @@ int	main(int ac, char **av)
 		return (fprintf(stderr, USAGE), 0);
 	if (!is_a_folder(av[2]))
 		return (fprintf(stderr, USAGE), 0);
-
-	nb = 0;
-	rl_fname = strdup("/ft_putnbr_fd_real.txt");
-	if (!rl_fname)
-		return (perror("ERROR:strdup():"), 1);
-	real = calloc(strlen(av[1]) + strlen(rl_fname) + 1, 1);
-	if (!real)
-		return (free(rl_fname), perror("ERROR:calloc():"), 1);
-	strcpy(real, av[1]);
-	strcat(real, rl_fname);
-	free(rl_fname);
-	if (!is_a_file(real))
-		return (fprintf(stderr, "ERROR:\"%s\" Not found\n%s", real, USAGE), free(real), 1);
-	ft_fname = strdup("/ft_putnbr_fd_ft.txt");
-	if (!ft_fname)
-		return (perror("ERROR:strdup():"), 1);
-	ft = calloc(strlen(av[2]) + strlen(ft_fname) + 1, 1);
-	if (!ft)
-		return (free(real), free(ft_fname), perror("ERROR:calloc():"), 1);
-	strcpy(ft, av[2]);
-	strcat(ft, ft_fname);
-	free(ft_fname);
-	if (create_file(ft, nb))
-		return (free(real), free(ft), perror("Error:create_file(ft)"), 1);
-	if (!is_a_file(ft))
-		return (fprintf(stderr, "ERROR:\"%s\" Not created\n%s", ft, USAGE), free(ft), free(real), 1);
-	nb_err = compare_files(ft, real);
-	return (free(ft), free(real), nb_err);
+	nb_err = test(av[1], av[2], "zero", 0);
+	nb_err+= test(av[1], av[2], "intmin", INT_MIN);
+	nb_err+= test(av[1], av[2], "intmax", INT_MAX);
+	return (nb_err);
 }
 
 //int	main()
