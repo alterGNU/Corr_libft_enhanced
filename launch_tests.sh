@@ -128,7 +128,8 @@ launch_tests_libft_mandatory()
                 fi
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀${GU}Execution  :${E}"
-                    ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
+                    echo "${exe} > \"${LOG_LIBFT_MANDA}/${fun}.log\" 2>&1"
+                    ${exe} "${PARENT_DIR}/src/tests_libft/print" "${BIN_DIR}" > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
                     local res_tests=$?
                     nb_err=$((nb_err + res_tests))
                     if [[ ${res_tests} -eq 0 ]];then
