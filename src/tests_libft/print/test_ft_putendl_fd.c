@@ -5,7 +5,7 @@
 #include <string.h>   // strcmp
 #include <sys/stat.h> // struct stat (use in is_a_{file, folder})
 
-#define USAGE "USAGE: this programm need 2 arguments\n   - arg1: path/folder where to find real.txt\n   - arg2: path/folder where to create ft.txt\n"
+#define USAGE "\nUSAGE: this programm need 2 arguments\n   - arg1: path/folder where to find real.txt\n   - arg2: path/folder where to create ft.txt\n"
 
 static int	is_a_folder(const char *path)
 {

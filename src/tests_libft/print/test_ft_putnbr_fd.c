@@ -6,7 +6,7 @@
 #include <sys/stat.h> // struct stat (use in is_a_{file, folder})
 #include <limits.h>   // INT_MAX, INT_MIN
 
-#define USAGE "USAGE: this programm need 2 arguments\n   - arg1: path/folder where to find real.txt\n   - arg2: path/folder where to create ft.txt\n"
+#define USAGE "\nUSAGE: this programm need 2 arguments\n   - arg1: path/folder where to find real.txt\n   - arg2: path/folder where to create ft.txt\n"
 
 static int	is_a_folder(const char *path)
 {
@@ -69,12 +69,12 @@ static int compare_files(const char *file1, const char *file2)
 
 int	main(int ac, char **av)
 {
-	char	*str;
 	char	*rl_fname;
 	char	*real;
 	char	*ft_fname;
 	char	*ft;
 	int		nb_err;
+	int		nb;
 
 	if (ac != 3)
 		return (fprintf(stderr, USAGE), 0);
@@ -83,6 +83,7 @@ int	main(int ac, char **av)
 	if (!is_a_folder(av[2]))
 		return (fprintf(stderr, USAGE), 0);
 
+	nb = 0;
 	rl_fname = strdup("/ft_putnbr_fd_real.txt");
 	if (!rl_fname)
 		return (perror("ERROR:strdup():"), 1);
@@ -103,10 +104,9 @@ int	main(int ac, char **av)
 	strcpy(ft, av[2]);
 	strcat(ft, ft_fname);
 	free(ft_fname);
-	str = strdup("coucou\tpetite\vperruche\n");
 	if (!str)
 		return (free(real), free(ft), perror("ERROR:strdup():"), 1);
-	if (create_file(ft, str))
+	if (create_file(ft, nb))
 		return (free(str), free(real), free(ft), perror("Error:create_file(ft)"), 1);
 	if (!is_a_file(ft))
 		return (fprintf(stderr, "ERROR:\"%s\" Not created\n%s", ft, USAGE), free(str), free(ft), free(real), 1);
