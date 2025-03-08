@@ -57,12 +57,12 @@ static int compare_files(const char *file1, const char *file2)
         int byte2 = fgetc(f2);
 
         if (byte1 != byte2)
-			return (fclose(f1), fclose(f2), 1);    // files are differents
+			return (fprintf(stderr,"File '%s' != '%s' [differ by containt]\n", file1, file2), fclose(f1), fclose(f2), 1);
 
         if (byte1 == EOF || byte2 == EOF)
 		{
             if (byte1 != EOF || byte2 != EOF)
-				return (fclose(f1), fclose(f2), 1);// files size are differents
+				return (fprintf(stderr,"File '%s' != '%s' [differ by size]\n", file1, file2), fclose(f1), fclose(f2), 1);
             break;
         }
     }
@@ -99,7 +99,7 @@ int	main(int ac, char **av)
 	ft_fname = strdup("/ft_putchar_fd_ft.txt");
 	if (!ft_fname)
 		return (perror("ERROR:strdup():"), 1);
-	ft = calloc(strlen(av[1]) + strlen(ft_fname) + 1, 1);
+	ft = calloc(strlen(av[2]) + strlen(ft_fname) + 1, 1);
 	if (!ft)
 		return (free(ft_fname), perror("ERROR:calloc():"), 1);
 	strcpy(ft, av[2]);
