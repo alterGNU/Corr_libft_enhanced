@@ -131,6 +131,7 @@ launch_tests_libft_mandatory()
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀${GU}Execution  :${E}"
                     if [ "${fun}" == "ft_put"*"_fd" ];then
+                        echo "${exe} \"${PARENT_DIR}/src/tests_libft/print\" \"${DOC_LIBFT_MANDA}\" > \"${LOG_LIBFT_MANDA}/${fun}.log\""
                         ${exe} "${PARENT_DIR}/src/tests_libft/print" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.log"
                     else
                         ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log"
