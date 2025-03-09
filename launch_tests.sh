@@ -144,7 +144,7 @@ launch_tests_libft_mandatory()
                         echo -en " ✅ ${V0} ${res_tests} error(s) detected.${E}\n"
                     else
                         echo -en " ❌ ${R0} ${res_tests} error(s) detected\n"
-                        echo "      🔸${Y0}check log file 👉 ${M0}${LOG_LIBFT_MANDA}/${fun}.log${E}"
+                        echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_LIBFT_MANDA}/${fun}.log)${E}"
                     fi
                     nb_err=$((nb_err + res_tests))
                     echo -en "  - 🚰 ${GU}Valgrind   :${E}"
