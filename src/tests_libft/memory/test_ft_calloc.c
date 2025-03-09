@@ -82,27 +82,27 @@ int	main()
 	////nb_err+=compare_str(SIZE_MAX,SIZE_MAX);   //--> NULL:(trop grand) tab taille SIZE_MAX de case SIZE_MAX
 	
 	// TEST SANS LE VRAI POUR VOIR CE QUE FAIT LE MIENS
-	printf("\nCAS SIZE_MAX:\n");
-	void	*pt0 = ft_calloc(0,SIZE_MAX);
-	nb_err+=(pt0 != NULL)?0:1;                  //--> &p  :tableau de 0 case de taille SIZE_MAX
+	printf("\nCAS INT_MAX:\n");
+	void	*pt0 = ft_calloc(0,INT_MAX);
+	nb_err+=(pt0 != NULL)?0:1;                  //--> &p  :tableau de 0 case de taille INT_MAX
 	free(pt0);
-	void	*pt1 = ft_calloc(SIZE_MAX,0);
-	nb_err+=(pt1 != NULL)?0:1;                  //--> &p  :tableau de 0 case de taille SIZE_MAX
+	void	*pt1 = ft_calloc(INT_MAX,0);
+	nb_err+=(pt1 != NULL)?0:1;                  //--> &p  :tableau de 0 case de taille INT_MAX
 	free(pt1);
-	void	*pt2 = ft_calloc(1,SIZE_MAX);
-	nb_err+=(!pt2)?0:1;                         //--> NULL:(trop grand) tab de taille 1 de case SIZE_MAX
+	void	*pt2 = ft_calloc(1,INT_MAX);
+	nb_err+=(!pt2)?0:1;                         //--> NULL:(trop grand) tab de taille 1 de case INT_MAX
 	free(pt2);
-	void	*pt3 = ft_calloc(10,SIZE_MAX);
-	nb_err+=(!pt3)?0:1;                         //--> NULL:(trop grand) tab de taille 1 de case SIZE_MAX
+	void	*pt3 = ft_calloc(10,INT_MAX);
+	nb_err+=(!pt3)?0:1;                         //--> NULL:(trop grand) tab de taille 1 de case INT_MAX
 	free(pt3);
-	void	*pt4 = ft_calloc(SIZE_MAX,1);
-	nb_err+=(pt4 == NULL)?0:1;                  //--> NULL:(trop grand) tab de taille SIZE_MAX de case SIZE_MAX
+	void	*pt4 = ft_calloc(INT_MAX,1);
+	nb_err+=(pt4 == NULL)?0:1;                  //--> NULL:(trop grand) tab de taille INT_MAX de case INT_MAX
 	free(pt4);
-	void	*pt5 = ft_calloc(SIZE_MAX,10);
-	nb_err+=(pt5 == NULL)?0:1;                  //--> NULL:(trop grand) tab de taille SIZE_MAX de case SIZE_MAX
+	void	*pt5 = ft_calloc(INT_MAX,10);
+	nb_err+=(pt5 == NULL)?0:1;                  //--> NULL:(trop grand) tab de taille INT_MAX de case INT_MAX
 	free(pt5);
-	void	*pt6 = ft_calloc(SIZE_MAX,SIZE_MAX);
-	nb_err+=(pt6 == NULL)?0:1;                  //--> NULL:(trop grand) tab de taille SIZE_MAX de case SIZE_MAX
+	void	*pt6 = ft_calloc(INT_MAX,INT_MAX);
+	nb_err+=(pt6 == NULL)?0:1;                  //--> NULL:(trop grand) tab de taille INT_MAX de case INT_MAX
 	free(pt6);
 
 	//CAS type=str
