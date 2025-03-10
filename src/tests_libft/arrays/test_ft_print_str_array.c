@@ -69,11 +69,11 @@ int	main(int ac, char **av)
 	int		r3;
 
 	if (ac != 3)
-		return (fprintf(stderr, USAGE), 0);
+		return (fprintf(stderr, USAGE), 1);
 	if (!is_a_folder(av[1]))
-		return (fprintf(stderr, USAGE), 0);
+		return (fprintf(stderr, USAGE), 1);
 	if (!is_a_folder(av[2]))
-		return (fprintf(stderr, USAGE), 0);
+		return (fprintf(stderr, USAGE), 1);
 	// construct real_filename.txt then open it.
 	fname = strdup("/ft_print_str_array.txt");
 	if (!fname)

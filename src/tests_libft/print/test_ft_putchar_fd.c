@@ -78,11 +78,11 @@ int	main(int ac, char **av)
 	int		nb_err;
 
 	if (ac != 3)
-		return (fprintf(stderr, USAGE), 0);
+		return (fprintf(stderr, USAGE), 1);
 	if (!is_a_folder(av[1]))
-		return (fprintf(stderr, USAGE), 0);
+		return (fprintf(stderr, USAGE), 1);
 	if (!is_a_folder(av[2]))
-		return (fprintf(stderr, USAGE), 0);
+		return (fprintf(stderr, USAGE), 1);
 
 	rl_fname = strdup("/ft_putchar_fd_real.txt");
 	if (!rl_fname)
