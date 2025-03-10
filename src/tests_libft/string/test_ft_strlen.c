@@ -29,7 +29,7 @@ int	main()
 	char s1[4] = {'\0','a','\0','\0'} ;
 	char *list[7]={s0, s1, "", "\0",  "toto", "to\0to","\nle\tgras\tc'est\rla\tvie\nle GRAS\n"};
 	for(int i=0;i<7;i++)
-		compare(list[i]);
+		tot_fail+=compare(list[i]);
 
 	return (tot_fail);
 }
