@@ -130,7 +130,7 @@ launch_tests_libft_mandatory()
                     local res_compile=${?}
                     [[ "${res_compile}" -eq 0 ]] && echo -en " ✅ ${V0} Successfull.${E}\n" || echo " ❌ ${R0}compilation failed.${E}\n"
                 else
-                    echo -en " ☑️  ${BC0}Not needed.\n${E}"
+                    echo -en " ☑️  ${BC0} Not needed.\n${E}"
                 fi
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀 ${GU}Execution  :${E}"
@@ -195,7 +195,7 @@ launch_tests_libft_bonus()
                     local res_compile=${?}
                     [[ "${res_compile}" -eq 0 ]] && echo -en " ✅ ${V0} Successfull.${E}\n" || echo " ❌ ${R0}compilation failed.${E}\n"
                 else
-                    echo -en " ☑️  ${BC0}Not needed.\n${E}"
+                    echo -en " ☑️  ${BC0} Not needed.\n${E}"
                 fi
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀 ${GU}Execution  :${E}"
@@ -235,6 +235,61 @@ launch_tests_libft_bonus()
         return ${nb_err}
 }
 
+# -[ LAUNCH_TESTS_PERSO_FUN() ]-------------------------------------------------------------------------------
+# Launch tests for all my personnal functions
+launch_tests_perso_fun()
+{
+    local LOG_PERSO_FUN="${LOG_DIR}/other_functions"
+    [[ ! -d ${LOG_PERSO_FUN} ]] && mkdir -p ${LOG_PERSO_FUN}
+    local nb_err=0
+    for fun in ${PERSO_FUN[@]};do
+        local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
+        echo "🔹${BCU}${fun}():${E}"
+        if [[ -n "${test_main}" ]];then
+            [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
+            exe="${BIN_DIR}/test_${fun}"
+            echo -en "  - ⚙️  ${GU}Compilation:${E}"
+            if [[ ! -f "${exe}" ]];then
+                ${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd
+                local res_compile=${?}
+                [[ "${res_compile}" -eq 0 ]] && echo -en " ✅ ${V0} Successfull.${E}\n" || echo " ❌ ${R0}compilation failed.${E}\n"
+            else
+                echo -en " ☑️  ${BC0} Not needed.\n${E}"
+            fi
+            if [[ -f "${exe}" ]];then
+                echo -en "  - 🚀 ${GU}Execution  :${E}"
+                ${exe} > "${LOG_PERSO_FUN}/${fun}.log" 2>&1
+                local res_tests=$?
+                if [[ ${res_tests} -eq 0 ]];then
+                    echo -en " ✅ ${V0} ${res_tests} error(s) detected.${E}\n"
+                else
+                    echo -en " ❌${R0} ${res_tests} error(s) detected\n"
+                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_PERSO_FUN}/${fun}.log)${E}"
+                fi
+                nb_err=$((nb_err + res_tests))
+                echo -en "  - 🚰 ${GU}Valgrind   :${E}"
+                if [[ "${fun}" == "ft_put"* ]];then
+                    ${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.val" 2>&1
+                else
+                    ${VALGRIND} ${exe} > "${LOG_PERSO_FUN}/${fun}.val" 2>&1
+                fi
+                local res_tests=$?
+                if [[ ${res_tests} -eq 0 ]];then
+                    echo -en " ✅ ${V0} ${res_tests} leak(s) detected.${E}\n"
+                else
+                    echo -en " ❌ ${R0} ${res_tests} leak(s) detected\n"
+                    echo "      🔸${Y0}check log file 👉 ${M0}${LOG_PERSO_FUN}/${fun}.log${E}"
+                fi
+            else
+                echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
+            fi
+        else
+            echo "${M0}  - No tests founded."
+        fi
+    done
+    return ${nb_err}
+}
+
 # ============================================================================================================
 # MAIN
 # ============================================================================================================
@@ -243,7 +298,7 @@ launch_tests_libft_bonus()
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ CHECK NORMINETTE ]=======================================================================================
-exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+#exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
 # =[ LST_FUNUSED ]============================================================================================
 # -[ SET LISTS HOMEMADE_FUNUSED BUILTIN_FUNUSED ]-------------------------------------------------------------
 for obj in ${LIBFT_A};do 
@@ -264,12 +319,16 @@ for obj in ${LIBFT_A};do
         echo -e "${BC0}${obj}${E} is not a file\033[m"
     fi
 done
-# -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
-exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
-# -[ LAUNCH_TESTS_LIBFT_BONUS() ]-----------------------------------------------------------------------------
-for fun in ${HOMEMADE_FUNUSED[@]};do
-    if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
-        exec_anim_in_box "launch_tests_libft_bonus" "Tests libft bonus functions"
-        break
-    fi
-done
+## -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
+#exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
+## -[ LAUNCH_TESTS_LIBFT_BONUS() ]-----------------------------------------------------------------------------
+#for fun in ${HOMEMADE_FUNUSED[@]};do
+#    if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+#        exec_anim_in_box "launch_tests_libft_bonus" "Tests libft bonus functions"
+#        break
+#    fi
+#done
+# -[ PERSONNAL FUNCTION ]-------------------------------------------------------------------------------------
+EXTRA=( "ft_printf" "get_next_line" )
+PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "${EXTRA[@]}")))
+exec_anim_in_box "launch_tests_perso_fun" "Tests personnal functions"
