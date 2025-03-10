@@ -118,7 +118,7 @@ launch_tests_libft_mandatory()
     local nb_err=0
     for fun in ${LIBFT_MANDA[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
-        echo "🔹${BCU}${fun}():"
+        echo "🔹${BCU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
             if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
