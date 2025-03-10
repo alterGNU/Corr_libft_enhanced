@@ -3,13 +3,13 @@
 # ============================================================================================================
 # Launch libft.a tests
 # This script take no argument (for now) and will automatically:
-#   - 1: check norminette for libft folder (excluding Corr_libft_enhancde folder, tests dont comply with normi.)
+#   - 1: check norminette for libft folder, excluding Corr_libft_enhancde folder, tests dont comply with norme
 #   - 2: list all home-made fun in libft.a
 #   - 3: list all build-in fun in libft.a
 #   - 4: launch libft mandatory functions tests.
-#   - 5: if detected, launch test for libft_bonus functions.
-#   - 6: if detected, launch test for ft_printf() tests (bonus too, auto)
-#   - 7: if detected, launch test for get_next_line() tests (bonus too, auto)
+#   - 5: if detected at least one fun of libft_bonus part, launch test for all libft_bonus functions.
+#   - 6: if detected ft_printf() in libft.a, launch tests for ft_printf() tests (bonus too, auto)
+#   - 7: if detected get_next_line() in libft.a, launch tests for get_next_line() tests (bonus too, auto)
 # ============================================================================================================
  
 # =[ VARIABLES ]==============================================================================================
