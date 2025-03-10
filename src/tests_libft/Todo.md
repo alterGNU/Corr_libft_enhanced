@@ -6,7 +6,7 @@
 - [ ] ft_concat_str_l
 - [ ] ft_dup_sub_str
 - [ ] ft_free
-- [ ] ft_free_str_array
+- [X] ft_free_str_array
 - [ ] ft_get_num
 - [ ] ft_init_stat
 - [ ] ft_isalnum
@@ -41,7 +41,7 @@
 - [ ] ft_print_n_char
 - [ ] ft_print_ptr_st
 - [ ] ft_print_str
-- [ ] ft_print_str_array
+- [X] ft_print_str_array
 - [ ] ft_print_str_st
 - [ ] ft_putchar_fd
 - [ ] ft_putendl_fd
