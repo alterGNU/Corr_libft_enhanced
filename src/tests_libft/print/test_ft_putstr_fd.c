@@ -69,9 +69,8 @@ static int compare_files(const char *file1, const char *file2)
 int	main(int ac, char **av)
 {
 	char	*str;
-	char	*rl_fname;
+	char	*filename;
 	char	*real;
-	char	*ft_fname;
 	char	*ft;
 	int		nb_err;
 
@@ -82,26 +81,22 @@ int	main(int ac, char **av)
 	if (!is_a_folder(av[2]))
 		return (fprintf(stderr, USAGE), 1);
 
-	rl_fname = strdup("/ft_putstr_fd_real.txt");
-	if (!rl_fname)
+	filename = strdup("/ft_putstr_fd.txt");
+	if (!filename)
 		return (perror("ERROR:strdup():"), 1);
-	real = calloc(strlen(av[1]) + strlen(rl_fname) + 1, 1);
+	real = calloc(strlen(av[1]) + strlen(filename) + 1, 1);
 	if (!real)
-		return (free(rl_fname), perror("ERROR:calloc():"), 1);
+		return (free(filename), perror("ERROR:calloc():"), 1);
 	strcpy(real, av[1]);
-	strcat(real, rl_fname);
-	free(rl_fname);
+	strcat(real, filename);
 	if (!is_a_file(real))
 		return (fprintf(stderr, "ERROR:\"%s\" Not found\n%s", real, USAGE), free(real), 1);
-	ft_fname = strdup("/ft_putstr_fd_ft.txt");
-	if (!ft_fname)
-		return (perror("ERROR:strdup():"), 1);
-	ft = calloc(strlen(av[2]) + strlen(ft_fname) + 1, 1);
+	ft = calloc(strlen(av[2]) + strlen(filename) + 1, 1);
 	if (!ft)
-		return (free(real), free(ft_fname), perror("ERROR:calloc():"), 1);
+		return (free(real), free(filename), perror("ERROR:calloc():"), 1);
 	strcpy(ft, av[2]);
-	strcat(ft, ft_fname);
-	free(ft_fname);
+	strcat(ft, filename);
+	free(filename);
 	str = strdup("coucou\tpetite\vperruche\n");
 	if (!str)
 		return (free(real), free(ft), perror("ERROR:strdup():"), 1);

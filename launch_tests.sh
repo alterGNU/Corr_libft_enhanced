@@ -119,7 +119,7 @@ launch_tests_libft_mandatory()
     local nb_err=0
     for fun in ${LIBFT_MANDA[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
-        echo "🔹${BCU}${fun}():${E}"
+        echo "🔹${BCU}${fun}():"
         if [[ -n "${test_main}" ]];then
             if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
@@ -185,7 +185,7 @@ launch_tests_libft_bonus()
     [[ ! -d ${DOC_LIBFT_BONUS} ]] && mkdir -p ${DOC_LIBFT_BONUS}
     local nb_err=0
     for fun in ${LIBFT_BONUS[@]};do
-        local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
+        local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")
         echo "🔹${BCU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
             if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " ${fun} " ]];then
@@ -251,7 +251,7 @@ launch_tests_perso_fun()
     [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
     local nb_err=0
     for fun in ${PERSO_FUN[@]};do
-        local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
+        local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")
         echo "🔹${BCU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
             [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
