@@ -43,10 +43,10 @@
 - [ ] ft_print_str
 - [X] ft_print_str_array
 - [ ] ft_print_str_st
-- [ ] ft_putchar_fd
-- [ ] ft_putendl_fd
-- [ ] ft_putnbr_fd
-- [ ] ft_putstr_fd
+- [X] ft_putchar_fd
+- [X] ft_putendl_fd
+- [X] ft_putnbr_fd
+- [X] ft_putstr_fd
 - [ ] ft_split
 - [ ] ft_strchr
 - [ ] ft_strdup
