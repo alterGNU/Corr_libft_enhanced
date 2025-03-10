@@ -219,7 +219,7 @@ launch_tests_libft_bonus()
                         echo -en " ✅ ${V0} ${res_tests} leak(s) detected.${E}\n"
                     else
                         echo -en " ❌ ${R0} ${res_tests} leak(s) detected\n"
-                        echo "      🔸${Y0}check log file 👉 ${M0}${LOG_LIBFT_BONUS}/${fun}.log${E}"
+                        echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_LIBFT_BONUS}/${fun}.val)${E}"
                     fi
                 else
                     echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
@@ -278,7 +278,7 @@ launch_tests_perso_fun()
                     echo -en " ✅ ${V0} ${res_tests} leak(s) detected.${E}\n"
                 else
                     echo -en " ❌ ${R0} ${res_tests} leak(s) detected\n"
-                    echo "      🔸${Y0}check log file 👉 ${M0}${LOG_PERSO_FUN}/${fun}.log${E}"
+                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_PERSO_FUN}/${fun}.val)${E}"
                 fi
             else
                 echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
@@ -298,7 +298,7 @@ launch_tests_perso_fun()
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
 # =[ CHECK NORMINETTE ]=======================================================================================
-#exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
 # =[ LST_FUNUSED ]============================================================================================
 # -[ SET LISTS HOMEMADE_FUNUSED BUILTIN_FUNUSED ]-------------------------------------------------------------
 for obj in ${LIBFT_A};do 
@@ -319,15 +319,15 @@ for obj in ${LIBFT_A};do
         echo -e "${BC0}${obj}${E} is not a file\033[m"
     fi
 done
-## -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
-#exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
-## -[ LAUNCH_TESTS_LIBFT_BONUS() ]-----------------------------------------------------------------------------
-#for fun in ${HOMEMADE_FUNUSED[@]};do
-#    if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
-#        exec_anim_in_box "launch_tests_libft_bonus" "Tests libft bonus functions"
-#        break
-#    fi
-#done
+# -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
+exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
+# -[ LAUNCH_TESTS_LIBFT_BONUS() ]-----------------------------------------------------------------------------
+for fun in ${HOMEMADE_FUNUSED[@]};do
+    if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+        exec_anim_in_box "launch_tests_libft_bonus" "Tests libft bonus functions"
+        break
+    fi
+done
 # -[ PERSONNAL FUNCTION ]-------------------------------------------------------------------------------------
 EXTRA=( "ft_printf" "get_next_line" )
 PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "${EXTRA[@]}")))
