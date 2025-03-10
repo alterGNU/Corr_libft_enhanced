@@ -114,8 +114,7 @@ launch_tests_libft_mandatory()
 {
     local LOG_LIBFT_MANDA="${LOG_DIR}/libft_mandatory"
     [[ ! -d ${LOG_LIBFT_MANDA} ]] && mkdir -p ${LOG_LIBFT_MANDA}
-    local DOC_LIBFT_MANDA="${LOG_LIBFT_MANDA}/files"
-    [[ ! -d ${DOC_LIBFT_MANDA} ]] && mkdir -p ${DOC_LIBFT_MANDA}
+    local DOC_LIBFT_MANDA="${LOG_LIBFT_MANDA}/files_generated"
     local nb_err=0
     for fun in ${LIBFT_MANDA[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}"*".c")
@@ -135,6 +134,7 @@ launch_tests_libft_mandatory()
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀 ${GU}Execution  :${E}"
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
+                        [[ ! -d ${DOC_LIBFT_MANDA} ]] && mkdir -p ${DOC_LIBFT_MANDA}
                         ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
                     else
                         ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
@@ -149,6 +149,7 @@ launch_tests_libft_mandatory()
                     nb_err=$((nb_err + res_tests))
                     echo -en "  - 🚰 ${GU}Valgrind   :${E}"
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
+                        [[ ! -d ${DOC_LIBFT_MANDA} ]] && mkdir -p ${DOC_LIBFT_MANDA}
                         ${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1
                     else
                         ${VALGRIND} ${exe} > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1
@@ -181,8 +182,7 @@ launch_tests_libft_bonus()
 {
     local LOG_LIBFT_BONUS="${LOG_DIR}/libft_bonus"
     [[ ! -d ${LOG_LIBFT_BONUS} ]] && mkdir -p ${LOG_LIBFT_BONUS}
-    local DOC_LIBFT_BONUS="${LOG_LIBFT_BONUS}/files"
-    [[ ! -d ${DOC_LIBFT_BONUS} ]] && mkdir -p ${DOC_LIBFT_BONUS}
+    local DOC_LIBFT_BONUS="${LOG_LIBFT_BONUS}/files_generated"
     local nb_err=0
     for fun in ${LIBFT_BONUS[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")
@@ -202,6 +202,7 @@ launch_tests_libft_bonus()
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀 ${GU}Execution  :${E}"
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
+                        [[ ! -d ${DOC_LIBFT_BONUS} ]] && mkdir -p ${DOC_LIBFT_BONUS}
                         ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_BONUS}" > "${LOG_LIBFT_BONUS}/${fun}.log" 2>&1
                     else
                         ${exe} > "${LOG_LIBFT_BONUS}/${fun}.log" 2>&1
@@ -216,6 +217,7 @@ launch_tests_libft_bonus()
                     nb_err=$((nb_err + res_tests))
                     echo -en "  - 🚰 ${GU}Valgrind   :${E}"
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
+                        [[ ! -d ${DOC_LIBFT_BONUS} ]] && mkdir -p ${DOC_LIBFT_BONUS}
                         ${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_BONUS}" > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1
                     else
                         ${VALGRIND} ${exe} > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1
@@ -247,8 +249,7 @@ launch_tests_perso_fun()
 {
     local LOG_PERSO_FUN="${LOG_DIR}/other_functions"
     [[ ! -d ${LOG_PERSO_FUN} ]] && mkdir -p ${LOG_PERSO_FUN}
-    local DOC_PERSO_FUN="${LOG_PERSO_FUN}/files"
-    [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
+    local DOC_PERSO_FUN="${LOG_PERSO_FUN}/files_generated"
     local nb_err=0
     for fun in ${PERSO_FUN[@]};do
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")
@@ -267,6 +268,7 @@ launch_tests_perso_fun()
             if [[ -f "${exe}" ]];then
                 echo -en "  - 🚀 ${GU}Execution  :${E}"
                 if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
+                    [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
                     ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.log" 2>&1
                 else
                     ${exe} > "${LOG_PERSO_FUN}/${fun}.log" 2>&1
@@ -281,6 +283,7 @@ launch_tests_perso_fun()
                 nb_err=$((nb_err + res_tests))
                 echo -en "  - 🚰 ${GU}Valgrind   :${E}"
                 if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
+                    [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
                     ${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.val" 2>&1
                 else
                     ${VALGRIND} ${exe} > "${LOG_PERSO_FUN}/${fun}.val" 2>&1
