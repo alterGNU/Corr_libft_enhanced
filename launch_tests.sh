@@ -134,7 +134,6 @@ launch_tests_libft_mandatory()
                 fi
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀 ${GU}Execution  :${E}"
-                    echo -en "Search for \"${PARENT_DIR}/src/tests_libft/docs/${fun}.txt\""
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                         ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
                     else
@@ -202,7 +201,6 @@ launch_tests_libft_bonus()
                 fi
                 if [[ -f "${exe}" ]];then
                     echo -en "  - 🚀 ${GU}Execution  :${E}"
-                    echo -en "Search for \"${PARENT_DIR}/src/tests_libft/docs/${fun}.txt\""
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                         ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_BONUS}" > "${LOG_LIBFT_BONUS}/${fun}.log" 2>&1
                     else
@@ -268,7 +266,6 @@ launch_tests_perso_fun()
             fi
             if [[ -f "${exe}" ]];then
                 echo -en "  - 🚀 ${GU}Execution  :${E}"
-                echo -en "Search for \"${PARENT_DIR}/src/tests_libft/docs/${fun}.txt\""
                 if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                     ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.log" 2>&1
                 else
