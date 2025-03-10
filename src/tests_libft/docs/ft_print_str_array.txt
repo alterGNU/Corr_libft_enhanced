@@ -1,4 +1,4 @@
-tab0=NULL
-tab1=[NULL]
-tab2=["coucou petite perruche!", NULL]
-tab3=["coucou", "petite", "perruche", "!", NULL]
+tab0=NULL-->(4)
+tab1=[NULL]-->(6)
+tab2=["coucou petite perruche!", NULL]-->(33)
+tab3=["coucou", "petite", "perruche", "!", NULL]-->(43)

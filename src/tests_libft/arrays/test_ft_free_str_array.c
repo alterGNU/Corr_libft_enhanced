@@ -1,4 +1,4 @@
-#include "libft.h"    // ft_print_str_arrey
+#include "libft.h"    // ft_print_str_array, ft_free_str_array
 #include <fcntl.h>    // open, close
 #include <stdio.h>    // fprintf, printf, fopen, fclose
 #include <errno.h>    // perror, errno
@@ -75,7 +75,7 @@ int	main(int ac, char **av)
 	if (!is_a_folder(av[2]))
 		return (fprintf(stderr, USAGE), 0);
 	// construct real_filename.txt then open it.
-	fname = strdup("/ft_print_str_array.txt");
+	fname = strdup("/ft_free_str_array.txt");
 	if (!fname)
 		return (perror("ERROR:strdup():"), 1);
 	real = calloc(strlen(av[1]) + strlen(fname) + 1, 1);
@@ -98,32 +98,42 @@ int	main(int ac, char **av)
 	// redirect to file stdout (erace > == O_TRUNC)
 	dup2(fd, STDOUT_FILENO);
 	// Tests tab0
-	ft_printf("tab0=");
+	ft_printf("Before:tab0=");
 	tab0 = NULL;
+	r0 = ft_print_str_array(tab0);
+	ft_printf("-->(%d)\n", r0);
+	ft_free_str_array(&tab0);
+	ft_printf("After :tab0=");
 	r0 = ft_print_str_array(tab0);
 	ft_printf("-->(%d)\n", r0);
 	// Tests tab1
 	tab1 = calloc(1, sizeof(char *));
 	if (!tab1)
 		return (perror("main()->tab1 = calloc():"), 1);
-	ft_printf("tab1=");
+	ft_printf("Before:tab1=");
 	r1 = ft_print_str_array(tab1);
+	ft_printf("-->(%d)\n", r1);
 	ft_free_str_array(&tab1);
+	ft_printf("After :tab1=");
+	r1 = ft_print_str_array(tab1);
 	ft_printf("-->(%d)\n", r1);
 	// Tests tab2
 	tab2 = calloc(2, sizeof(char *));
 	if (!tab2)
 		return (perror("main()->tab2 = calloc():"), 1);
-	ft_printf("tab2=");
+	ft_printf("Before:tab2=");
 	tab2[0] = strdup("coucou petite perruche!");
 	r2 = ft_print_str_array(tab2);
+	ft_printf("-->(%d)\n", r2);
 	ft_free_str_array(&tab2);
+	ft_printf("After :tab2=");
+	r2 = ft_print_str_array(tab2);
 	ft_printf("-->(%d)\n", r2);
 	// Tests tab3
 	tab3 = calloc(5, sizeof(char *));
 	if (!tab3)
 		return (perror("main()->tab3 = calloc():"), 1);
-	ft_printf("tab3=");
+	ft_printf("Before:tab3=");
 	tab3[0] = strdup("coucou");
 	if (!tab3[0])
 		return (perror("main()->tab3[0] = strdup():"), free(tab3), 1);
@@ -137,7 +147,10 @@ int	main(int ac, char **av)
 	if (!tab3[3])
 		return (perror("main()->tab3[3] = strdup():"), ft_free_str_array(&tab3), 1);
 	r3 = ft_print_str_array(tab3);
+	ft_printf("-->(%d)\n", r3);
 	ft_free_str_array(&tab3);
+	ft_printf("After :tab3=");
+	r3 = ft_print_str_array(tab3);
 	ft_printf("-->(%d)\n", r3);
 	// Close
 	close(fd);

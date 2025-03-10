@@ -1,0 +1,8 @@
+Before:tab0=NULL-->(4)
+After :tab0=NULL-->(4)
+Before:tab1=[NULL]-->(6)
+After :tab1=NULL-->(4)
+Before:tab2=["coucou petite perruche!", NULL]-->(33)
+After :tab2=NULL-->(4)
+Before:tab3=["coucou", "petite", "perruche", "!", NULL]-->(43)
+After :tab3=NULL-->(4)
