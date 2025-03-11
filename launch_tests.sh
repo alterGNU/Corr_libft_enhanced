@@ -36,6 +36,9 @@ LIBFT_MANDA=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "
     "ft_putstr_fd" "ft_putendl_fd" "ft_putnbr_fd" )
 LIBFT_BONUS=( "ft_lstnew" "ft_lstadd_front" "ft_lstsize" "ft_lstlast" "ft_lstadd_back" "ft_lstdelone" \
     "ft_lstclear" "ft_lstiter" "ft_lstmap" )
+TESTED_FUN=( ${LIBFT_MANDA[@]} )                                   # ☒ List of all tested function
+PASS_FUN=( )                                                       # ☒ List of all function successfully tested function
+FAIL_FUN=( )                                                       # ☒ List of all function that failed
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                            # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
@@ -67,8 +70,8 @@ script_usage()
     echo -e "    ${B0}‣ ${R0}ii)${E}: The static lib ${M0}path/libft/*/${B0}libft.a${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
     echo -e " 🔹 ${V0}${SCRIPTNAME}${E} takes no arguments and will automatically:"
     echo -e "    ${B0}‣ ${R0}1${E}: Check if ${M0}libft/${E} complies with the 42-norme"
-    echo -e "    ${B0}‣ ${R0}2${E}: Display a list of all function found in the ${B0}libft.a${E} static lib"
-    echo -e "    ${B0}‣ ${R0}3${E}: Display a list of all built-in function called by ${B0}libft.a"
+    echo -e "    ${B0}‣ ${R0}2${E}: Set a list of all user-made function found in the ${B0}libft.a${E} static lib"
+    echo -e "    ${B0}‣ ${R0}3${E}: Set a list of all built-in function called by ${B0}libft.a"
     echo -e "    ${B0}‣ ${R0}4${E}: Launch at least the tests for the libft (mandatory part)"
     echo -e "    ${B0}‣ ${R0}5${E}: If libft bonus fun. detected, launch the libft bonus part tests"
     echo -e "    ${B0}‣ ${R0}6${E}: If ${G0}ft_print()${E} fun. detected, launch the tests for both its mandatory & bonus part)"
@@ -180,6 +183,7 @@ launch_tests_libft_mandatory()
 # Launch test for all bonus function needed for libft
 launch_tests_libft_bonus()
 {
+    #TESTED_FUN+=( "${LIBFT_BONUS[@]}" )
     local LOG_LIBFT_BONUS="${LOG_DIR}/libft_bonus"
     [[ ! -d ${LOG_LIBFT_BONUS} ]] && mkdir -p ${LOG_LIBFT_BONUS}
     local DOC_LIBFT_BONUS="${LOG_LIBFT_BONUS}/files_generated"
@@ -255,6 +259,7 @@ launch_tests_perso_fun()
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")
         echo "🔹${BCU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
+            #TESTED_FUN+=( "${${fun}}" )
             [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
             exe="${BIN_DIR}/test_${fun}"
             echo -en "  - ⚙️  ${GU}Compilation:${E}"
@@ -312,28 +317,24 @@ launch_tests_perso_fun()
 [[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${BC0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
 # =[ CREATE LOG_DIR ]=========================================================================================
 [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
+# =[ START MESSAGE ]==========================================================================================
+print_in_box -t 2 -c y "🚧${Y0} START Libft_Enhanced's Tests${E}"
 # =[ CHECK NORMINETTE ]=======================================================================================
-exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+#exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
 # =[ LST_FUNUSED ]============================================================================================
 # -[ SET LISTS HOMEMADE_FUNUSED BUILTIN_FUNUSED ]-------------------------------------------------------------
-for obj in ${LIBFT_A};do 
-    if [[ -f ${obj} ]];then
-        if file "${obj}" | grep -qE 'relocatable|executable|shared object|ar archive';then
-            for fun in $(nm -C "${obj}" | awk '$2 == "T" {print $3}' | sort | uniq);do
-                [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]] && HOMEMADE_FUNUSED+=( "${fun}" )
-            done
-            for fun in $(nm -C "${obj}" | awk '$2 == "U" {print $3}' | sort | uniq);do
-                if [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
-                    [[ ! " ${BUILTIN_FUNUSED[@]} " =~ " $fun " ]] && BUILTIN_FUNUSED+=( "${fun}" )
-                fi
-            done
-        else
-            echo -e "${BC0}${obj}${E} is not an object file\033[m"
+if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
+    for fun in $(nm -C "${LIBFT_A}" | awk '$2 == "T" {print $3}' | sort | uniq);do
+        [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]] && HOMEMADE_FUNUSED+=( "${fun}" )
+    done
+    for fun in $(nm -C "${LIBFT_A}" | awk '$2 == "U" {print $3}' | sort | uniq);do
+        if [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]];then
+            [[ ! " ${BUILTIN_FUNUSED[@]} " =~ " $fun " ]] && BUILTIN_FUNUSED+=( "${fun}" )
         fi
-    else
-        echo -e "${BC0}${obj}${E} is not a file\033[m"
-    fi
-done
+    done
+else
+    echo -e "${BC0}${LIBFT_A}${E} is not an object file\033[m"
+fi
 # -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
 exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
 # -[ LAUNCH_TESTS_LIBFT_BONUS() ]-----------------------------------------------------------------------------
@@ -347,3 +348,11 @@ done
 EXTRA=( "ft_printf" "get_next_line" )
 PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "${EXTRA[@]}")))
 exec_anim_in_box "launch_tests_perso_fun" "Tests personnal functions"
+# =[ RESUME ]=================================================================================================
+#print_in_box -t 2 -c y \
+#    "🚧${Y0} RESUME Libft_Enhanced's Tests${E}" \
+#    "   - 📂 ${GU}Log files created at:${E} ${M0}$(print_shorter_path ${LOG_DIR})/*${E}" \
+#    "   - 🚀 ${BU}${#TESTED_FUN[@]}${GU} functions were tested:${E}" \
+#    "      - ✅ ${#PASS_FUN[@]} functions ${V0}PASSED${E} there tests." \
+#    "      - ❌ ${#FAIL_FUN[@]} functions ${R0}FAILLED${E} there tests:" \
+#    "         - ${R0}${FAIL_FUN[@]}${E}"
