@@ -159,9 +159,9 @@ launch_tests_libft_mandatory()
                     echo -en "  - 🚰 ${GU}Valgrind   :${E}"
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                         [[ ! -d ${DOC_LIBFT_MANDA} ]] && mkdir -p ${DOC_LIBFT_MANDA}
-                        res_tests=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1 && echo $? || echo $?)
+                        local res_val=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1 && echo $? || echo $?)
                     else
-                        res_tests=$(${VALGRIND} ${exe} > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1 && echo $? || echo $?)
+                        local res_val=$(${VALGRIND} ${exe} > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1 && echo $? || echo $?)
                     fi
                     nb_err=$((nb_err + res_val))
                     if [[ ${res_val} -eq 0 ]];then
@@ -233,15 +233,15 @@ launch_tests_libft_bonus()
                     echo -en "  - 🚰 ${GU}Valgrind   :${E}"
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                         [[ ! -d ${DOC_LIBFT_BONUS} ]] && mkdir -p ${DOC_LIBFT_BONUS}
-                        nb_error=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_BONUS}" > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1 && echo $? || echo $?)
+                        local res_val=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_BONUS}" > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1 && echo $? || echo $?)
                     else
-                        nb_error=$(${VALGRIND} ${exe} > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1 && echo $? || echo $?)
+                        local res_val=$(${VALGRIND} ${exe} > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1 && echo $? || echo $?)
                     fi
-                    nb_err=$((nb_err + res_tests))
+                    nb_err=$((nb_err + res_val))
                     if [[ ${res_tests} -eq 0 ]];then
-                        echo -en " ✅ ${V0} ${res_tests} leak(s) detected.${E}\n"
+                        echo -en " ✅ ${V0} ${res_val} leak(s) detected.${E}\n"
                     else
-                        echo -en " ❌ ${R0} ${res_tests} leak(s) detected\n"
+                        echo -en " ❌ ${R0} ${res_val} leak(s) detected\n"
                         echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_LIBFT_BONUS}/${fun}.val)${E}"
                     fi
                 else
@@ -306,15 +306,15 @@ launch_tests_perso_fun()
                 echo -en "  - 🚰 ${GU}Valgrind   :${E}"
                 if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                     [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
-                    res_tests=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.val" 2>&1 && echo $? || echo $?)
+                    local res_val=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.val" 2>&1 && echo $? || echo $?)
                 else
-                    res_tests=$(${VALGRIND} ${exe} > "${LOG_PERSO_FUN}/${fun}.val" 2>&1 && echo $? || echo $?)
+                    local res_val=$(${VALGRIND} ${exe} > "${LOG_PERSO_FUN}/${fun}.val" 2>&1 && echo $? || echo $?)
                 fi
-                nb_err=$((nb_err + res_tests))
+                nb_err=$((nb_err + res_val))
                 if [[ ${res_tests} -eq 0 ]];then
-                    echo -en " ✅ ${V0} ${res_tests} leak(s) detected.${E}\n"
+                    echo -en " ✅ ${V0} ${res_val} leak(s) detected.${E}\n"
                 else
-                    echo -en " ❌ ${R0} ${res_tests} leak(s) detected\n"
+                    echo -en " ❌ ${R0} ${res_val} leak(s) detected\n"
                     echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_PERSO_FUN}/${fun}.val)${E}"
                 fi
             else
