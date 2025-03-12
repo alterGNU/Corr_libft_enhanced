@@ -36,9 +36,6 @@ LIBFT_MANDA=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "
     "ft_putstr_fd" "ft_putendl_fd" "ft_putnbr_fd" )
 LIBFT_BONUS=( "ft_lstnew" "ft_lstadd_front" "ft_lstsize" "ft_lstlast" "ft_lstadd_back" "ft_lstdelone" \
     "ft_lstclear" "ft_lstiter" "ft_lstmap" )
-TESTED_FUN=( ${LIBFT_MANDA[@]} )                                   # ☒ List of all tested function
-PASS_FUN=( )                                                       # ☒ List of all function successfully tested function
-FAIL_FUN=( )                                                       # ☒ List of all function that failed
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                            # ☑ Width of the box
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
@@ -56,6 +53,9 @@ BCU="\033[4;36m"                                                   # ☒ START A
 P0="\033[0;35m"                                                    # ☒ START PINK
 G0="\033[0;37m"                                                    # ☒ START GREY
 GU="\033[4;37m"                                                    # ☒ START GREY
+# -[ COUNT ]--------------------------------------------------------------------------------------------------
+TOT_TESTS="${#LIBFT_MANDA[@]}"                                     # ☒ Count how many fun are tested
+TOT_FAILS=0                                                        # ☒ Count how many fun have failed
 # =[ SOURCES ]================================================================================================
 source ${BSL_DIR}/src/check42_norminette.sh
 source ${BSL_DIR}/src/print.sh
@@ -188,7 +188,6 @@ launch_tests_libft_mandatory()
 # Launch test for all bonus function needed for libft
 launch_tests_libft_bonus()
 {
-    TESTED_FUN+=( "${LIBFT_BONUS[@]}" )
     local LOG_LIBFT_BONUS="${LOG_DIR}/libft_bonus"
     [[ ! -d ${LOG_LIBFT_BONUS} ]] && mkdir -p ${LOG_LIBFT_BONUS}
     local DOC_LIBFT_BONUS="${LOG_LIBFT_BONUS}/files_generated"
@@ -270,7 +269,6 @@ launch_tests_perso_fun()
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")
         echo "🔹${BCU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
-            TESTED_FUN+=( "${${fun}}" )
             [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
             exe="${BIN_DIR}/test_${fun}"
             echo -en "  - ⚙️  ${GU}Compilation:${E}"
@@ -354,22 +352,33 @@ else
 fi
 # -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
 exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
+last_return=${?}
+TOT_FAILS=$(( TOT_FAILS + last_return ))
 # -[ LAUNCH_TESTS_LIBFT_BONUS() ]-----------------------------------------------------------------------------
 for fun in ${HOMEMADE_FUNUSED[@]};do
     if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+        TOT_TESTS=$(( TOT_TESTS + ${#LIBFT_BONUS[@]} ))
         exec_anim_in_box "launch_tests_libft_bonus" "Tests libft bonus functions"
+        last_return=${?}
+        TOT_FAILS=$(( TOT_FAILS + last_return ))
         break
     fi
 done
 # -[ PERSONNAL FUNCTION ]-------------------------------------------------------------------------------------
 EXTRA=( "ft_printf" "get_next_line" )
 PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "${EXTRA[@]}")))
+for fun in "${PERSO_FUN[@]}";do [[ -n "$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")" ]] && TOT_TESTS=$(( TOT_TESTS + 1 ));done
 exec_anim_in_box "launch_tests_perso_fun" "Tests personnal functions"
+last_return=${?}
+TOT_FAILS=$(( TOT_FAILS + last_return ))
 # =[ RESUME ]=================================================================================================
+short_log_dir=$(print_shorter_path ${LOG_DIR})
 print_in_box -t 2 -c y \
     "🚧${Y0} RESUME Libft_Enhanced's Tests${E}" \
-    "   - 📂 ${GU}Log files created at:${E} ${M0}$(print_shorter_path ${LOG_DIR})/*${E}" \
-    "   - 🚀 ${BU}${#TESTED_FUN[@]}${GU} functions were tested:${E}" \
-    "      - ✅ ${#PASS_FUN[@]} functions ${V0}PASSED${E} there tests." \
-    "      - ❌ ${#FAIL_FUN[@]} functions ${R0}FAILLED${E} there tests:" \
-    "         - ${R0}${FAIL_FUN[@]}${E}"
+    "   - 🚀 ${GU}${TOT_TESTS} functions were tested:${E}" \
+    "      - ✅ $(( TOT_TESTS - TOT_FAILS)) functions ${V0}PASSED${E} there tests." \
+    "      - ❌ ${TOT_FAILS} functions ${R0}FAILLED${E} there tests:" \
+    "   - 📂 ${GU}Log files created at:${E} ${M0}${short_log_dir}/*${E}" \
+    "      - $(find ${short_log_dir} -type f | grep '.log$' | wc -l) exec log files where created." \
+    "      - $(find ${short_log_dir} -type f | grep '.val$' | wc -l) valgrind log files where created." \
+    "      - $(find ${short_log_dir} -type f | grep '.txt$' | wc -l) outputs files where produce by test."
