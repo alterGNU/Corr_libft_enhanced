@@ -147,7 +147,7 @@ launch_tests_libft_mandatory()
                         [[ ! -d ${DOC_LIBFT_MANDA} ]] && mkdir -p ${DOC_LIBFT_MANDA}
                         local res_tests=$(${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1 && echo $? || echo $?)
                     else
-                        local res_tests=$(${exe} > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1 && echo $? || echo $?)jk
+                        local res_tests=$(${exe} > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1 && echo $? || echo $?)
                     fi
                     nb_err=$((nb_err + res_tests))
                     if [[ ${res_tests} -eq 0 ]];then
