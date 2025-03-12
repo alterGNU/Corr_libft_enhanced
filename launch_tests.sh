@@ -376,9 +376,9 @@ short_log_dir=$(print_shorter_path ${LOG_DIR})
 print_in_box -t 2 -c y \
     "🚧${Y0} RESUME Libft_Enhanced's Tests${E}" \
     "   - 🚀 ${GU}${TOT_TESTS} functions were tested:${E}" \
-    "      - ✅ $(( TOT_TESTS - TOT_FAILS)) functions ${V0}PASSED${E} there tests." \
-    "      - ❌ ${TOT_FAILS} functions ${R0}FAILLED${E} there tests:" \
+    "      - $(( TOT_TESTS - TOT_FAILS)) functions ${V0}PASSED${E} there tests." \
+    "      - ${TOT_FAILS} functions ${R0}FAILLED${E} there tests:" \
     "   - 📂 ${GU}Log files created at:${E} ${M0}${short_log_dir}/*${E}" \
-    "      - $(find ${short_log_dir} -type f | grep '.log$' | wc -l) exec log files where created." \
-    "      - $(find ${short_log_dir} -type f | grep '.val$' | wc -l) valgrind log files where created." \
-    "      - $(find ${short_log_dir} -type f | grep '.txt$' | wc -l) outputs files where produce by test."
+    "      - $(find ${short_log_dir} -type f | grep '.log$' | wc -l) ${M0}exec log files${E} where created." \
+    "      - $(find ${short_log_dir} -type f | grep '.val$' | wc -l) ${M0}valgrind log files${E} where created." \
+    "      - $(find ${short_log_dir} -type f | grep '.txt$' | wc -l) ${M0}outputs files${E} where produce by test."
