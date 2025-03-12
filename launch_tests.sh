@@ -366,10 +366,10 @@ EXTRA=( "ft_printf" "get_next_line" )
 PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "${EXTRA[@]}")))
 exec_anim_in_box "launch_tests_perso_fun" "Tests personnal functions"
 # =[ RESUME ]=================================================================================================
-#print_in_box -t 2 -c y \
-#    "🚧${Y0} RESUME Libft_Enhanced's Tests${E}" \
-#    "   - 📂 ${GU}Log files created at:${E} ${M0}$(print_shorter_path ${LOG_DIR})/*${E}" \
-#    "   - 🚀 ${BU}${#TESTED_FUN[@]}${GU} functions were tested:${E}" \
-#    "      - ✅ ${#PASS_FUN[@]} functions ${V0}PASSED${E} there tests." \
-#    "      - ❌ ${#FAIL_FUN[@]} functions ${R0}FAILLED${E} there tests:" \
-#    "         - ${R0}${FAIL_FUN[@]}${E}"
+print_in_box -t 2 -c y \
+    "🚧${Y0} RESUME Libft_Enhanced's Tests${E}" \
+    "   - 📂 ${GU}Log files created at:${E} ${M0}$(print_shorter_path ${LOG_DIR})/*${E}" \
+    "   - 🚀 ${BU}${#TESTED_FUN[@]}${GU} functions were tested:${E}" \
+    "      - ✅ ${#PASS_FUN[@]} functions ${V0}PASSED${E} there tests." \
+    "      - ❌ ${#FAIL_FUN[@]} functions ${R0}FAILLED${E} there tests:" \
+    "         - ${R0}${FAIL_FUN[@]}${E}"
