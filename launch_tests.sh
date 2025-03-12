@@ -128,9 +128,16 @@ launch_tests_libft_mandatory()
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en "  - ⚙️  ${GU}Compilation:${E}"
                 if [[ ! -f "${exe}" ]];then
-                    ${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd
-                    local res_compile=${?}
-                    [[ "${res_compile}" -eq 0 ]] && echo -en " ✅ ${V0} Successfull.${E}\n" || echo " ❌ ${R0}compilation failed.${E}\n"
+                    local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_DIR}/${fun}.compile" 2>&1 && echo $? || echo $?)
+                    if [[ "${res_compile}" -eq 0 ]];then
+                        echo -en " ✅ ${V0} Successfull.${E}\n"
+                    else
+                        local log_comp_fail=$(print_shorter_path ${LOG_DIR}/${fun}.compile)
+                        echo -en " ❌ ${R0}compilation failed.${E}\n"
+                        sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
+                        echo "      🔸${Y0}check log file 👉 ${M0}${log_comp_fail}${E}"
+                        continue
+                    fi
                 else
                     echo -en " ☑️  ${BC0} Not needed.\n${E}"
                 fi
@@ -138,33 +145,31 @@ launch_tests_libft_mandatory()
                     echo -en "  - 🚀 ${GU}Execution  :${E}"
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                         [[ ! -d ${DOC_LIBFT_MANDA} ]] && mkdir -p ${DOC_LIBFT_MANDA}
-                        ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
+                        local res_tests=$(${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1 && echo $? || echo $?)
                     else
-                        ${exe} > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1
+                        local res_tests=$(${exe} > "${LOG_LIBFT_MANDA}/${fun}.log" 2>&1 && echo $? || echo $?)jk
                     fi
-                    local res_tests=$?
+                    nb_err=$((nb_err + res_tests))
                     if [[ ${res_tests} -eq 0 ]];then
                         echo -en " ✅ ${V0} ${res_tests} error(s) detected.${E}\n"
                     else
                         echo -en " ❌ ${R0} ${res_tests} error(s) detected\n"
                         echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_LIBFT_MANDA}/${fun}.log)${E}"
                     fi
-                    nb_err=$((nb_err + res_tests))
                     echo -en "  - 🚰 ${GU}Valgrind   :${E}"
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                         [[ ! -d ${DOC_LIBFT_MANDA} ]] && mkdir -p ${DOC_LIBFT_MANDA}
-                        ${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1
+                        res_tests=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1 && echo $? || echo $?)
                     else
-                        ${VALGRIND} ${exe} > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1
+                        res_tests=$(${VALGRIND} ${exe} > "${LOG_LIBFT_MANDA}/${fun}.val" 2>&1 && echo $? || echo $?)
                     fi
-                    local res_val=$?
+                    nb_err=$((nb_err + res_val))
                     if [[ ${res_val} -eq 0 ]];then
                         echo -en " ✅ ${V0} ${res_val} leak(s) detected.${E}\n"
                     else
                         echo -en " ❌ ${R0} ${res_val} leak(s) detected\n"
                         echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_LIBFT_MANDA}/${fun}.val)${E}"
                     fi
-                    nb_err=$((nb_err + res_val))
                 else
                     echo "${R0}  - no binary ${B0}${exe}${R0} found${E}"
                 fi
@@ -197,9 +202,16 @@ launch_tests_libft_bonus()
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en "  - ⚙️  ${GU}Compilation:${E}"
                 if [[ ! -f "${exe}" ]];then
-                    ${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd
-                    local res_compile=${?}
-                    [[ "${res_compile}" -eq 0 ]] && echo -en " ✅ ${V0} Successfull.${E}\n" || echo " ❌ ${R0}compilation failed.${E}\n"
+                    local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_DIR}/${fun}.compile" 2>&1 && echo $? || echo $?)
+                    if [[ "${res_compile}" -eq 0 ]];then
+                        echo -en " ✅ ${V0} Successfull.${E}\n"
+                    else
+                        local log_comp_fail=$(print_shorter_path ${LOG_DIR}/${fun}.compile)
+                        echo -en " ❌ ${R0}compilation failed.${E}\n"
+                        sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
+                        echo "      🔸${Y0}check log file 👉 ${M0}${log_comp_fail}${E}"
+                        continue
+                    fi
                 else
                     echo -en " ☑️  ${BC0} Not needed.\n${E}"
                 fi
@@ -207,26 +219,25 @@ launch_tests_libft_bonus()
                     echo -en "  - 🚀 ${GU}Execution  :${E}"
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                         [[ ! -d ${DOC_LIBFT_BONUS} ]] && mkdir -p ${DOC_LIBFT_BONUS}
-                        ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_BONUS}" > "${LOG_LIBFT_BONUS}/${fun}.log" 2>&1
+                        local res_tests=$(${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_BONUS}" > "${LOG_LIBFT_BONUS}/${fun}.log" 2>&1 && echo $? || echo $?)
                     else
-                        ${exe} > "${LOG_LIBFT_BONUS}/${fun}.log" 2>&1
+                        local res_tests=$(${exe} > "${LOG_LIBFT_BONUS}/${fun}.log" 2>&1 && echo $? || echo $?)
                     fi
-                    local res_tests=$?
+                    nb_err=$((nb_err + res_tests))
                     if [[ ${res_tests} -eq 0 ]];then
                         echo -en " ✅ ${V0} ${res_tests} error(s) detected.${E}\n"
                     else
                         echo -en " ❌${R0} ${res_tests} error(s) detected\n"
                         echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_LIBFT_BONUS}/${fun}.log)${E}"
                     fi
-                    nb_err=$((nb_err + res_tests))
                     echo -en "  - 🚰 ${GU}Valgrind   :${E}"
                     if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                         [[ ! -d ${DOC_LIBFT_BONUS} ]] && mkdir -p ${DOC_LIBFT_BONUS}
-                        ${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_BONUS}" > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1
+                        nb_error=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_BONUS}" > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1 && echo $? || echo $?)
                     else
-                        ${VALGRIND} ${exe} > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1
+                        nb_error=$(${VALGRIND} ${exe} > "${LOG_LIBFT_BONUS}/${fun}.val" 2>&1 && echo $? || echo $?)
                     fi
-                    local res_tests=$?
+                    nb_err=$((nb_err + res_tests))
                     if [[ ${res_tests} -eq 0 ]];then
                         echo -en " ✅ ${V0} ${res_tests} leak(s) detected.${E}\n"
                     else
@@ -264,9 +275,16 @@ launch_tests_perso_fun()
             exe="${BIN_DIR}/test_${fun}"
             echo -en "  - ⚙️  ${GU}Compilation:${E}"
             if [[ ! -f "${exe}" ]];then
-                ${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd
-                local res_compile=${?}
-                [[ "${res_compile}" -eq 0 ]] && echo -en " ✅ ${V0} Successfull.${E}\n" || echo " ❌ ${R0}compilation failed.${E}\n"
+                local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_DIR}/${fun}.compile" 2>&1 && echo $? || echo $?)
+                if [[ "${res_compile}" -eq 0 ]];then
+                    echo -en " ✅ ${V0} Successfull.${E}\n"
+                else
+                    local log_comp_fail=$(print_shorter_path ${LOG_DIR}/${fun}.compile)
+                    echo -en " ❌ ${R0}compilation failed.${E}\n"
+                    sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
+                    echo "      🔸${Y0}check log file 👉 ${M0}${log_comp_fail}${E}"
+                    continue
+                fi
             else
                 echo -en " ☑️  ${BC0} Not needed.\n${E}"
             fi
@@ -274,26 +292,25 @@ launch_tests_perso_fun()
                 echo -en "  - 🚀 ${GU}Execution  :${E}"
                 if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                     [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
-                    ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.log" 2>&1
+                    local res_tests=$(${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.log" 2>&1 && echo $? || echo $?)
                 else
-                    ${exe} > "${LOG_PERSO_FUN}/${fun}.log" 2>&1
+                    local res_tests=$(${exe} > "${LOG_PERSO_FUN}/${fun}.log" 2>&1 && echo $? || echo $?)
                 fi
-                local res_tests=$?
+                nb_err=$((nb_err + res_tests))
                 if [[ ${res_tests} -eq 0 ]];then
                     echo -en " ✅ ${V0} ${res_tests} error(s) detected.${E}\n"
                 else
                     echo -en " ❌${R0} ${res_tests} error(s) detected\n"
                     echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${LOG_PERSO_FUN}/${fun}.log)${E}"
                 fi
-                nb_err=$((nb_err + res_tests))
                 echo -en "  - 🚰 ${GU}Valgrind   :${E}"
                 if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
                     [[ ! -d ${DOC_PERSO_FUN} ]] && mkdir -p ${DOC_PERSO_FUN}
-                    ${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.val" 2>&1
+                    res_tests=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_PERSO_FUN}" > "${LOG_PERSO_FUN}/${fun}.val" 2>&1 && echo $? || echo $?)
                 else
-                    ${VALGRIND} ${exe} > "${LOG_PERSO_FUN}/${fun}.val" 2>&1
+                    res_tests=$(${VALGRIND} ${exe} > "${LOG_PERSO_FUN}/${fun}.val" 2>&1 && echo $? || echo $?)
                 fi
-                local res_tests=$?
+                nb_err=$((nb_err + res_tests))
                 if [[ ${res_tests} -eq 0 ]];then
                     echo -en " ✅ ${V0} ${res_tests} leak(s) detected.${E}\n"
                 else
@@ -320,7 +337,7 @@ launch_tests_perso_fun()
 # =[ START MESSAGE ]==========================================================================================
 print_in_box -t 2 -c y "🚧${Y0} START Libft_Enhanced's Tests${E}"
 # =[ CHECK NORMINETTE ]=======================================================================================
-#exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
 # =[ LST_FUNUSED ]============================================================================================
 # -[ SET LISTS HOMEMADE_FUNUSED BUILTIN_FUNUSED ]-------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
