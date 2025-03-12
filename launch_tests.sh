@@ -188,7 +188,7 @@ launch_tests_libft_mandatory()
 # Launch test for all bonus function needed for libft
 launch_tests_libft_bonus()
 {
-    #TESTED_FUN+=( "${LIBFT_BONUS[@]}" )
+    TESTED_FUN+=( "${LIBFT_BONUS[@]}" )
     local LOG_LIBFT_BONUS="${LOG_DIR}/libft_bonus"
     [[ ! -d ${LOG_LIBFT_BONUS} ]] && mkdir -p ${LOG_LIBFT_BONUS}
     local DOC_LIBFT_BONUS="${LOG_LIBFT_BONUS}/files_generated"
@@ -270,7 +270,7 @@ launch_tests_perso_fun()
         local test_main=$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")
         echo "🔹${BCU}${fun}():${E}"
         if [[ -n "${test_main}" ]];then
-            #TESTED_FUN+=( "${${fun}}" )
+            TESTED_FUN+=( "${${fun}}" )
             [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
             exe="${BIN_DIR}/test_${fun}"
             echo -en "  - ⚙️  ${GU}Compilation:${E}"
