@@ -111,6 +111,90 @@ exec_anim_in_box()
     return ${exit_code}
 }
 
+# -[ LAUNCH_UNITESTS() ]--------------------------------------------------------------------------------------
+# Function that launch unitests for each <function_name> found in <list_name> given as arg1:
+# - Take one to two arguments:
+#   - arg1 (mandatory): <list_name> that contains all the <function_name> found in object to test.
+#   - arg2 (optionnal): <list_name> that contains all the <function_name> that have to be found in object.
+launch_unitests()
+{
+    # check arguments and set lists
+    [[ ${#} -eq 0 || ${#} -gt 2 ]] && { echo "${R0}WRONG USAGE OF launch_unitests():wrong number of argument" && exit 2 ; }
+    local -a FUN_FOUND=( )     # list of all fun found in object (==arg1)
+    local -a FUN_MANDATORY=( ) # list of all fun needed, (set as arg2 if given, else is a copy of arg1)
+    eval "local -a FUN_FOUND=( \"\${${1}[@]}\" )"
+    [[ -n ${2} ]] && eval "local -a FUN_MANDATORY+=( \"\${${2}[@]}\" )" && eval "local -a FUN_MANDATORY+=( \"\${${1}[@]}\" )"
+    [[ ${#FUN_FOUND[@]} -eq 0 ]] && { echo "${R0}WRONG USAGE OF launch_unitests():FUN_FOUND created is an empty list" && exit 2 ; }
+    [[ ${#FUN_MANDATORY[@]} -eq 0 ]] && { echo "${R0}WRONG USAGE OF launch_unitests():FUN_MANDATORY created is an empty list" && exit 2 ; }
+
+    local nb_err=0
+    for fun in ${FUN_MANDATORY[@]};do
+        echo -en "🔹${BCU}${fun}():${E}"
+        if [[ " ${FUN_FOUND[@]} " =~ " ${fun} " ]];then
+            local FUN_LOG_DIR="${LOG_DIR}/${fun}"
+            [[ ! -d ${FUN_LOG_DIR} ]] && mkdir -p ${FUN_LOG_DIR}
+            local test_main=$(find "${PARENT_DIR}/src" -type f -name *"${fun}"*".c")
+            if [[ -n "${test_main}" ]];then
+                # STEP 1 : COMPILATION
+                [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
+                exe="${BIN_DIR}/test_${fun}"
+                echo -en "\n  - ⚙️  ${GU}Compilation:${E}"
+                if [[ ! -f "${exe}" ]];then
+                    local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_DIR}/${fun}.compile" 2>&1 && echo $? || echo $?)
+                    if [[ "${res_compile}" -eq 0 ]];then
+                        echo -en " ✅ ${V0} Successfull.${E}\n"
+                    else
+                        local log_comp_fail=$(print_shorter_path ${LOG_DIR}/${fun}.compile)
+                        echo -en " ❌ ${R0}compilation failed.${E}\n"
+                        sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
+                        echo "      🔸${Y0}check log file 👉 ${M0}${log_comp_fail}${E}"
+                        continue
+                    fi
+                else
+                    echo -en " ☑️  ${BC0} Not needed.\n${E}"
+                fi
+                # STEP 2 : EXECUTION
+                echo -en "\n  - 🚀 ${GU}Execution  :${E}"
+                local test_txt=$(find "${PARENT_DIR}/src" -type f -name *"${fun}"*".txt")
+                if [[ -f "${test_txt}" ]];then
+                    [[ ! -d ${DOC_LIBFT_MANDA} ]] && mkdir -p ${DOC_LIBFT_MANDA}
+                    local res_tests=$(${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${FUN_LOG_DIR}/${fun}.log" 2>&1 && echo $? || echo $?)
+                else
+                    local res_tests=$(${exe} > "${FUN_LOG_DIR}/${fun}.log" 2>&1 && echo $? || echo $?)
+                fi
+                nb_err=$((nb_err + res_tests))
+                if [[ ${res_tests} -eq 0 ]];then
+                    echo -en " ✅ ${V0} ${res_tests} error(s) detected.${E}\n"
+                else
+                    echo -en " ❌ ${R0} ${res_tests} error(s) detected\n"
+                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${FUN_LOG_DIR}/${fun}.log)${E}"
+                fi
+                # STEP 3 : VALGRIND
+                echo -en "\n  - 🚰 ${GU}Valgrind   :${E}"
+                if [[ -f "${PARENT_DIR}/src/tests_libft/docs/${fun}.txt" ]];then
+                    [[ ! -d ${DOC_LIBFT_MANDA} ]] && mkdir -p ${DOC_LIBFT_MANDA}
+                    local res_val=$(${VALGRIND} ${exe} "${PARENT_DIR}/src/tests_libft/docs" "${DOC_LIBFT_MANDA}" > "${FUN_LOG_DIR}/${fun}.val" 2>&1 && echo $? || echo $?)
+                else
+                    local res_val=$(${VALGRIND} ${exe} > "${FUN_LOG_DIR}/${fun}.val" 2>&1 && echo $? || echo $?)
+                fi
+                nb_err=$((nb_err + res_val))
+                if [[ ${res_val} -eq 0 ]];then
+                    echo -en " ✅ ${V0} ${res_val} leak(s) detected.${E}\n"
+                else
+                    echo -en " ❌ ${R0} ${res_val} leak(s) detected\n"
+                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${FUN_LOG_DIR}/${fun}.val)${E}"
+                fi
+            else
+                echo "${R0}  - Tests for ${BC0}${fun}${R0} not found"
+            fi
+        else
+            echo -en " ❌ ${R0}Function not found in object.\n${E}"
+            nb_err=$(( nb_err + 1 ))
+        fi
+    done
+    return ${nb_err}
+}
+
 # -[ LAUNCH_TEST_LIBFT_MANDATORY() ]--------------------------------------------------------------------------
 # Launch test for all mandatory function needed for libft
 launch_tests_libft_mandatory()
@@ -177,11 +261,11 @@ launch_tests_libft_mandatory()
                 echo "${R0}  - Mandatory libft function ${BC0}${fun}${R0} not found in static lib ${V0}libft.a${E}"
                 nb_err=$((nb_err + 1))
             fi
-            else
-                echo "${R0}  - Tests for ${BC0}${fun}${R0} not found"
-            fi
-        done
-        return ${nb_err}
+        else
+            echo "${R0}  - Tests for ${BC0}${fun}${R0} not found"
+        fi
+    done
+    return ${nb_err}
 }
 
 # -[ LAUNCH_TEST_LIBFT_BONUS() ]------------------------------------------------------------------------------
@@ -336,8 +420,9 @@ launch_tests_perso_fun()
 print_in_box -t 2 -c y "🚧${Y0} START Libft_Enhanced's Tests${E}"
 # =[ CHECK NORMINETTE ]=======================================================================================
 exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
-# =[ LST_FUNUSED ]============================================================================================
-# -[ SET LISTS HOMEMADE_FUNUSED BUILTIN_FUNUSED ]-------------------------------------------------------------
+res_normi=${?}
+# =[ SET LISTS ]==============================================================================================
+# -[ HOMEMADE AND BUILTIN LISTS ]-----------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
     for fun in $(nm -C "${LIBFT_A}" | awk '$2 == "T" {print $3}' | sort | uniq);do
         [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " $fun " ]] && HOMEMADE_FUNUSED+=( "${fun}" )
@@ -350,11 +435,9 @@ if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive
 else
     echo -e "${BC0}${LIBFT_A}${E} is not an object file\033[m"
 fi
-# -[ LAUNCH_TESTS_LIBFT_MANDATODY() ]-------------------------------------------------------------------------
+# =[ LAUNCH TEST FOR LIBFT MANDATORY PART ]===================================================================
 exec_anim_in_box "launch_tests_libft_mandatory" "Tests libft mandatory functions"
-last_return=${?}
-TOT_FAILS=$(( TOT_FAILS + last_return ))
-# -[ LAUNCH_TESTS_LIBFT_BONUS() ]-----------------------------------------------------------------------------
+# =[ LAUNCH TESTS FOR LIBFT BONUS PART (IT AT LEAST ON BONUS FUNCTION FOUND ]=================================
 for fun in ${HOMEMADE_FUNUSED[@]};do
     if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
         TOT_TESTS=$(( TOT_TESTS + ${#LIBFT_BONUS[@]} ))
@@ -364,7 +447,11 @@ for fun in ${HOMEMADE_FUNUSED[@]};do
         break
     fi
 done
-# -[ PERSONNAL FUNCTION ]-------------------------------------------------------------------------------------
+# =[ LAUNCH TESTS FOR FT_PRINTF IF FOUND IN LIBFT.A ]=========================================================
+# TODO
+# =[ LAUNCH TESTS FOR GET_NEXT_LINE IF FOUND IN LIBFT.A ]=====================================================
+# TODO
+# =[ LAUNCH TESTS FOR OTHERS FUNCTION ]=======================================================================
 EXTRA=( "ft_printf" "get_next_line" )
 PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "${EXTRA[@]}")))
 for fun in "${PERSO_FUN[@]}";do [[ -n "$(find "${PARENT_DIR}/src" -type f -name "test_${fun}.c")" ]] && TOT_TESTS=$(( TOT_TESTS + 1 ));done
@@ -372,13 +459,37 @@ exec_anim_in_box "launch_tests_perso_fun" "Tests personnal functions"
 last_return=${?}
 TOT_FAILS=$(( TOT_FAILS + last_return ))
 # =[ RESUME ]=================================================================================================
-short_log_dir=$(print_shorter_path ${LOG_DIR})
-print_in_box -t 2 -c y \
-    "🚧${Y0} RESUME Libft_Enhanced's Tests${E}" \
-    "   - 🚀 ${GU}${TOT_TESTS} functions were tested:${E}" \
-    "      - $(( TOT_TESTS - TOT_FAILS)) functions ${V0}PASSED${E} there tests." \
-    "      - ${TOT_FAILS} functions ${R0}FAILLED${E} there tests:" \
-    "   - 📂 ${GU}Log files created at:${E} ${M0}${short_log_dir}/*${E}" \
-    "      - $(find ${short_log_dir} -type f | grep '.log$' | wc -l) ${M0}exec log files${E} where created (*.log ext-->tests returns)" \
-    "      - $(find ${short_log_dir} -type f | grep '.val$' | wc -l) ${M0}valgrind log files${E} where created (*.val ext-->valgrind returns)" \
-    "      - $(find ${short_log_dir} -type f | grep '.txt$' | wc -l) ${M0}outputs files${E} where produced by the tests execution (*.txt ext-->created by test)"
+display_resume()
+{
+    local short_log_dir=$(print_shorter_path ${LOG_DIR})
+    local c_comp=$(find ${short_log_dir} -type f | grep '.compile$' | wc -l)
+    local c_log=$(find ${short_log_dir} -type f | grep '.log$' | wc -l)
+    local c_val=$(find ${short_log_dir} -type f | grep '.val$' | wc -l)
+    local c_txt=$(find ${short_log_dir} -type f | grep '.txt$' | wc -l)
+    local args=( "🔶 ${YU}RESUME Minishell's Tests${E}:" "  🔸 ${Y0}Norminette:${E}" )
+    [[ ${res_normi} -eq 0 ]] && args+=( "     ✅${G0} PASS${E}" ) || args+=( "     ❌${R0} FAIL (${res_normi} wrong files detected)${E}" )
+    args+=( \
+        "  🔸 ${Y0}${#FUN_TESTED[@]}/${#FUN_TO_TEST[@]} functions have been tested:${E}" \
+        "     - $(( "${#FUN_TESTED[@]}" - TOT_FAILS)) functions ${V0}PASSED${E} there tests." \
+        "     - ${TOT_FAILS} functions ${R0}FAILLED${E} there tests:" \
+    )
+    print_in_box -t 2 -c y "${args[@]}"
+
+    #print_in_box -t 2 -c y \
+    #    "   - 📂 ${GU}Log files created at:${E} ${M0}${short_log_dir}/*${E}" \
+    #    "      - $(find ${short_log_dir} -type f | grep '.compile$' | wc -l) ${M0}compilation log files${E} where created(*.compile ext-->failed compilation commands returns)" \
+    #    "      - $(find ${short_log_dir} -type f | grep '.log$' | wc -l) ${M0}exec log files${E} where created (*.log ext-->tests returns)" \
+    #    "      - $(find ${short_log_dir} -type f | grep '.val$' | wc -l) ${M0}valgrind log files${E} where created (*.val ext-->valgrind returns)" \
+    #    "      - $(find ${short_log_dir} -type f | grep '.txt$' | wc -l) ${M0}outputs files${E} where produced by the tests execution (*.txt ext-->created by test)"
+}
+display_resume
+#short_log_dir=$(print_shorter_path ${LOG_DIR})
+#print_in_box -t 2 -c y \
+#    "🚧${Y0} RESUME Libft_Enhanced's Tests${E}" \
+#    "   - 🚀 ${GU}${TOT_TESTS} functions were tested:${E}" \
+#    "      - $(( TOT_TESTS - TOT_FAILS)) functions ${V0}PASSED${E} there tests." \
+#    "      - ${TOT_FAILS} functions ${R0}FAILLED${E} there tests:" \
+#    "   - 📂 ${GU}Log files created at:${E} ${M0}${short_log_dir}/*${E}" \
+#    "      - $(find ${short_log_dir} -type f | grep '.log$' | wc -l) ${M0}exec log files${E} where created (*.log ext-->tests returns)" \
+#    "      - $(find ${short_log_dir} -type f | grep '.val$' | wc -l) ${M0}valgrind log files${E} where created (*.val ext-->valgrind returns)" \
+#    "      - $(find ${short_log_dir} -type f | grep '.txt$' | wc -l) ${M0}outputs files${E} where produced by the tests execution (*.txt ext-->created by test)"
