@@ -379,6 +379,6 @@ print_in_box -t 2 -c y \
     "      - $(( TOT_TESTS - TOT_FAILS)) functions ${V0}PASSED${E} there tests." \
     "      - ${TOT_FAILS} functions ${R0}FAILLED${E} there tests:" \
     "   - 📂 ${GU}Log files created at:${E} ${M0}${short_log_dir}/*${E}" \
-    "      - $(find ${short_log_dir} -type f | grep '.log$' | wc -l) ${M0}exec log files${E} where created." \
-    "      - $(find ${short_log_dir} -type f | grep '.val$' | wc -l) ${M0}valgrind log files${E} where created." \
-    "      - $(find ${short_log_dir} -type f | grep '.txt$' | wc -l) ${M0}outputs files${E} where produce by test."
+    "      - $(find ${short_log_dir} -type f | grep '.log$' | wc -l) ${M0}exec log files${E} where created (*.log ext-->tests returns)" \
+    "      - $(find ${short_log_dir} -type f | grep '.val$' | wc -l) ${M0}valgrind log files${E} where created (*.val ext-->valgrind returns)" \
+    "      - $(find ${short_log_dir} -type f | grep '.txt$' | wc -l) ${M0}outputs files${E} where produced by the tests execution (*.txt ext-->created by test)"
