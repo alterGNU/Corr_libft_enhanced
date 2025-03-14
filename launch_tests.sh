@@ -218,7 +218,7 @@ display_resume()
     local c_txt=$(find ${short_log_dir} -type f | grep '.txt$' | wc -l)
     local tot_tested=$(( c_com + c_log ))
     local lst_fail=( )
-    for ff in $(cat ${LOG_DIR}/fun_fails.lst ${LOG_DIR}/fun_leaks.lst ${LOG_DIR}/fun_missing.lst | sort -u);do lst_fail+=( "${ff}" );done
+    for ff in $(cat ${LOG_DIR}/fun_{fails,leaks,missing}.lst 2>/dev/null | sort -u);do lst_fail+=( "${ff}" );done
     [[ ${res_normi} -eq 0 ]] && args+=( "  🔸 ${Y0}Norminette:${V0} ✅ PASS${E}" ) || args+=( "  🔸 ${Y0}Norminette:${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
     if [[ ${#lst_fail[@]} -eq 0 ]];then
         args+=( "  🔸 ${Y0}${tot_tested} functions have been tested:${V0} ✅ PASS${E}" ) 
