@@ -114,48 +114,73 @@ exec_anim_in_box()
 }
 
 # -[ LAUNCH_UNITESTS() ]--------------------------------------------------------------------------------------
-# Function that launch unitests for each <function_name> found in <list_name> given as arg1:
-# - Take one to two arguments:
-#   - arg1 (mandatory): <list_name> that contains all the <function_name> found in object to test.
-#   - arg2 (optionnal): <list_name> that contains all the <function_name> that have to be found in object.
+# Function that launch unitests for each <function_name> found in <list_name> given as arg1 or arg2.
+# Compile then Exec unitests will creating log_files then returns the numbers of errors encountred.
+# - USAGE:
+#   - Take one to two arguments:
+#     - arg1 (mandatory): list_name of a list that contains all the <function_name> fount in object.
+#       - `launch_unitests FUN_TO_TEST` --> will launch unitests for all function in list name: FUN_TO_TEST
+#     - arg2 (optionnal): list_name of a list that contains all the <function_name> THAT HAVE TO BE FOUND in object.
+#       - `launch_unitests LST1 LST2` --> will launch unitests for all fun in LST2 and LST1, if not in LST1=ERROR
+# - LOG FILES PRODUCE:
+# - ../log/<date>/<time>/${LOG_FAIL}                --> File contains list of all encountred errors, format="<fun_name>\t<error_type>"
+#                                                   └-> error_type = {compilation, errors, leaks, missing}                        
+# - ../log/<date>/<time>/<fun_name>/                --> Folder created for each function tested (remove if empty at the end)
+# - ../log/<date>/<time>/<fun_name>/comp_stderr.txt --> File created only when compilation failed: contains compilation error messages.
+# - ../log/<date>/<time>/<fun_name>/exec.log        --> File contains execution's outputs (stdout && stderr)
+# - ../log/<date>/<time>/<fun_name>/leaks.log       --> File contains valgrind's outputs (stdout && stderr)
+# - PSEUDO-CODE:
+#   - (0): INPUT VALIDATION
+#     - Check number of args given valid, else exit.
+#     - Build the 2 needed arrays: FUN_FOUND (list of fun found in obj), FUN_MANDA (list of fun needed)
+#       - If only arg1    --> FUN_FOUND == FUN_MANDA == ${arg1[@]}
+#       - If arg1 && arg2 --> FUN_FOUND == ${arg1[@]} && FUN_MANDA == ${arg2[@]}
+#     - Check if builded lists valid, else exit.
+#   - (1): LOOP TROUGHT FUN_MANDA
+#     - if <fun> not in FUN_FOUND --> nb_err++;
+#     - else check if an unitests exist:
+#        - (1.0) Create directory ../log/<date>/<time>/<fun_name>/
+#        - (1.1) COMPILE if compilation needed, if compilation fail --> nb_err++ && create comp_stderr.txt
+#        - (1.2) EXEC if compilation succed, redir stdout && stderr to exec.log, if exec failed --> nb_err++
+#        - (1.3) VALGRIND if compilation succed, redir stdout && stderr to leaks.log, if valgrind failed --> nb_err++
+#        - (1.4) If ../log/<date>/<time>/<fun_name>/ empty, remove the directory
 launch_unitests()
 {
-    # check arguments and set lists
+    # INPUT VALIDATION
     [[ ${#} -eq 0 || ${#} -gt 2 ]] && { echo "${R0}WRONG USAGE OF launch_unitests():wrong number of argument" && exit 2 ; }
     local -a FUN_FOUND=( )     # list of all fun found in object (==arg1)
-    local -a FUN_MANDATORY=( ) # list of all fun needed, (set as arg2 if given, else is a copy of arg1)
+    local -a FUN_MANDA=( ) # list of all fun needed, (set as arg2 if given, else is a copy of arg1)
     eval "local -a FUN_FOUND=( \"\${${1}[@]}\" )"
-    [[ -n ${2} ]] && eval "local -a FUN_MANDATORY+=( \"\${${2}[@]}\" )" || eval "local -a FUN_MANDATORY+=( \"\${${1}[@]}\" )"
+    [[ -n ${2} ]] && eval "local -a FUN_MANDA+=( \"\${${2}[@]}\" )" || eval "local -a FUN_MANDA+=( \"\${${1}[@]}\" )"
     [[ ${#FUN_FOUND[@]} -eq 0 ]] && { echo "${R0}WRONG USAGE OF launch_unitests():FUN_FOUND created is an empty list" && exit 2 ; }
-    [[ ${#FUN_MANDATORY[@]} -eq 0 ]] && { echo "${R0}WRONG USAGE OF launch_unitests():FUN_MANDATORY created is an empty list" && exit 2 ; }
-    # Create file that contains list of function by errors
-    local file_fail="${LOG_DIR}/fun_fails.lst"
-    local file_leak="${LOG_DIR}/fun_leaks.lst"
-    local file_miss="${LOG_DIR}/fun_missing.lst"
+    [[ ${#FUN_MANDA[@]} -eq 0 ]] && { echo "${R0}WRONG USAGE OF launch_unitests():FUN_MANDA created is an empty list" && exit 2 ; }
 
     local nb_err=0
-    for fun in ${FUN_MANDATORY[@]};do
+    for fun in ${FUN_MANDA[@]};do
         echo "🔹${BCU}${fun}():${E}"
         if [[ " ${FUN_FOUND[@]} " =~ " ${fun} " ]];then
             local FUN_LOG_DIR="${LOG_DIR}/${fun}"
             [[ ! -d ${FUN_LOG_DIR} ]] && mkdir -p ${FUN_LOG_DIR}
             local test_main=$(find "${PARENT_DIR}/src" -type f -name *"${fun}.c")
+            local test_txt=$(find "${PARENT_DIR}/src" -type f -name *"${fun}.txt")
             if [[ -n "${test_main}" ]];then
-                # STEP 1 : COMPILATION
+                # STEP 1 : COMPILATION --> IF NO BINARY OR IF SOURCES NEWER THAN BINARY
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en " ${BC0} ⤷${E} ⚙️  ${GU}Compilation:${E}"
-                if [[ ! -f "${exe}" ]];then
-                    local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${LOG_DIR}/${fun}.compile" 2>&1 && echo ${?} || echo ${?})
+                # cases where compilation needed: (1:no binary),(2:sources newer than binary),(3:text exist and newer than binary)
+                # TODO: handle when OBJ file are newer that exe too
+                if [[ ! -f "${exe}" || "${test_main}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) ]];then
+                    local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
                     if [[ "${res_compile}" -eq 0 ]];then
                         echo -en " ✅ ${V0} Successfull.${E}\n"
-                        rm "${LOG_DIR}/${fun}.compile"
+                        rm "${FUN_LOG_DIR}/comp_stderr.log"
                     else
+                        local log_comp_fail=$(print_shorter_path ${FUN_LOG_DIR}/comp_stderr.log)
                         nb_err=$(( nb_err + 1 ))
-                        local log_comp_fail=$(print_shorter_path ${LOG_DIR}/${fun}.compile)
+                        echo -e "${fun}\tcompilation\t${log_comp_fail}" >> ${LOG_FAIL}
                         echo -en " ❌ ${R0}Compilation failed.${E}\n"
                         sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
-                        echo "      🔸${Y0}check log file 👉 ${M0}${log_comp_fail}${E}"
                         continue
                     fi
                 else
@@ -163,48 +188,50 @@ launch_unitests()
                 fi
                 # STEP 2 : EXECUTION
                 echo -en " ${BC0} ⤷${E} 🚀 ${GU}Execution  :${E}"
-                local test_txt=$(find "${PARENT_DIR}/src" -type f -name *"${fun}.txt")
                 if [[ -f "${test_txt}" ]];then
-                    local res_tests=$(${exe} "$(dirname "${test_txt}")" "${FUN_LOG_DIR}" > "${FUN_LOG_DIR}/${fun}.log" 2>&1 && echo ${?} || echo ${?})
+                    local res_tests=$(${exe} "$(dirname "${test_txt}")" "${FUN_LOG_DIR}" > "${FUN_LOG_DIR}/exec.log" 2>&1 && echo ${?} || echo ${?})
                 else
-                    local res_tests=$(${exe} > "${FUN_LOG_DIR}/${fun}.log" 2>&1 && echo ${?} || echo ${?})
+                    local res_tests=$(${exe} > "${FUN_LOG_DIR}/exec.log" 2>&1 && echo ${?} || echo ${?})
                 fi
-                echo "EXIT_VALUE=${res_tests}" >> "${FUN_LOG_DIR}/${fun}.log"
+                echo "EXIT_VALUE=${res_tests}" >> "${FUN_LOG_DIR}/exec.log"
                 if [[ ${res_tests} -eq 0 ]];then
                     echo -en " ✅ ${V0} No error detected.${E}\n"
                 else
-                    echo "${fun}" >> ${file_fail}
-                    echo -en " ❌ ${R0} Error detected (exec return value=${res_tests})\n"
-                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${FUN_LOG_DIR}/${fun}.log)${E}"
+                    local exec_log_file=$(print_shorter_path ${FUN_LOG_DIR}/exec.log)
                     nb_err=$(( nb_err + 1 ))
+                    echo -e "${fun}\terrors\t${exec_log_file}" >> ${LOG_FAIL}
+                    echo -en " ❌ ${R0} Error detected (exec return value=${res_tests})\n"
+                    echo "      🔸${Y0}check log file 👉 ${M0}${exec_log_file}${E}"
                 fi
                 # STEP 3 : VALGRIND
                 echo -en " ${BC0} ⤷${E} 🚰 ${GU}Valgrind   :${E}"
                 if [[ -f "${test_txt}" ]];then
-                    local res_val=$(${VALGRIND} ${exe} "$(dirname "${test_txt}")" "${FUN_LOG_DIR}" > "${FUN_LOG_DIR}/${fun}.val" 2>&1 && echo ${?} || echo ${?})
+                    local res_val=$(${VALGRIND} ${exe} "$(dirname "${test_txt}")" "${FUN_LOG_DIR}" > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
                 else
-                    local res_val=$(${VALGRIND} ${exe} > "${FUN_LOG_DIR}/${fun}.val" 2>&1 && echo ${?} || echo ${?})
+                    local res_val=$(${VALGRIND} ${exe} > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
                 fi
                 if [[ ${res_val} -ne ${VAL_ERR} ]];then
                     echo -en " ✅ ${V0} No leak detected.${E}\n"
                 else
-                    echo "${fun}" >> ${file_leak}
-                    echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
-                    echo "      🔸${Y0}check log file 👉 ${M0}$(print_shorter_path ${FUN_LOG_DIR}/${fun}.val)${E}"
+                    local leaks_log_file=$(print_shorter_path ${FUN_LOG_DIR}/leaks.log)
                     nb_err=$(( nb_err + 1 ))
+                    echo -e "${fun}\tleaks\t${leaks_log_file}" >> ${LOG_FAIL}
+                    echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
+                    echo "      🔸${Y0}check log file 👉 ${M0}${leaks_log_file}${E}"
                 fi
             else
                 echo " ${BC0} ⤷${E} ✖️  ${G0}Tests not found.${E}"
                 rmdir "${FUN_LOG_DIR}" > /dev/null 2>&1
             fi
         else
-            echo "${fun}" >> ${file_miss}
-            echo " ${BC0} ⤷${E} ❌ ${R0}Function not found in object.${E}"
+            echo -e "${fun}\tmissing\t⭙" >> ${LOG_FAIL}
             nb_err=$(( nb_err + 1 ))
+            echo " ${BC0} ⤷${E} ❌ ${R0}Function not found in object.${E}"
         fi
     done
     return ${nb_err}
 }
+
 # -[ DISPLAY_RESUME() ]---------------------------------------------------------------------------------------
 # Display the resume of test (norminette, tests results, log files produces ...)
 # Take on optionnal argument, text to add between the <🔶 RESUME> and the <:>.
@@ -290,4 +317,4 @@ done
 PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "ft_printf" "get_next_line" )))
 exec_anim_in_box "launch_unitests PERSO_FUN" "Tests other functions"
 # =[ RESUME ]=================================================================================================
-display_resume "Libft's tests"
+#display_resume "Libft's tests"
