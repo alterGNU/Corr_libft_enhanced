@@ -58,6 +58,8 @@
 - [ ] ft_strmapi
 - [ ] ft_strncmp
 - [ ] ft_strnstr
+- [X] ft_strspn
+- [X] ft_strcspn
 - [ ] ft_strrchr
 - [ ] ft_strtrim
 - [ ] ft_substr
