@@ -10,6 +10,13 @@ int	printntime(char c, int n)
 	return (n);
 }
 
+void print_title(const char *title)
+{
+	int print_sofar = printf("=[ %s ]", title);
+	printntime('=', LEN - print_sofar);
+	printf("\n");
+}
+
 int	test(char *src, char *accept)
 {
 	int	print_sofar;
@@ -33,10 +40,11 @@ int	test(char *src, char *accept)
 int main()
 {
 	int	nb_err = 0;
+	print_title("ERRORS/NULL CASES (-1)");
 	nb_err += test(NULL, NULL);
 	nb_err += test("coucou ", NULL);
 	nb_err += test(NULL, " ");
-
+	print_title("CLASSIC");
 	nb_err += test("", "");
 	nb_err += test("", "abcdefghijklmopqrstuvwxyz");
 	nb_err += test("coucou", "");
@@ -46,7 +54,8 @@ int main()
 	nb_err += test("1234", "0123456789");
 	nb_err += test("12a34", "0123456789");
 	nb_err += test("coucou ", "cou");
-
+	nb_err += test("hello ", "aeiou");
+	nb_err += test("hello ", "he");
 	char	src1[10]="123123123";
 	char	src2[10]="12312312 ";
 	for (int i = 0; i < 10; i++)
@@ -54,5 +63,14 @@ int main()
 		nb_err += test(src1+i, "12345");
 		nb_err += test(src2+i, "12345");
 	}
+	print_title("REPETITION");
+	nb_err += test("aaaaa", "a");
+	nb_err += test("bbbb", "bb");
+	print_title("SPECIAL CHAR");
+	nb_err += test("!@#' ", "'!@#");
+	nb_err += test("\"!@#<><<>>||&&&&", "!@#<>|&'\"");
+	print_title("PERFORMANCES");
+	nb_err += test("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+	nb_err += test("aaaaaaaaaaaaaaaaaaaaaaaabcdefghijklmnopqrstuvwxyzAAAAAAAAAAAABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 	return (nb_err);
 }
