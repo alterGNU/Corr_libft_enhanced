@@ -10,21 +10,21 @@ int	printntime(char c, int n)
 	return (n);
 }
 
-int	test(char *src, char *accept)
+int	test(char *src, char *reject)
 {
 	int	print_sofar;
 	int	ft;
 	int	real;
-	ft = ft_strcspn(src, accept);
-	if (!src || !accept)
+	ft = ft_strcspn(src, reject);
+	if (!src || !reject)
 	{
-		print_sofar=printf("strcspn(\"%s\", \"%s\")ft-> [%d]", src, accept, ft);
+		print_sofar=printf("strcspn(\"%s\", \"%s\")ft-> [%d]", src, reject, ft);
 		if (ft == -1)
 			return (printntime('-', LEN-print_sofar-7), printf("> ✅\n"), 0);
 		return (printntime('-', LEN-print_sofar-7), printf("> ❌\n"), 0);
 	}
-	real = (int)strcspn(src, accept);
-	print_sofar=printf("strcspn(\"%s\", \"%s\")[%d] vs [%d]", src, accept, real, ft);
+	real = (int)strcspn(src, reject);
+	print_sofar=printf("strcspn(\"%s\", \"%s\")[%d] vs [%d]", src, reject, real, ft);
 	if (real == ft)
 		return (printntime('-', LEN-print_sofar-7), printf("> ✅\n"), 0);
 	return (printntime('-', LEN-print_sofar-7), printf("> ❌\n"), 0);
