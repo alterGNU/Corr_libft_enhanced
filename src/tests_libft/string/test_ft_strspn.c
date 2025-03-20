@@ -28,13 +28,13 @@ int	test(char *src, char *accept)
 		print_sofar=printf("strspn(\"%s\", \"%s\")ft-> [%d]", src, accept, ft);
 		if (ft == -1)
 			return (printntime('-', LEN-print_sofar-7), printf("> ✅\n"), 0);
-		return (printntime('-', LEN-print_sofar-7), printf("> ❌\n"), 0);
+		return (printntime('-', LEN-print_sofar-7), printf("> ❌\n"), 1);
 	}
 	real = (int)strspn(src, accept);
 	print_sofar=printf("strspn(\"%s\", \"%s\")[%d] vs [%d]", src, accept, real, ft);
 	if (real == ft)
 		return (printntime('-', LEN-print_sofar-7), printf("> ✅\n"), 0);
-	return (printntime('-', LEN-print_sofar-7), printf("> ❌\n"), 0);
+	return (printntime('-', LEN-print_sofar-7), printf("> ❌\n"), 1);
 }
 
 int main()
