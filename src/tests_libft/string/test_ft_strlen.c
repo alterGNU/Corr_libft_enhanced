@@ -9,8 +9,15 @@ int	compare(char *str)
 	size_t	real;
 	size_t	ft;
 
-	real = strlen(str);
 	ft = ft_strlen(str);
+	if (!str)
+	{
+		printf("strlen(%s) = real:UB, ft_strlen(%s)=%d",str , str, ft);
+		if (ft == 0)
+			return ( printf("----> PASS!\n") , 0);
+		return ( printf("----> FAIL!\n") , 1);
+	}
+	real = strlen(str);
 	printf("strlen(%s) = real[%ld] == ft[%ld]",str ,real ,ft); 
 	if ((!real && ft) || (real && !ft))
 	{
