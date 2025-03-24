@@ -6,6 +6,8 @@ TESTS_PATH				= tests/
 SHELL					= bash
 
 LIBFT_A					= $(shell find ../../.. -name 'libft.a' 2>/dev/null | head -n 1)
+LIBFT_H					= $(shell find ../../.. -name 'libft.h' 2>/dev/null | head -n 1)
+INCLUDE					= $(shell dirname $(LIBFT_H))
 
 MANDATORY				= mandatory
 1MANDATORY				= $(addprefix 1, $(MANDATORY))
@@ -22,7 +24,7 @@ BONUS					= bonus
 10MBONUS				= $(addprefix 10M, $(BONUS))
 
 CFLAGS					= -g3 -Wall -Wextra -Werror
-CPPFLAGS				= -g3 -ldl -std=c++11 -I utils/ -I.. -Wno-everything
+CPPFLAGS				= -g3 -ldl -std=c++11 -I utils/ -I$(INCLUDE) -Wno-everything -no-pie
 
 UNAME = $(shell uname -s)
 ifeq ($(UNAME), Linux)
@@ -60,6 +62,7 @@ bonus_start:
 
 print:
 	@echo "libft.a found at:'$(LIBFT_A)'"
+	@echo "libft.h found at:'$(LIBFT_H)' --> -I$(INCLUDE)"
 m: mandatory_start $(1MANDATORY) $(42MANDATORY) $(10MMANDATORY) cleanMandatory
 b: bonus_start $(1MBONUS) $(42MBONUS) $(10MMBONUS) $(1BONUS) $(42BONUS) $(10MBONUS) cleanBonus
 a: m b
