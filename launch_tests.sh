@@ -233,16 +233,6 @@ launch_unitests()
     return ${nb_err}
 }
 
-# -[ LAUNCH_GNL_TESTS() ]-------------------------------------------------------------------------------------
-# Use tripouille testeur
-launch_gnl_tests()
-{
-    # create needed files for get_next_line.c
-    echo "Launch get_next_line Tripouille testeur"
-    echo "print libft_a path:"
-    make -C ${PARENT_DIR}/src/tripouille print
-}
-
 # -[ DISPLAY_RESUME() ]---------------------------------------------------------------------------------------
 # Display the resume of test (norminette, tests results, log files produces ...)
 # Take on optionnal argument, text to add between the <🔶 RESUME> and the <:>.
@@ -318,7 +308,7 @@ done
 #TODO
 #exec_anim_in_box "launch_unitests ft_printf ft_printf" "Tests other functions"
 # =[ LAUNCH TESTS FOR GET_NEXT_LINE IF FOUND IN LIBFT.A ]=====================================================
-exec_anim_in_box "launch_gnl_tests" "Tests Get_Next_Line functions"
+[[ ! " ${LIBFT_BONUS[@]} " =~ " get_next_line " ]] && make -C ${PARENT_DIR}/src/tripouille a
 ## =[ LAUNCH TESTS FOR OTHERS FUNCTION ]=======================================================================
 PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "ft_printf" "get_next_line" )))
 exec_anim_in_box "launch_unitests PERSO_FUN" "Tests other functions"
