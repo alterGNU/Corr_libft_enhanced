@@ -40,15 +40,15 @@ int	test(char *str, int start, int stop, char *res)
 	int print_sofar = printf("%s(<%s>, %d, %d)==<%s>", f_name, str, start, stop, res);
 	printntime('-', LEN - print_sofar - 3);
 	char *ft = ft_strdup_substr(str, start, stop);
-	if (!res)
+	if (!res || !ft)
 	{
-		if (!ft)
-			return (ft_free((void **)ft), printf("> ✅\n"), 0);
-		return (ft_free((void **)ft), printf("> ❌\n"), 1);
+		if (!ft && !res)
+			return (printf("> ✅\n"), 0);
+		return (printf("---\n - res\t= <%s>\n - ft\t= <%s>\n", res, ft), ft_free((void **)&ft), printntime('-', LEN - 3), printf("> ❌\n"), 1);
 	}
-	if (strcmp(ft, res))
-		return (printf("---\nft=<%s>\n", ft), free(ft), printntime('-', LEN - 3), printf("> ❌\n"), 1);
-	return (ft_free((void **)ft), printf("> ✅\n"), 0);
+	if (!strcmp(ft, res))
+		return (ft_free((void **)&ft), printf("> ✅\n"), 0);
+	return (printf("---\n - res\t= <%s>\n - ft\t= <%s>\n", res, ft), ft_free((void **)&ft), printntime('-', LEN - 3), printf("> ❌\n"), 1);
 }
 
 int main()
@@ -79,5 +79,6 @@ int main()
 	nb_err += test("hello", 0, 7, "hello");
 	nb_err += test("hello", 1, 6, "ello");
 	nb_err += test("hello", 2, 5, "llo");
+
 	return (nb_err);
 }
