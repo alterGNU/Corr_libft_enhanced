@@ -60,4 +60,3 @@ int	main()
 	tot_fail += test('a', s1, -1); // check that stop at '\0'
 	return (tot_fail);
 }
-

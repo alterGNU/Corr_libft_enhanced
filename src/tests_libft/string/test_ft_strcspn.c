@@ -1,7 +1,7 @@
 #include "libft.h"  // ft_strcspn
 #include <string.h> // strcspn
 #include <stdio.h>  // printf
-#define LEN 100
+#define LEN 90
 
 int	printntime(char c, int n)
 {
