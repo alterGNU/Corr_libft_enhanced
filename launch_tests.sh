@@ -12,25 +12,30 @@
 #   - 7: if detected get_next_line() in libft.a, launch tests for get_next_line() tests (bonus too, auto)
 # ============================================================================================================
  
-# =[ VARIABLES ]==============================================================================================
+# =[ # =[ VARIABLES ]============================================================================================== ]
+# -[ SCRIPT OPTIONS ]-----------------------------------------------------------------------------------------
+TRIPOUILLE_LIBFT=0                                                 # ☒ Tripouille tester option for libft()
+TRIPOUILLE_GNL=0                                                   # ☒ Tripouille tester option for get_next_line()
+TRIPOUILLE_PRINTF=0                                                # ☒ Tripouille tester option for ft_printf()
 # -[ PATH/FOLDER/FILE ]---------------------------------------------------------------------------------------
-SCRIPTNAME=${0##*\/}                                              # ☒ Script's name (no path)
-PARENT_DIR=$(dirname $(realpath ${0}))                            # ☒ Name of parent directory
-LIBFT_DIR=$(dirname ${PARENT_DIR})                                # ☒ Name of libft_enhanced (grandparent folder)
-LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"           # ☒ Name of the log folder
-LOG_FAIL="${LOG_DIR}/list_errors.log"                             # ☒ File contains list of function that failed
-BSL_DIR="${PARENT_DIR}/src/BSL"                                   # ☒ Path to BSL folder
-BIN_DIR="${PARENT_DIR}/bin"                                       # ☒ Path to bin folder (test binary)
-LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")              # ☒ static library name libft.a 
-LIBFT_INC=$(dirname $(find ${LIBFT_DIR} -type f -name "libft.h")) # ☒ Folder that contains to libft.h HEADER
+SCRIPTNAME=${0##*\/}                                               # ☒ Script's name (no path)
+PARENT_DIR=$(dirname $(realpath ${0}))                             # ☒ Name of parent directory
+LIBFT_DIR=$(dirname ${PARENT_DIR})                                 # ☒ Name of libft_enhanced (grandparent folder)
+LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"            # ☒ Name of the log folder
+LOG_FAIL="${LOG_DIR}/list_errors.log"                              # ☒ File contains list of function that failed
+BSL_DIR="${PARENT_DIR}/src/BSL"                                    # ☒ Path to BSL folder
+BIN_DIR="${PARENT_DIR}/bin"                                        # ☒ Path to bin folder (test binary)
+LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")               # ☒ static library name libft.a 
+LIBFT_INC=$(dirname $(find ${LIBFT_DIR} -type f -name "libft.h"))  # ☒ Folder that contains to libft.h HEADER
 # -[ COMMANDS ]-----------------------------------------------------------------------------------------------
 CC="cc -Wall -Wextra -Werror -I${LIBFT_INC}"
 VAL_ERR=42
 VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=${VAL_ERR}"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
-HOMEMADE_FUNUSED=( )                                              # ☒ List of user created function in libft.a
-BUILTIN_FUNUSED=( )                                               # ☒ List of build-in function in libft.a
-EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )               # ☒ List of folder to be ignore by norminette
+OPTIONS=( )                                                        # ☒ List of script options enabled
+HOMEMADE_FUNUSED=( )                                               # ☒ List of user created function in libft.a
+BUILTIN_FUNUSED=( )                                                # ☒ List of build-in function in libft.a
+EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )                # ☒ List of folder to be ignore by norminette
 LIBFT_MANDA=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "ft_strlen" "ft_memset" \
     "ft_bzero" "ft_memcpy" "ft_memmove" "ft_strlcpy" "ft_strlcat" "ft_toupper" "ft_tolower" "ft_strchr" \
     "ft_strrchr" "ft_strncmp" "ft_memchr" "ft_memcmp" "ft_strnstr" "ft_atoi" "ft_calloc" "ft_strdup" \
@@ -39,7 +44,7 @@ LIBFT_MANDA=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "
 LIBFT_BONUS=( "ft_lstnew" "ft_lstadd_front" "ft_lstsize" "ft_lstlast" "ft_lstadd_back" "ft_lstdelone" \
     "ft_lstclear" "ft_lstiter" "ft_lstmap" )
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
-LEN=100                                                            # ☑ Width of the box
+LEN=100                                                            # ☑ Width of lines (and therefore of boxes)
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
 E="\033[0m"                                                        # ☒ END color balise
 N0="\033[0;30m"                                                    # ☒ START BLACK
@@ -54,8 +59,8 @@ BU="\033[4;34m"                                                    # ☒ START B
 BC0="\033[0;36m"                                                   # ☒ START AZURE
 BCU="\033[4;36m"                                                   # ☒ START AZURE UNDERSCORED
 P0="\033[0;35m"                                                    # ☒ START PINK
-G0="\033[2;37m"                                                    # ☒ START GREY
-GU="\033[4;37m"                                                    # ☒ START GREY
+G0="\033[2;47m"                                                    # ☒ START GREY
+GU="\033[4;47m"                                                    # ☒ START GREY
 # -[ COUNT ]--------------------------------------------------------------------------------------------------
 TOT_TESTS="${#LIBFT_MANDA[@]}"                                     # ☒ Count how many fun are tested
 TOT_FAILS=0                                                        # ☒ Count how many fun have failed
@@ -250,8 +255,7 @@ display_resume()
         args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${V0} ✅ PASS${E}" ) 
     else
         args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${E}" )
-        args+=( \
-            "    ${V0}✅ $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED.${E}" \
+        args+=( \ "    ${V0}✅ $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED.${E}" \
             "    ${R0}❌ ${#lst_fail[@]} functions ${R0}FAILLED:${E}" \
         )
         for fun in "${lst_fail[@]}";do
@@ -274,15 +278,33 @@ display_resume()
 # ============================================================================================================
 # =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
 [[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${BC0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
-# =[ CREATE LOG_DIR ]=========================================================================================
-[[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
-# =[ START MESSAGE ]==========================================================================================
-print_in_box -t 2 -c y "🔶 ${Y0}START Libft_Enhanced's Tests${E}"
-# =[ CHECK NORMINETTE ]=======================================================================================
-exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
-res_normi=${?}
+# =[ HANDLE SCRIPTS OPTIONS ]=================================================================================
+# -[ SET OPTIONS VARIABLES ]----------------------------------------------------------------------------------
+for args in "$@";do
+    shift
+    case "${args}" in
+        --[Tt]ripouille | -[Tt])
+            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL + 1))
+            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT + 1))
+            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF + 1))
+            ;;
+        [Gg][Nn][Ll] | get_next_line)
+            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL + 1))
+            ;;
+        [Li]bft)
+            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT + 1))
+            ;;
+        ft_printf | printf)
+            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF + 1))
+            ;;
+    esac
+done
 # =[ SET LISTS ]==============================================================================================
-# -[ HOMEMADE AND BUILTIN LISTS ]-----------------------------------------------------------------------------
+# -[ SET OPTIONS LIST ]---------------------------------------------------------------------------------------
+[[ ${TRIPOUILLE_LIBFT} -eq 0 ]] || OPTIONS+=( " - Tripouille enable for libft()" )
+[[ ${TRIPOUILLE_GNL} -eq 0 ]] || OPTIONS+=( " - Tripouille enable for get_next_line()" )
+[[ ${TRIPOUILLE_PRINTF} -eq 0 ]] || OPTIONS+=( " - Tripouille enable for ft_printf()" )
+# -[ SET HOMEMADE AND BUILTIN LISTS ]-------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
     for fun in $(nm -C "${LIBFT_A}" | awk '$2 == "T" {print $3}' | sort | uniq);do
         [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " ${fun} " ]] && HOMEMADE_FUNUSED+=( "${fun}" )
@@ -295,22 +317,37 @@ if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive
 else
     echo -e "${BC0}${LIBFT_A}${E} is not an object file\033[m"
 fi
-# =[ LAUNCH TEST FOR LIBFT MANDATORY PART ]===================================================================
-exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_MANDA" "Tests libft mandatory functions"
-# =[ LAUNCH TESTS FOR LIBFT BONUS PART (IT AT LEAST ON BONUS FUNCTION FOUND ]=================================
-for fun in ${HOMEMADE_FUNUSED[@]};do
-    if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
-        exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
-        break
-    fi
-done
-# =[ LAUNCH TESTS FOR FT_PRINTF IF FOUND IN LIBFT.A ]=========================================================
-#TODO
-#exec_anim_in_box "launch_unitests ft_printf ft_printf" "Tests other functions"
-# =[ LAUNCH TESTS FOR GET_NEXT_LINE IF FOUND IN LIBFT.A ]=====================================================
-[[ ! " ${LIBFT_BONUS[@]} " =~ " get_next_line " ]] && make -C ${PARENT_DIR}/src/tripouille a
-## =[ LAUNCH TESTS FOR OTHERS FUNCTION ]=======================================================================
-PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "ft_printf" "get_next_line" )))
-exec_anim_in_box "launch_unitests PERSO_FUN" "Tests other functions"
-# =[ RESUME ]=================================================================================================
-display_resume "Libft's tests"
+# =[ CHECK NORMINETTE ]=======================================================================================
+exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+res_normi=${?}
+# =[ IF OPTIONS LAUNCH TESTERS, ELSE LAUNCH MINE ]============================================================
+if [[ ${#OPTIONS[@]} -ne 0 ]];then
+    # -[ DISPLAY SCRIPT OPTIONS ]-----------------------------------------------------------------------------
+    print_in_box -t 0 -c b "🔘 ${G0}${OPTIONS[@]}${E}"
+    # -[ CHECK IF GNL, THEN LAUNCH TRIPOUILLE ]---------------------------------------------------------------
+    [[ ! " ${LIBFT_BONUS[@]} " =~ " get_next_line " ]] && make -C ${PARENT_DIR}/src/tripouille a
+else
+    # =[ CREATE LOG_DIR ]=====================================================================================
+    [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
+    # =[ START MESSAGE ]======================================================================================
+    print_in_box -t 2 -c y "🔶 ${Y0}START Libft_Enhanced's Tests${E}"
+    # =[ LAUNCH TEST FOR LIBFT MANDATORY PART ]===============================================================
+    exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_MANDA" "Tests libft mandatory functions"
+    # =[ LAUNCH TESTS FOR LIBFT BONUS PART (IT AT LEAST ON BONUS FUNCTION FOUND ]=============================
+    for fun in ${HOMEMADE_FUNUSED[@]};do
+        if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+            exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
+            break
+        fi
+    done
+    # =[ LAUNCH TESTS FOR FT_PRINTF IF FOUND IN LIBFT.A ]=====================================================
+    #TODO
+    #exec_anim_in_box "launch_unitests ft_printf ft_printf" "Tests other functions"
+    # =[ LAUNCH TESTS FOR GET_NEXT_LINE IF FOUND IN LIBFT.A ]=================================================
+    #TODO --> launch on option
+    ## =[ LAUNCH TESTS FOR OTHERS FUNCTION ]==================================================================
+    PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "ft_printf" "get_next_line" )))
+    exec_anim_in_box "launch_unitests PERSO_FUN" "Tests other functions"
+    # =[ RESUME ]=============================================================================================
+    display_resume "Libft's tests"
+fi
