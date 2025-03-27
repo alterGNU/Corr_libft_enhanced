@@ -36,7 +36,7 @@
 # -[ SCRIPT OPTIONS ]-----------------------------------------------------------------------------------------
 HELP=0                                                             # ☒ OPTION when set at 1🢥 Display script usage
 BONUS=0                                                            # ☒ OPTION when set at 1🢥 launch all test with bonus option
-NORMI=1                                                            # ☒ OPTION when set at 1🢥 launch NORMINETTE TESTER
+NORM=1                                                            # ☒ OPTION when set at 1🢥 launch NORMINETTE TESTER
 MY_UNITEST_LIBFT=1                                                 # ☒ OPTION when set at 1🢥 launch my tester for LIBFT(DEFAULT)
 MY_UNITEST_GNL=1                                                   # ☒ OPTION when set at 1🢥 launch my tester for GNL(DEFAULT)
 MY_UNITEST_PRINTF=1                                                # ☒ OPTION when set at 1🢥 launch my tester for PRINTF(DEFAULT)
@@ -57,18 +57,6 @@ LIBFT_INC=$(dirname $(find ${LIBFT_DIR} -type f -name "libft.h"))  # ☒ Folder 
 CC="cc -Wall -Wextra -Werror -I${LIBFT_INC}"
 VAL_ERR=42
 VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=${VAL_ERR}"
-# -[ LISTS ]--------------------------------------------------------------------------------------------------
-OPTIONS=("LIST OF ALL ACTIVATED OPTIONS:" )                        # ☒ List of script options enabled
-HOMEMADE_FUNUSED=( )                                               # ☒ List of user created function in libft.a
-BUILTIN_FUNUSED=( )                                                # ☒ List of build-in function in libft.a
-EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )                # ☒ List of folder to be ignore by norminette
-LIBFT_MANDA=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "ft_strlen" "ft_memset" \
-    "ft_bzero" "ft_memcpy" "ft_memmove" "ft_strlcpy" "ft_strlcat" "ft_toupper" "ft_tolower" "ft_strchr" \
-    "ft_strrchr" "ft_strncmp" "ft_memchr" "ft_memcmp" "ft_strnstr" "ft_atoi" "ft_calloc" "ft_strdup" \
-    "ft_substr" "ft_strjoin" "ft_strtrim" "ft_split" "ft_itoa" "ft_strmapi" "ft_striteri" "ft_putchar_fd" \
-    "ft_putstr_fd" "ft_putendl_fd" "ft_putnbr_fd" )
-LIBFT_BONUS=( "ft_lstnew" "ft_lstadd_front" "ft_lstsize" "ft_lstlast" "ft_lstadd_back" "ft_lstdelone" \
-    "ft_lstclear" "ft_lstiter" "ft_lstmap" )
 # -[ LAYOUT ]-------------------------------------------------------------------------------------------------
 LEN=100                                                            # ☑ Width of lines (and therefore of boxes)
 # -[ COLORS ]-------------------------------------------------------------------------------------------------
@@ -85,8 +73,20 @@ BU="\033[4;34m"                                                    # ☒ START B
 BC0="\033[0;36m"                                                   # ☒ START AZURE
 BCU="\033[4;36m"                                                   # ☒ START AZURE UNDERSCORED
 P0="\033[0;35m"                                                    # ☒ START PINK
-G0="\033[2;47m"                                                    # ☒ START GREY
-GU="\033[4;47m"                                                    # ☒ START GREY
+G0="\033[2;37m"                                                    # ☒ START GREY
+GU="\033[4;37m"                                                    # ☒ START GREY
+# -[ LISTS ]--------------------------------------------------------------------------------------------------
+OPTIONS=("${BCU}LIST OF ALL ACTIVATED OPTIONS:${E}" )               # ☒ List of script options enabled
+HOMEMADE_FUNUSED=( )                                               # ☒ List of user created function in libft.a
+BUILTIN_FUNUSED=( )                                                # ☒ List of build-in function in libft.a
+EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )                # ☒ List of folder to be ignore by norminette
+LIBFT_MANDA=( "ft_isalpha" "ft_isdigit" "ft_isalnum" "ft_isascii" "ft_isprint" "ft_strlen" "ft_memset" \
+    "ft_bzero" "ft_memcpy" "ft_memmove" "ft_strlcpy" "ft_strlcat" "ft_toupper" "ft_tolower" "ft_strchr" \
+    "ft_strrchr" "ft_strncmp" "ft_memchr" "ft_memcmp" "ft_strnstr" "ft_atoi" "ft_calloc" "ft_strdup" \
+    "ft_substr" "ft_strjoin" "ft_strtrim" "ft_split" "ft_itoa" "ft_strmapi" "ft_striteri" "ft_putchar_fd" \
+    "ft_putstr_fd" "ft_putendl_fd" "ft_putnbr_fd" )
+LIBFT_BONUS=( "ft_lstnew" "ft_lstadd_front" "ft_lstsize" "ft_lstlast" "ft_lstadd_back" "ft_lstdelone" \
+    "ft_lstclear" "ft_lstiter" "ft_lstmap" )
 # -[ COUNT ]--------------------------------------------------------------------------------------------------
 TOT_TESTS="${#LIBFT_MANDA[@]}"                                     # ☒ Count how many fun are tested
 TOT_FAILS=0                                                        # ☒ Count how many fun have failed
@@ -306,7 +306,8 @@ display_resume()
 # =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
 [[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${BC0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
 # =[ HANDLE SCRIPTS OPTIONS ]=================================================================================
-has_a=0 ; has_t=0 ; has_l=0 ; has_g=0 ; has_p=0 ; has_b=0 ; has_h=0
+NB_ARG="${#}"
+has_a=0 ; has_t=0 ; has_l=0 ; has_g=0 ; has_p=0 ; has_b=0 ; has_h=0; has_n=0
 for args in "$@";do
     shift
     case "${args}" in
@@ -317,13 +318,14 @@ for args in "$@";do
         --ft_printf | --printf | --print | -[Pp] ) has_p=1 ;;
         --[Bb]onus | -[Bb] ) has_b=1 ;;
         --[Hh]elp | -[Hh] ) has_h=1 ;;
+        --[Nn]o-[Nn]orm | -[Nn] ) has_n=1 ;;
         *) script_usage "Error: Unknown option '${args}'" 1 ;;
     esac
 done
 # -[ CHECK FORBIDDEN OPTIONS COMBINATION ]--------------------------------------------------------------------
-[[ ( ${has_h} -eq 1 ) && ( ${#} -gt 1 ) ]] && script_usage "--help option can not be paired with other option" 3
-[[ ( ${has_a} -eq 1 ) && (( ${#} -eq 2 && ${has_b} -eq 0 ) || ( ${#} -gt 2)) ]] && script_usage "--all option can only be paired with --bonus option" 3
-[[ ( ${has_t} -eq 1 ) && (( ${#} -eq 2 && ${has_b} -eq 0 ) || ( ${#} -gt 2)) ]] && script_usage "--tripouille option can only be paired with --bonus option" 3
+[[ ( ${has_h} -eq 1 ) && ( ${NB_ARG} -gt 1 ) ]] && script_usage "--help option can not be paired with other option" 3
+[[ ( ${has_a} -eq 1 ) && ( ${ARG_COUNT} -gt 2 || ( ${ARG_COUNT} -eq 2 && ${has_b} -eq 0 && ${has_n} -eq 0 )) ]] && script_usage "--all option can only be paired with --bonus option" 3
+[[ ( ${has_t} -eq 1 ) && ( ${ARG_COUNT} -gt 2 || ( ${ARG_COUNT} -eq 2 && ${has_b} -eq 0 && ${has_n} -eq 0 )) ]] && script_usage "--tripouille option can only be paired with --bonus option" 3
 # -[ SET OPTIONS VARIABLES ]----------------------------------------------------------------------------------
 [[ ${has_a} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_GNL=1 && MY_UNITESTS_PRINTF=1
 [[ ${has_t} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=0
@@ -332,25 +334,26 @@ done
 [[ ${has_p} -eq 1 ]] && TRIPOUILLE_LIBFT=0 && TRIPOUILLE_GNL=0 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=1
 [[ ${has_b} -eq 1 ]] && BONUS=1
 [[ ${has_h} -eq 1 ]] && HELP=1
+[[ ${has_n} -eq 1 ]] && NORM=0
 # =[ DISPLAY USAGE THEN STOP IF --help OPTION ]===============================================================
-[[ ${HELP} -eq 1 ]] && usage "Help asked" 0
+[[ ${HELP} -eq 1 ]] && script_usage "Help asked" 0
 # =[ SET LISTS ]==============================================================================================
 # -[ SET OPTIONS LIST ]---------------------------------------------------------------------------------------
-[[ ${NORMI} -eq 1 ]] && OPTIONS+=( " - Norminette testeur enable" ) || OPTIONS+=( " - Norminette testeur desable" )
+[[ ${NORM} -eq 1 ]] && OPTIONS+=( "  ${G0}✓ Norminette testeur enable${E}" ) || OPTIONS+=( "  ${G0}✘ Norminette testeur desable${E}" )
 if [[ ${has_b} -eq 0 ]];then
-    [[ ${TRIPOUILLE_LIBFT} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for libft()" )
-    [[ ${TRIPOUILLE_GNL} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for get_next_line()" )
-    [[ ${TRIPOUILLE_PRINTF} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for ft_printf()" )
-    [[ ${MY_UNITESTS_LIBFT} -eq 1 ]] && OPTIONS+=( " - My unitests enable for libft()" )
-    [[ ${MY_UNITESTS_GNL} -eq 1 ]] && OPTIONS+=( " - My unitests enable for get_next_line()" )
-    [[ ${MY_UNITESTS_PRINTF} -eq 1 ]] && OPTIONS+=( " - My unitests enable for ft_printf()" )
+    [[ ${TRIPOUILLE_LIBFT} -eq 1 ]]   && OPTIONS+=( "  ${G0}✓ Tripouille test enable for libft()${E}" )
+    [[ ${TRIPOUILLE_GNL} -eq 1 ]]     && OPTIONS+=( "  ${G0}✓ Tripouille test enable for get_next_line()${E}" )
+    [[ ${TRIPOUILLE_PRINTF} -eq 1 ]]  && OPTIONS+=( "  ${G0}✓ Tripouille test enable for ft_printf()${E}" )
+    [[ ${MY_UNITESTS_LIBFT} -eq 1 ]]  && OPTIONS+=( "  ${G0}✓ My unitests enable for libft()${E}" )
+    [[ ${MY_UNITESTS_GNL} -eq 1 ]]    && OPTIONS+=( "  ${G0}✓ My unitests enable for get_next_line()${E}" )
+    [[ ${MY_UNITESTS_PRINTF} -eq 1 ]] && OPTIONS+=( "  ${G0}✓ My unitests enable for ft_printf()${E}" )
 else
-    [[ ${TRIPOUILLE_LIBFT} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for libft() with bonus" )
-    [[ ${TRIPOUILLE_GNL} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for get_next_line() with bonus" )
-    [[ ${TRIPOUILLE_PRINTF} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for ft_printf() with bonus" )
-    [[ ${MY_UNITESTS_LIBFT} -eq 1 ]] && OPTIONS+=( " - My unitests enable for libft() with bonus" )
-    [[ ${MY_UNITESTS_GNL} -eq 1 ]] && OPTIONS+=( " - My unitests enable for get_next_line() with bonus" )
-    [[ ${MY_UNITESTS_PRINTF} -eq 1 ]] && OPTIONS+=( " - My unitests enable for ft_printf() with bonus" )
+    [[ ${TRIPOUILLE_LIBFT} -eq 1 ]]   && OPTIONS+=( "  ${G0}✓ Tripouille test enable for libft() with bonus${E}" )
+    [[ ${TRIPOUILLE_GNL} -eq 1 ]]     && OPTIONS+=( "  ${G0}✓ Tripouille test enable for get_next_line() with bonus${E}" )
+    [[ ${TRIPOUILLE_PRINTF} -eq 1 ]]  && OPTIONS+=( "  ${G0}✓ Tripouille test enable for ft_printf() with bonus${E}" )
+    [[ ${MY_UNITESTS_LIBFT} -eq 1 ]]  && OPTIONS+=( "  ${G0}✓ My unitests enable for libft() with bonus${E}" )
+    [[ ${MY_UNITESTS_GNL} -eq 1 ]]    && OPTIONS+=( "  ${G0}✓ My unitests enable for get_next_line() with bonus${E}" )
+    [[ ${MY_UNITESTS_PRINTF} -eq 1 ]] && OPTIONS+=( "  ${G0}✓ My unitests enable for ft_printf() with bonus${E}" )
 fi
 # -[ SET HOMEMADE AND BUILTIN LISTS ]-------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
@@ -367,9 +370,11 @@ else
 fi
 
 # =[ 0.1 | DISPLAY ENABLED OPTIONS ]==========================================================================
-print_in_box -t 0 -c b "🔘 ${G0}${OPTIONS[@]}${E}"
+print_in_box -t 1 -c b "🟦 ${OPTIONS[@]}"
 # =[ 0.2 | DISPLAY LIST HOME-MADE FUN ]=======================================================================
+#print_in_box -t 1 -c b "🟦 ${HOMEMADE_FUNUSED[@]}"
 # =[ 0.3 | DISPLAY LIST BUILD-IN FUN ]========================================================================
+#print_in_box -t 1 -c b "🟦 ${BUILTIN_FUNUSED[@]}"
 # =[ 0.4 | CHECK NORMINETTE ]=================================================================================
 if [[ ${NORM} -eq 1 ]];then
     exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
