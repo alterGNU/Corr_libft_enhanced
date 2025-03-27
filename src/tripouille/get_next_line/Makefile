@@ -5,8 +5,8 @@ UTILS					= utils/sigsegv.cpp utils/color.cpp utils/check.cpp utils/gnl.cpp util
 TESTS_PATH				= tests/
 SHELL					= bash
 
-LIBFT_A					= $(shell find ../../.. -name 'libft.a' 2>/dev/null | head -n 1)
-LIBFT_H					= $(shell find ../../.. -name 'libft.h' 2>/dev/null | head -n 1)
+LIBFT_A					= $(shell find ../../../.. -name 'libft.a' 2>/dev/null | head -n 1)
+LIBFT_H					= $(shell find ../../../.. -name 'libft.h' 2>/dev/null | head -n 1)
 INCLUDE					= $(shell dirname $(LIBFT_H))
 
 MANDATORY				= mandatory

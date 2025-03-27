@@ -372,13 +372,46 @@ fi
 # =[ 0.1 | DISPLAY ENABLED OPTIONS ]==========================================================================
 print_in_box -t 1 -c b "🟦 ${OPTIONS[@]}"
 # =[ 0.2 | DISPLAY LIST HOME-MADE FUN ]=======================================================================
+# TODO
 #print_in_box -t 1 -c b "🟦 ${HOMEMADE_FUNUSED[@]}"
 # =[ 0.3 | DISPLAY LIST BUILD-IN FUN ]========================================================================
+# TODO
 #print_in_box -t 1 -c b "🟦 ${BUILTIN_FUNUSED[@]}"
 # =[ 0.4 | CHECK NORMINETTE ]=================================================================================
 if [[ ${NORM} -eq 1 ]];then
     exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
     res_normi=${?}
+fi
+# =[ LAUNCH MY_TESTS FIRST ]==================================================================================
+# -[ LIBFT ]--------------------------------------------------------------------------------------------------
+if [[ ${MY_UNITESTS_LIBFT} -eq 1 ]];then
+    exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_MANDA" "Tests libft mandatory functions"
+    # -[ LIBFT_BONUS if BONUS opt or if any libft_bonus fun detected in libft.a ]-----------------------------
+    if [[ ${BONUS} -eq 1 ]];then 
+        exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
+    else
+        for fun in ${HOMEMADE_FUNUSED[@]};do
+            if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+                exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
+                break
+            fi
+        done
+    fi
+fi
+# -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
+# TODO
+# -[ GET_NEXT_LINE BONUS ]------------------------------------------------------------------------------------
+# TODO
+# -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
+# TODO
+# -[ FT_PRINTF BONUS ]----------------------------------------------------------------------------------------
+# TODO
+# =[ LAUNCH TRIPOUILLE ]======================================================================================
+# -[ LIBFT ]--------------------------------------------------------------------------------------------------
+# TODO
+if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
+    make -C ${PARENT_DIR}/src/tripouille/libft m
+    [[ ${BONUS} -eq 1 ]] && make -C ${PARENT_DIR}/src/tripouille/libft b
 fi
 ## =[ IF OPTIONS LAUNCH TESTERS, ELSE LAUNCH MINE ]============================================================
 #if [[ ${#OPTIONS[@]} -ne 0 ]];then
@@ -391,7 +424,6 @@ fi
 #    # =[ START MESSAGE ]======================================================================================
 #    print_in_box -t 2 -c y "🔶 ${Y0}START Libft_Enhanced's Tests${E}"
 #    # =[ LAUNCH TEST FOR LIBFT MANDATORY PART ]===============================================================
-#    exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_MANDA" "Tests libft mandatory functions"
 #    # =[ LAUNCH TESTS FOR LIBFT BONUS PART (IT AT LEAST ON BONUS FUNCTION FOUND ]=============================
 #    for fun in ${HOMEMADE_FUNUSED[@]};do
 #        if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
