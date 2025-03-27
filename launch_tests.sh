@@ -408,10 +408,25 @@ fi
 # TODO
 # =[ LAUNCH TRIPOUILLE ]======================================================================================
 # -[ LIBFT ]--------------------------------------------------------------------------------------------------
-# TODO
 if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
     make -C ${PARENT_DIR}/src/tripouille/libft m
-    [[ ${BONUS} -eq 1 ]] && make -C ${PARENT_DIR}/src/tripouille/libft b
+    # -[ LIBFT_BONUS if BONUS opt or if any libft_bonus fun detected in libft.a ]-----------------------------
+    if [[ ${BONUS} -eq 1 ]];then 
+        make -C ${PARENT_DIR}/src/tripouille/libft b
+    else
+        for fun in ${HOMEMADE_FUNUSED[@]};do
+            if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+                make -C ${PARENT_DIR}/src/tripouille/libft b
+                break
+            fi
+        done
+    fi
+fi
+# -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
+if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
+    make -C ${PARENT_DIR}/src/tripouille/get_next_line m
+    # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
+    [[ ${BONUS} -eq 1 ]] && make -C ${PARENT_DIR}/src/tripouille/get_next_line b
 fi
 ## =[ IF OPTIONS LAUNCH TESTERS, ELSE LAUNCH MINE ]============================================================
 #if [[ ${#OPTIONS[@]} -ne 0 ]];then
