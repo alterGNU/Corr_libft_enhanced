@@ -313,7 +313,7 @@ for args in "$@";do
     case "${args}" in
         --[Aa]ll | -[Aa]) has_a=1 ;;
         --[Tt]ripouille | -[Tt]) has_t=1 ;;
-        --[Li]bft | -lft | -l) has_l=1 ;;
+        --[Li]bft | -[Ll][Ff][Tt] | -[Ll]) has_l=1 ;;
         --[Gg]et[Nn]ext[Ll]ine | --[Gg]et_[Nn]ext_[Ll]ine | -[Gg][Nn][Ll] | -[Gg]) has_g=1 ;;
         --ft_printf | --printf | --print | -[Pp] ) has_p=1 ;;
         --[Bb]onus | -[Bb] ) has_b=1 ;;
@@ -329,9 +329,9 @@ done
 # -[ SET OPTIONS VARIABLES ]----------------------------------------------------------------------------------
 [[ ${has_a} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_GNL=1 && MY_UNITESTS_PRINTF=1
 [[ ${has_t} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=0
-[[ ${has_l} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=0 && TRIPOUILLE_PRINTF=0 && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=0
-[[ ${has_g} -eq 1 ]] && TRIPOUILLE_LIBFT=0 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=0 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=1 && MY_UNITESTS_PRINTF=0
-[[ ${has_p} -eq 1 ]] && TRIPOUILLE_LIBFT=0 && TRIPOUILLE_GNL=0 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=1
+[[ ${has_l} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && MY_UNITESTS_LIBFT=1
+[[ ${has_g} -eq 1 ]] && TRIPOUILLE_GNL=1 && MY_UNITESTS_GNL=1
+[[ ${has_p} -eq 1 ]] && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_PRINTF=1
 [[ ${has_b} -eq 1 ]] && BONUS=1
 [[ ${has_h} -eq 1 ]] && HELP=1
 [[ ${has_n} -eq 1 ]] && NORM=0
