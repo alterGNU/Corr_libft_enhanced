@@ -2,21 +2,47 @@
 
 # ============================================================================================================
 # Launch libft.a tests
-# This script take no argument (for now) and will automatically:
-#   - 1: check norminette for libft folder, excluding Corr_libft_enhancde folder, tests dont comply with norme
-#   - 2: list all home-made fun in libft.a
-#   - 3: list all build-in fun in libft.a
-#   - 4: launch libft mandatory functions tests.
-#   - 5: if detected at least one fun of libft_bonus part, launch test for all libft_bonus functions.
-#   - 6: if detected ft_printf() in libft.a, launch tests for ft_printf() tests (bonus too, auto)
-#   - 7: if detected get_next_line() in libft.a, launch tests for get_next_line() tests (bonus too, auto)
+# This script take options as arguments:
+#  - SCRIPT ARGUMENTS:
+#    - NO-ARGS                       🢥  Default= enable:MY_UNITEST, desable:BONUS,TRIPOUILLE
+#    - ARGS ∈ {--no-norm, -n}        🢥  Desable the NORMINETTE tester (DEFAULT ENABLE)
+#    - ARGS ∈ {--help, -h}           🢥  Enable HELP option that display script usage
+#    - ARGS ∈ {--tripouille, -t}     🢥  Enable TRIPOUILLE option && Disable MY_UNITEST option
+#    - ARGS ∈ {--all, -a}            🢥  Enable TRIPOUILLE option && Enable  MY_UNITEST option
+#    - ARGS ∈ {--bonus, -b}          🢥  Enable Bonus for ({MY_UNITEST, Tripouille}{libft,gnl,ft_printf}
+#    - ARGS ∈ {--libft, -lft}        🢥  Enable test ONLY FOR LIBFT {MY_UNITEST, Tripouille}
+#    - ARGS ∈ {--ft_printf, -p}      🢥  Enable test ONLY FOR FT_PRINTF {MY_UNITEST, Tripouille}
+#    - ARGS ∈ {--get_next_line, -gnl}🢥  Enable test ONLY FOR GET_NEXT_LINE {MY_UNITEST, Tripouille}
+#  - CODE OPERATION:
+#    - 0| IN ANY CASE:
+#        - 0.0| display all enabled options
+#        - 0.1| display list all home-made fun in libft.a
+#        - 0.2| display list all build-in fun in libft.a
+#        - 0.3| check norminette for libft folder, excluding Corr_libft_enhancde folder, tests dont comply with norme
+#    - 1| IF TRIPOUILLE OPTION ENABLE:
+#        - 1.1| launch tripouille-tests for libft mandatory functions.
+#        - 1.2| if at least one libft_bonus_fun ∈  libft.a   🢥  launch tripouille-tests for all libft_bonus_fun.
+#        - 1.3| if ft_printf()                  ∈  libft.a   🢥  launch tripouille-tests for ft_printf_fun.
+#        - 1.4| if get_next_line()              ∈  libft.a   🢥  launch tripouille-tests for gnl_fun.
+#    - 2| IF MY_UNITEST OPTION ENABLE:
+#        - 2.0| launch my libft mandatory unitests.
+#        - 2.1| if at least one libft_bonus_fun ∈  libft.a   🢥  launch my unitests for all libft_bonus_fun.
+#        - 2.2| if ft_printf()                  ∈  libft.a   🢥  launch my unitests for ft_printf fun.
+#        - 2.3| if get_next_line()              ∈  libft.a   🢥  launch my unitests for gnl fun.
+#        - 2.4| if an unitest filename   ⊂  function's name  🢥  launch this unitests (check personnal fun.)
 # ============================================================================================================
  
-# =[ # =[ VARIABLES ]============================================================================================== ]
+# =[ VARIABLES ]==============================================================================================
 # -[ SCRIPT OPTIONS ]-----------------------------------------------------------------------------------------
-TRIPOUILLE_LIBFT=0                                                 # ☒ Tripouille tester option for libft()
-TRIPOUILLE_GNL=0                                                   # ☒ Tripouille tester option for get_next_line()
-TRIPOUILLE_PRINTF=0                                                # ☒ Tripouille tester option for ft_printf()
+HELP=0                                                             # ☒ OPTION when set at 1🢥 Display script usage
+BONUS=0                                                            # ☒ OPTION when set at 1🢥 launch all test with bonus option
+NORMI=1                                                            # ☒ OPTION when set at 1🢥 launch NORMINETTE TESTER
+MY_UNITEST_LIBFT=1                                                 # ☒ OPTION when set at 1🢥 launch my tester for LIBFT(DEFAULT)
+MY_UNITEST_GNL=1                                                   # ☒ OPTION when set at 1🢥 launch my tester for GNL(DEFAULT)
+MY_UNITEST_PRINTF=1                                                # ☒ OPTION when set at 1🢥 launch my tester for PRINTF(DEFAULT)
+TRIPOUILLE_LIBFT=0                                                 # ☒ OPTION when set at 1🢥 launch Tripouille for libft()
+TRIPOUILLE_GNL=0                                                   # ☒ OPTION when set at 1🢥 launch Tripouille for get_next_line()
+TRIPOUILLE_PRINTF=0                                                # ☒ OPTION when set at 1🢥 launch Tripouille for ft_printf()
 # -[ PATH/FOLDER/FILE ]---------------------------------------------------------------------------------------
 SCRIPTNAME=${0##*\/}                                               # ☒ Script's name (no path)
 PARENT_DIR=$(dirname $(realpath ${0}))                             # ☒ Name of parent directory
@@ -32,7 +58,7 @@ CC="cc -Wall -Wextra -Werror -I${LIBFT_INC}"
 VAL_ERR=42
 VALGRIND="valgrind --leak-check=full --track-fds=yes --error-exitcode=${VAL_ERR}"
 # -[ LISTS ]--------------------------------------------------------------------------------------------------
-OPTIONS=( )                                                        # ☒ List of script options enabled
+OPTIONS=("LIST OF ALL ACTIVATED OPTIONS:" )                        # ☒ List of script options enabled
 HOMEMADE_FUNUSED=( )                                               # ☒ List of user created function in libft.a
 BUILTIN_FUNUSED=( )                                                # ☒ List of build-in function in libft.a
 EXCLUDE_NORMI_FOLD=( "tests" "${PARENT_DIR##*\/}" )                # ☒ List of folder to be ignore by norminette
@@ -70,6 +96,7 @@ source ${BSL_DIR}/src/print.sh
 # =[ FUNCTIONS ]==============================================================================================
 # -[ USAGE ]--------------------------------------------------------------------------------------------------
 # Display usage with arg1 as error_msg and arg2 as exit_code
+# TODO UPDATE usage to add options.
 script_usage()
 {
     echo -e "${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME}\`${E}"
@@ -279,31 +306,52 @@ display_resume()
 # =[ CHECK IF LIBFT.A FOUNDED ]===============================================================================
 [[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${BC0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
 # =[ HANDLE SCRIPTS OPTIONS ]=================================================================================
-# -[ SET OPTIONS VARIABLES ]----------------------------------------------------------------------------------
+has_a=0 ; has_t=0 ; has_l=0 ; has_g=0 ; has_p=0 ; has_b=0 ; has_h=0
 for args in "$@";do
     shift
     case "${args}" in
-        --[Tt]ripouille | -[Tt])
-            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL + 1))
-            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT + 1))
-            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF + 1))
-            ;;
-        [Gg][Nn][Ll] | get_next_line)
-            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL + 1))
-            ;;
-        [Li]bft)
-            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT + 1))
-            ;;
-        ft_printf | printf)
-            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF + 1))
-            ;;
+        --[Aa]ll | -[Aa]) has_a=1 ;;
+        --[Tt]ripouille | -[Tt]) has_t=1 ;;
+        --[Li]bft | -lft | -l) has_l=1 ;;
+        --[Gg]et[Nn]ext[Ll]ine | --[Gg]et_[Nn]ext_[Ll]ine | -[Gg][Nn][Ll] | -[Gg]) has_g=1 ;;
+        --ft_printf | --printf | --print | -[Pp] ) has_p=1 ;;
+        --[Bb]onus | -[Bb] ) has_b=1 ;;
+        --[Hh]elp | -[Hh] ) has_h=1 ;;
+        *) script_usage "Error: Unknown option '${args}'" 1 ;;
     esac
 done
+# -[ CHECK FORBIDDEN OPTIONS COMBINATION ]--------------------------------------------------------------------
+[[ ( ${has_h} -eq 1 ) && ( ${#} -gt 1 ) ]] && script_usage "--help option can not be paired with other option" 3
+[[ ( ${has_a} -eq 1 ) && (( ${#} -eq 2 && ${has_b} -eq 0 ) || ( ${#} -gt 2)) ]] && script_usage "--all option can only be paired with --bonus option" 3
+[[ ( ${has_t} -eq 1 ) && (( ${#} -eq 2 && ${has_b} -eq 0 ) || ( ${#} -gt 2)) ]] && script_usage "--tripouille option can only be paired with --bonus option" 3
+# -[ SET OPTIONS VARIABLES ]----------------------------------------------------------------------------------
+[[ ${has_a} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_GNL=1 && MY_UNITESTS_PRINTF=1
+[[ ${has_t} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=0
+[[ ${has_l} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=0 && TRIPOUILLE_PRINTF=0 && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=0
+[[ ${has_g} -eq 1 ]] && TRIPOUILLE_LIBFT=0 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=0 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=1 && MY_UNITESTS_PRINTF=0
+[[ ${has_p} -eq 1 ]] && TRIPOUILLE_LIBFT=0 && TRIPOUILLE_GNL=0 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=1
+[[ ${has_b} -eq 1 ]] && BONUS=1
+[[ ${has_h} -eq 1 ]] && HELP=1
+# =[ DISPLAY USAGE THEN STOP IF --help OPTION ]===============================================================
+[[ ${HELP} -eq 1 ]] && usage "Help asked" 0
 # =[ SET LISTS ]==============================================================================================
 # -[ SET OPTIONS LIST ]---------------------------------------------------------------------------------------
-[[ ${TRIPOUILLE_LIBFT} -eq 0 ]] || OPTIONS+=( " - Tripouille enable for libft()" )
-[[ ${TRIPOUILLE_GNL} -eq 0 ]] || OPTIONS+=( " - Tripouille enable for get_next_line()" )
-[[ ${TRIPOUILLE_PRINTF} -eq 0 ]] || OPTIONS+=( " - Tripouille enable for ft_printf()" )
+[[ ${NORMI} -eq 1 ]] && OPTIONS+=( " - Norminette testeur enable" ) || OPTIONS+=( " - Norminette testeur desable" )
+if [[ ${has_b} -eq 0 ]];then
+    [[ ${TRIPOUILLE_LIBFT} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for libft()" )
+    [[ ${TRIPOUILLE_GNL} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for get_next_line()" )
+    [[ ${TRIPOUILLE_PRINTF} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for ft_printf()" )
+    [[ ${MY_UNITESTS_LIBFT} -eq 1 ]] && OPTIONS+=( " - My unitests enable for libft()" )
+    [[ ${MY_UNITESTS_GNL} -eq 1 ]] && OPTIONS+=( " - My unitests enable for get_next_line()" )
+    [[ ${MY_UNITESTS_PRINTF} -eq 1 ]] && OPTIONS+=( " - My unitests enable for ft_printf()" )
+else
+    [[ ${TRIPOUILLE_LIBFT} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for libft() with bonus" )
+    [[ ${TRIPOUILLE_GNL} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for get_next_line() with bonus" )
+    [[ ${TRIPOUILLE_PRINTF} -eq 1 ]] && OPTIONS+=( " - Tripouille test enable for ft_printf() with bonus" )
+    [[ ${MY_UNITESTS_LIBFT} -eq 1 ]] && OPTIONS+=( " - My unitests enable for libft() with bonus" )
+    [[ ${MY_UNITESTS_GNL} -eq 1 ]] && OPTIONS+=( " - My unitests enable for get_next_line() with bonus" )
+    [[ ${MY_UNITESTS_PRINTF} -eq 1 ]] && OPTIONS+=( " - My unitests enable for ft_printf() with bonus" )
+fi
 # -[ SET HOMEMADE AND BUILTIN LISTS ]-------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
     for fun in $(nm -C "${LIBFT_A}" | awk '$2 == "T" {print $3}' | sort | uniq);do
@@ -317,37 +365,43 @@ if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive
 else
     echo -e "${BC0}${LIBFT_A}${E} is not an object file\033[m"
 fi
-# =[ CHECK NORMINETTE ]=======================================================================================
-exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
-res_normi=${?}
-# =[ IF OPTIONS LAUNCH TESTERS, ELSE LAUNCH MINE ]============================================================
-if [[ ${#OPTIONS[@]} -ne 0 ]];then
-    # -[ DISPLAY SCRIPT OPTIONS ]-----------------------------------------------------------------------------
-    print_in_box -t 0 -c b "🔘 ${G0}${OPTIONS[@]}${E}"
-    # -[ CHECK IF GNL, THEN LAUNCH TRIPOUILLE ]---------------------------------------------------------------
-    [[ ! " ${LIBFT_BONUS[@]} " =~ " get_next_line " ]] && make -C ${PARENT_DIR}/src/tripouille a
-else
-    # =[ CREATE LOG_DIR ]=====================================================================================
-    [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
-    # =[ START MESSAGE ]======================================================================================
-    print_in_box -t 2 -c y "🔶 ${Y0}START Libft_Enhanced's Tests${E}"
-    # =[ LAUNCH TEST FOR LIBFT MANDATORY PART ]===============================================================
-    exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_MANDA" "Tests libft mandatory functions"
-    # =[ LAUNCH TESTS FOR LIBFT BONUS PART (IT AT LEAST ON BONUS FUNCTION FOUND ]=============================
-    for fun in ${HOMEMADE_FUNUSED[@]};do
-        if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
-            exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
-            break
-        fi
-    done
-    # =[ LAUNCH TESTS FOR FT_PRINTF IF FOUND IN LIBFT.A ]=====================================================
-    #TODO
-    #exec_anim_in_box "launch_unitests ft_printf ft_printf" "Tests other functions"
-    # =[ LAUNCH TESTS FOR GET_NEXT_LINE IF FOUND IN LIBFT.A ]=================================================
-    #TODO --> launch on option
-    ## =[ LAUNCH TESTS FOR OTHERS FUNCTION ]==================================================================
-    PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "ft_printf" "get_next_line" )))
-    exec_anim_in_box "launch_unitests PERSO_FUN" "Tests other functions"
-    # =[ RESUME ]=============================================================================================
-    display_resume "Libft's tests"
+
+# =[ 0.1 | DISPLAY ENABLED OPTIONS ]==========================================================================
+print_in_box -t 0 -c b "🔘 ${G0}${OPTIONS[@]}${E}"
+# =[ 0.2 | DISPLAY LIST HOME-MADE FUN ]=======================================================================
+# =[ 0.3 | DISPLAY LIST BUILD-IN FUN ]========================================================================
+# =[ 0.4 | CHECK NORMINETTE ]=================================================================================
+if [[ ${NORM} -eq 1 ]];then
+    exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+    res_normi=${?}
 fi
+## =[ IF OPTIONS LAUNCH TESTERS, ELSE LAUNCH MINE ]============================================================
+#if [[ ${#OPTIONS[@]} -ne 0 ]];then
+#    # -[ DISPLAY SCRIPT OPTIONS ]-----------------------------------------------------------------------------
+#    # -[ CHECK IF GNL, THEN LAUNCH TRIPOUILLE ]---------------------------------------------------------------
+#    [[ ! " ${LIBFT_BONUS[@]} " =~ " get_next_line " ]] && make -C ${PARENT_DIR}/src/tripouille a
+#else
+#    # =[ CREATE LOG_DIR ]=====================================================================================
+#    [[ ! -d ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
+#    # =[ START MESSAGE ]======================================================================================
+#    print_in_box -t 2 -c y "🔶 ${Y0}START Libft_Enhanced's Tests${E}"
+#    # =[ LAUNCH TEST FOR LIBFT MANDATORY PART ]===============================================================
+#    exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_MANDA" "Tests libft mandatory functions"
+#    # =[ LAUNCH TESTS FOR LIBFT BONUS PART (IT AT LEAST ON BONUS FUNCTION FOUND ]=============================
+#    for fun in ${HOMEMADE_FUNUSED[@]};do
+#        if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+#            exec_anim_in_box "launch_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
+#            break
+#        fi
+#    done
+#    # =[ LAUNCH TESTS FOR FT_PRINTF IF FOUND IN LIBFT.A ]=====================================================
+#    #TODO
+#    #exec_anim_in_box "launch_unitests ft_printf ft_printf" "Tests other functions"
+#    # =[ LAUNCH TESTS FOR GET_NEXT_LINE IF FOUND IN LIBFT.A ]=================================================
+#    #TODO --> launch on option
+#    ## =[ LAUNCH TESTS FOR OTHERS FUNCTION ]==================================================================
+#    PERSO_FUN=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "ft_printf" "get_next_line" )))
+#    exec_anim_in_box "launch_unitests PERSO_FUN" "Tests other functions"
+#    # =[ RESUME ]=============================================================================================
+#    display_resume "Libft's tests"
+#fi
