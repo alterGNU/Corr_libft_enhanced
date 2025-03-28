@@ -12,7 +12,7 @@ int	compare(char *str)
 	ft = ft_strlen(str);
 	if (!str)
 	{
-		printf("strlen(%s) = real:UB, ft_strlen(%s)=%d",str , str, ft);
+		printf("strlen(%s) = real:UB, ft_strlen(%s)=%ld",str , str, ft);
 		if (ft == 0)
 			return ( printf("----> PASS!\n") , 0);
 		return ( printf("----> FAIL!\n") , 1);
