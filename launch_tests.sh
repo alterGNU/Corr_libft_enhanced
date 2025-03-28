@@ -340,6 +340,7 @@ done
 [[ ( ${has_h} -eq 1 ) && ( ${NB_ARG} -gt 1 ) ]] && script_usage "--help option can not be paired with other option" 3
 [[ ( ${has_a} -eq 1 ) && ( ${ARG_COUNT} -gt 2 || ( ${ARG_COUNT} -eq 2 && ${has_b} -eq 0 && ${has_n} -eq 0 )) ]] && script_usage "--all option can only be paired with --bonus option" 3
 [[ ( ${has_t} -eq 1 ) && ( ${ARG_COUNT} -gt 2 || ( ${ARG_COUNT} -eq 2 && ${has_b} -eq 0 && ${has_n} -eq 0 )) ]] && script_usage "--tripouille option can only be paired with --bonus option" 3
+[[ ${ARG_COUNT} -eq 2 && ${has_b} -eq 1 && ${has_o} -eq 1 ]] && script_usage "--bonus option does not means anything for --others option" 3
 # -[ SET OPTIONS VARIABLES ]----------------------------------------------------------------------------------
 [[ ${has_a} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_GNL=1 && MY_UNITESTS_PRINTF=1 && MY_UNITESTS_OTHERS=1
 [[ ${has_t} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=0
@@ -402,7 +403,7 @@ if [[ $(( TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -gt 0 ]];then
         [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part${E}" )
     fi
 fi
-if [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF )) -gt 0 ]];then
+if [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS)) -gt 0 ]];then
     OPTIONS+=( "    🔸 ${YU}My_unitests tester:${E}" )
     if [[ ${MY_UNITESTS_LIBFT} -eq 1 ]];then
         OPTIONS+=( "      🔸 ${YU}libft functions:${E}" "         ${V0}✓ MANDATORY part${E}" )
@@ -437,7 +438,7 @@ if [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF )) -gt 0 ]];t
             break
         fi
     fi
-    if [[ ${#PERSO_FUN[@]} -ne 0 ]];then
+    if [[ ${MY_UNITESTS_OTHERS} -eq 1 ]];then
         OPTIONS+=( "      🔸 ${YU}${#PERSO_FUN[@]} Personnal/Other functions detected:${E}" )
         if [[ ${#PERSO_FUN_TO_TEST[@]} -eq 0 ]];then
             OPTIONS+=( "         ${R0}✘ no matching tester found${E}" )
