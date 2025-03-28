@@ -354,7 +354,7 @@ done
 # =[ DISPLAY USAGE THEN STOP IF --help OPTION ]===============================================================
 [[ ${HELP} -eq 1 ]] && script_usage "Help asked for" 0
 # =[ SET MY_UNITEST LIBFT AS DEFAULT BEHAVIOR ]===============================================================
-[[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS + TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -eq 0 ]] && MY_UNITESTS_LIBFT=1;
+[[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS + TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -eq 0 ]] && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_OTHERS=1;
 # =[ SET LISTS ]==============================================================================================
 # -[ SET HOMEMADE AND BUILTIN LISTS ]-------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
@@ -481,14 +481,14 @@ if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
         "    ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏           ┓         ${E}" \
         "    ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┏┳┓┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
         "    ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┛┗┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-    make -C ${PARENT_DIR}/src/tripouille/libft m
+    make -s -C ${PARENT_DIR}/src/tripouille/libft m
     # -[ LIBFT_BONUS if BONUS opt or if any libft_bonus fun detected in libft.a ]-----------------------------
     if [[ ${BONUS} -eq 1 ]];then 
         print_in_box -t 3 -c b \
         "    ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
         "    ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
         "    ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
-        make -C ${PARENT_DIR}/src/tripouille/libft b
+        make -s -C ${PARENT_DIR}/src/tripouille/libft b
     else
         for fun in ${HOMEMADE_FUNUSED[@]};do
             if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
@@ -496,31 +496,45 @@ if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
                     "    ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
                     "    ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
                     "    ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
-                make -C ${PARENT_DIR}/src/tripouille/libft b
+                make -s -C ${PARENT_DIR}/src/tripouille/libft b
                 break
             fi
         done
     fi
 fi
-# -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
-if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
+# -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
+if [[ ${TRIPOUILLE_PRINT} -eq 1 ]];then
     print_in_box -t 3 -c b \
-        "${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •    ${E}" \
-        "${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓${E}" \
-        "${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗ ${E}" \
-        "${BC0}      ┛                                   ${E}"
-    make -C ${PARENT_DIR}/src/tripouille/get_next_line m
+        "${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
+        "${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+        "${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+    make -s -C ${PARENT_DIR}/src/tripouille/ft_printf m
     # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
     if [[ ${BONUS} -eq 1 ]];then
         print_in_box -t 3 -c b \
-            "${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •    ${E}" \
-            "${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓${E}" \
-            "${BC0} ┻ ┛ ┗┣┛┗┛┗┻┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗ ${E}" \
-            "${BC0}      ┛                                   ${E}"
-        make -C ${PARENT_DIR}/src/tripouille/get_next_line b
+            "${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
+            "${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
+            "${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
+        make -s -C ${PARENT_DIR}/src/tripouille/ft_printf b
     fi
 fi
-## =[ MY_UNITESTS ]============================================================================================
+# -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
+if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
+    print_in_box -t 3 -c b \
+        "${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
+        "${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+        "${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+    make -s -C ${PARENT_DIR}/src/tripouille/get_next_line m
+    # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
+    if [[ ${BONUS} -eq 1 ]];then
+        print_in_box -t 3 -c b \
+            "${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
+            "${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
+            "${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
+        make -s -C ${PARENT_DIR}/src/tripouille/get_next_line b
+    fi
+fi
+# =[ MY_UNITESTS ]============================================================================================
 print_in_box -t 2 -c y \
     "           ${Y0}  __  __                _   _          _   _                _        ${E}" \
     "           ${Y0} |  \/  |  _  _   ___  | | | |  _ _   (_) | |_   ___   ___ | |_   ___${E}" \
