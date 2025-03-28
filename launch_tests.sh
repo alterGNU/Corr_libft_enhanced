@@ -396,11 +396,11 @@ if [[ $(( TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -gt 0 ]];then
     fi
     if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
         OPTIONS+=( "      🔸 ${YU}get_next_line():${E}" "         ${V0}✓ MANDATORY part${E}" )
-        [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part${E}" )
+        [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
     fi
     if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
         OPTIONS+=( "      🔸 ${YU}ft_printf():${E}" "         ${V0}✓ MANDATORY part${E}" )
-        [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part${E}" )
+        [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
     fi
 fi
 if [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS)) -gt 0 ]];then
@@ -478,24 +478,24 @@ fi
 # -[ LIBFT ]--------------------------------------------------------------------------------------------------
 if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
     print_in_box -t 3 -c b \
-        "    ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏           ┓         ${E}" \
-        "    ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┏┳┓┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-        "    ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┛┗┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+        "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏           ┓         ${E}" \
+        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┏┳┓┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┛┗┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
     make -s -C ${PARENT_DIR}/src/tripouille/libft m
     # -[ LIBFT_BONUS if BONUS opt or if any libft_bonus fun detected in libft.a ]-----------------------------
     if [[ ${BONUS} -eq 1 ]];then 
         print_in_box -t 3 -c b \
-        "    ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
-        "    ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
-        "    ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
+        "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
+        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
+        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
         make -s -C ${PARENT_DIR}/src/tripouille/libft b
     else
         for fun in ${HOMEMADE_FUNUSED[@]};do
             if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
                 print_in_box -t 3 -c b \
-                    "    ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
-                    "    ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
-                    "    ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
+                    "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
+                    "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
+                    "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
                 make -s -C ${PARENT_DIR}/src/tripouille/libft b
                 break
             fi
@@ -503,34 +503,34 @@ if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
     fi
 fi
 # -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
-if [[ ${TRIPOUILLE_PRINT} -eq 1 ]];then
+if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
     print_in_box -t 3 -c b \
-        "${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
-        "${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-        "${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+        "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
+        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
     make -s -C ${PARENT_DIR}/src/tripouille/ft_printf m
     # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
     if [[ ${BONUS} -eq 1 ]];then
         print_in_box -t 3 -c b \
-            "${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
-            "${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
-            "${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
+            "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
+            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
+            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
         make -s -C ${PARENT_DIR}/src/tripouille/ft_printf b
     fi
 fi
 # -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
 if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
     print_in_box -t 3 -c b \
-        "${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
-        "${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-        "${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+        "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
+        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
     make -s -C ${PARENT_DIR}/src/tripouille/get_next_line m
     # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
     if [[ ${BONUS} -eq 1 ]];then
         print_in_box -t 3 -c b \
-            "${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
-            "${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
-            "${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
+            "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
+            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
+            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
         make -s -C ${PARENT_DIR}/src/tripouille/get_next_line b
     fi
 fi
@@ -558,12 +558,26 @@ if [[ ${MY_UNITESTS_LIBFT} -eq 1 ]];then
 fi
 # -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
 # TODO
-# -[ GET_NEXT_LINE BONUS ]------------------------------------------------------------------------------------
-# TODO
+if [[ ${MY_UNITESTS_GNL} -eq 1 ]];then
+    #exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_MANDA" "Tests libft mandatory functions"
+    exec_anim_in_box "echo \"execute test for get_next_line() mandatory part\""
+    # -[ LIBFT_BONUS if BONUS opt or if any libft_bonus fun detected in libft.a ]-----------------------------
+    if [[ ${BONUS} -eq 1 ]];then 
+        exec_anim_in_box "echo \"execute test for get_next_line() bonus part\""
+        #exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
+    fi
+fi
 # -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
 # TODO
-# -[ FT_PRINTF BONUS ]----------------------------------------------------------------------------------------
-# TODO
+if [[ ${MY_UNITESTS_PRINTF} -eq 1 ]];then
+    #exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_MANDA" "Tests libft mandatory functions"
+    exec_anim_in_box "echo \"execute test for ft_printf() mandatory part\""
+    # -[ LIBFT_BONUS if BONUS opt or if any libft_bonus fun detected in libft.a ]-----------------------------
+    if [[ ${BONUS} -eq 1 ]];then 
+        exec_anim_in_box "echo \"execute test for ft_printf() bonus part\""
+        #exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
+    fi
+fi
 # -[ PERSONNAL FUNCTIONS ]------------------------------------------------------------------------------------
 if [[ ${MY_UNITESTS_OTHERS} -eq 1 ]];then
     #exec_anim_in_box "launch_my_unitests PERSO_FUN_TO_TEST" "Tests ${#PERSO_FUN_TO_TEST[@]} personnal functions"
@@ -571,4 +585,4 @@ if [[ ${MY_UNITESTS_OTHERS} -eq 1 ]];then
 fi
 # -[ DISPLAY UNITESTS RESUME ]--------------------------------------------------------------------------------
 # TODO
-display_resume "Libft's tests"
+[[ $(( MY_UNITEST_LIBFT + MY_UNITEST_GNL + MY_UNITEST_PRINTF )) -gt 0 ]] && display_resume "Libft's tests"
