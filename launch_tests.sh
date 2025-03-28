@@ -3,33 +3,39 @@
 # ============================================================================================================
 # Launch libft.a tests
 # This script take options as arguments:
-#  - SCRIPT ARGUMENTS:
-#    - NO-ARGS                       🢥  Default= enable:MY_UNITESTS, desable:BONUS,TRIPOUILLE
-#    - ARGS ∈ {--no-norm, -n}        🢥  Desable the NORMINETTE tester (DEFAULT ENABLE)
-#    - ARGS ∈ {--help, -h}           🢥  Enable HELP option that display script usage
-#    - ARGS ∈ {--tripouille, -t}     🢥  Enable TRIPOUILLE option && Disable MY_UNITESTS option
-#    - ARGS ∈ {--all, -a}            🢥  Enable TRIPOUILLE option && Enable  MY_UNITESTS option
-#    - ARGS ∈ {--bonus, -b}          🢥  Enable Bonus for ({MY_UNITESTS, Tripouille}{libft,gnl,ft_printf}
-#    - ARGS ∈ {--libft, -lft}        🢥  Enable test ONLY FOR LIBFT {MY_UNITESTS, Tripouille}
-#    - ARGS ∈ {--ft_printf, -p}      🢥  Enable test ONLY FOR FT_PRINTF {MY_UNITESTS, Tripouille}
-#    - ARGS ∈ {--get_next_line, -gnl}🢥  Enable test ONLY FOR GET_NEXT_LINE {MY_UNITESTS, Tripouille}
-#  - CODE OPERATION:
+#  - ARGUMENTS:
+#    - NO-ARGS                        🢥  Default behavior:enable all MY_UNITESTS_{LIBFT,GNL,PRINTF,OTHERS}->{MY_UNITESTS}
+#    - ARGS ∈ {--help, -h}            🢥  Enable HELP option that display script usage---------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {--no-norm, -n}         🢥  Desable the NORMINETTE tester------------------------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {--bonus, -b}           🢥  Enable Bonus option for all tester-------------------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {--all, -a}             🢥  Enable ALL TRIPOUILLE AND MY_UNITESTS OPTION WITHOUT BONUS-------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {--tripouille, -t}      🢥  Enable ALL TRIPOUILLE && Disable ALL MY_UNITESTS------------------>{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {--libft, -lft}         🢥  Enable test for LIBFT--------------------------------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {--ft_printf, -p}       🢥  Enable test for FT_PRINTF----------------------------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {--get_next_line, -gnl} 🢥  Enable test for GET_NEXT_LINE------------------------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {--other, -o}           🢥  Enable test for OTHERS FUNCTIONS FOUND---------------------------->{MY_UNITESTS}
+#  - MAIN PSEUDO-CODE:
 #    - 0| IN ANY CASE:
 #        - 0.0| display all enabled options
 #        - 0.1| display list all home-made fun in libft.a
-#        - 0.2| display list all build-in fun in libft.a
-#        - 0.3| check norminette for libft folder, excluding Corr_libft_enhancde folder, tests dont comply with norme
-#    - 1| IF TRIPOUILLE OPTION ENABLE:
-#        - 1.1| launch tripouille-tests for libft mandatory functions.
-#        - 1.2| if at least one libft_bonus_fun ∈  libft.a   🢥  launch tripouille-tests for all libft_bonus_fun.
-#        - 1.3| if ft_printf()                  ∈  libft.a   🢥  launch tripouille-tests for ft_printf_fun.
-#        - 1.4| if get_next_line()              ∈  libft.a   🢥  launch tripouille-tests for gnl_fun.
-#    - 2| IF MY_UNITESTS OPTION ENABLE:
-#        - 2.0| launch my libft mandatory unitests.
-#        - 2.1| if at least one libft_bonus_fun ∈  libft.a   🢥  launch my unitests for all libft_bonus_fun.
-#        - 2.2| if ft_printf()                  ∈  libft.a   🢥  launch my unitests for ft_printf fun.
-#        - 2.3| if get_next_line()              ∈  libft.a   🢥  launch my unitests for gnl fun.
-#        - 2.4| if an unitest filename   ⊂  function's name  🢥  launch this unitests (check personnal fun.)
+#        - 0.2| display list all build-in fun in libft.a (ca be use to see forbidden function)
+#    - 1| NORMINETTE-CHECKER:
+#        - 1.1| if NORMI=1                                   🢥  launch norminette-checker, excluding Corr_libft_enhanced folder
+#    - 2| TRIPOUILLE-TESTER:
+#        - 2.0| if TRIPOUILLE_LIBFT=1                        🢥  launch Tripouille-libft for mandatory part
+#          - if BONUS=1 OR if any libft_bonus fun. detected  🢥  launch Tripouille-libft for bonus part
+#        - 2.1| if TRIPOUILLE_PRINTF=1                       🢥  launch Tripouille-ft_printf for mandatory part
+#          - if BONUS=1                                      🢥  launch Tripouille-ft_printf for bonus part
+#        - 2.2| if TRIPOUILLE_GNL=1                          🢥  launch Tripouille-get_next_line for mandatory part
+#          - if BONUS=1                                      🢥  launch Tripouille-get_next_line for bonus part
+#    - 3| MY_UNITEST-TESTER:
+#        - 3.0| if MY_UNITESTS_LIBFT=1                       🢥  launch My_unitests-libft for mandatory part
+#          - if BONUS=1 OR if any libft_bonus fun. detected  🢥  launch My_unitests-libft for bonus part
+#        - 3.1| if MY_UNITESTS_PRINTF=1                      🢥  launch My_unitests-ft_printf for mandatory part
+#          - if BONUS=1                                      🢥  launch My_unitests-ft_printf for bonus part
+#        - 3.2| if MY_UNITESTS_GNL=1                         🢥  launch My_unitests-get_next_line for mandatory part
+#          - if BONUS=1                                      🢥  launch My_unitests-get_next_line for bonus part
+#        - 3.3| if MY_UNITESTS_OTHERS=1                      🢥  launch My_unitests-others (personnal fun for which a matching test was found)
 # ============================================================================================================
  
 # =[ VARIABLES ]==============================================================================================
@@ -40,6 +46,7 @@ NORM=1                                                             # ☑ set:1�
 MY_UNITESTS_LIBFT=0                                                # ☑ set:1🢥 launch my tester for LIBFT(DEFAULT)
 MY_UNITESTS_GNL=0                                                  # ☑ set:1🢥 launch my tester for GNL(DEFAULT)
 MY_UNITESTS_PRINTF=0                                               # ☑ set:1🢥 launch my tester for PRINTF(DEFAULT)
+MY_UNITESTS_OTHERS=0                                               # ☑ set:1🢥 launch my tester for OTHERS_FUNCTION_FOUND(DEFAULT)
 TRIPOUILLE_LIBFT=0                                                 # ☑ set:1🢥 launch Tripouille for libft()
 TRIPOUILLE_GNL=0                                                   # ☑ set:1🢥 launch Tripouille for get_next_line()
 TRIPOUILLE_PRINTF=0                                                # ☑ set:1🢥 launch Tripouille for ft_printf()
@@ -313,7 +320,7 @@ display_resume()
 [[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${BC0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
 # =[ HANDLE SCRIPTS OPTIONS ]=================================================================================
 NB_ARG="${#}"
-has_a=0 ; has_t=0 ; has_l=0 ; has_g=0 ; has_p=0 ; has_b=0 ; has_h=0; has_n=0
+has_a=0 ; has_t=0 ; has_l=0 ; has_g=0 ; has_p=0 ; has_b=0 ; has_h=0; has_n=0; has_o=0
 for args in "$@";do
     shift
     case "${args}" in
@@ -325,6 +332,7 @@ for args in "$@";do
         --[Bb]onus | -[Bb] ) has_b=1 ;;
         --[Hh]elp | -[Hh] ) has_h=1 ;;
         --[Nn]o-[Nn]orm | -[Nn] ) has_n=1 ;;
+        --[Oo]ther | --[Oo]thers | -[Oo] ) has_o=1 ;;
         *) script_usage "Error: Unknown option '${args}'" 1 ;;
     esac
 done
@@ -333,18 +341,19 @@ done
 [[ ( ${has_a} -eq 1 ) && ( ${ARG_COUNT} -gt 2 || ( ${ARG_COUNT} -eq 2 && ${has_b} -eq 0 && ${has_n} -eq 0 )) ]] && script_usage "--all option can only be paired with --bonus option" 3
 [[ ( ${has_t} -eq 1 ) && ( ${ARG_COUNT} -gt 2 || ( ${ARG_COUNT} -eq 2 && ${has_b} -eq 0 && ${has_n} -eq 0 )) ]] && script_usage "--tripouille option can only be paired with --bonus option" 3
 # -[ SET OPTIONS VARIABLES ]----------------------------------------------------------------------------------
-[[ ${has_a} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_GNL=1 && MY_UNITESTS_PRINTF=1
+[[ ${has_a} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_GNL=1 && MY_UNITESTS_PRINTF=1 && MY_UNITESTS_OTHERS=1
 [[ ${has_t} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=0
 [[ ${has_l} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && MY_UNITESTS_LIBFT=1
 [[ ${has_g} -eq 1 ]] && TRIPOUILLE_GNL=1 && MY_UNITESTS_GNL=1
 [[ ${has_p} -eq 1 ]] && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_PRINTF=1
+[[ ${has_o} -eq 1 ]] && MY_UNITESTS_OTHERS=1
 [[ ${has_b} -eq 1 ]] && BONUS=1
 [[ ${has_h} -eq 1 ]] && HELP=1
 [[ ${has_n} -eq 1 ]] && NORM=0
 # =[ DISPLAY USAGE THEN STOP IF --help OPTION ]===============================================================
 [[ ${HELP} -eq 1 ]] && script_usage "Help asked for" 0
 # =[ SET MY_UNITEST LIBFT AS DEFAULT BEHAVIOR ]===============================================================
-[[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -eq 0 ]] && MY_UNITESTS_LIBFT=1;
+[[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS + TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -eq 0 ]] && MY_UNITESTS_LIBFT=1;
 # =[ SET LISTS ]==============================================================================================
 # -[ SET HOMEMADE AND BUILTIN LISTS ]-------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
@@ -541,7 +550,7 @@ fi
 # -[ FT_PRINTF BONUS ]----------------------------------------------------------------------------------------
 # TODO
 # -[ PERSONNAL FUNCTIONS ]------------------------------------------------------------------------------------
-if [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF )) -gt 0 ]];then
+if [[ ${MY_UNITESTS_OTHERS} -eq 1 ]];then
     #exec_anim_in_box "launch_my_unitests PERSO_FUN_TO_TEST" "Tests ${#PERSO_FUN_TO_TEST[@]} personnal functions"
     exec_anim_in_box "launch_my_unitests PERSO_FUN" "Tests ${#PERSO_FUN_TO_TEST[@]}/${#PERSO_FUN[@]} of personnal functions"
 fi
