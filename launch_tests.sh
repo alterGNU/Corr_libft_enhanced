@@ -28,7 +28,7 @@
 #          - if BONUS=1                                      🢥  launch Tripouille-ft_printf for bonus part
 #        - 2.2| if TRIPOUILLE_GNL=1                          🢥  launch Tripouille-get_next_line for mandatory part
 #          - if BONUS=1                                      🢥  launch Tripouille-get_next_line for bonus part
-#    - 3| MY_UNITEST-TESTER:
+#    - 3| MY_UNITESTS-TESTER:
 #        - 3.0| if MY_UNITESTS_LIBFT=1                       🢥  launch My_unitests-libft for mandatory part
 #          - if BONUS=1 OR if any libft_bonus fun. detected  🢥  launch My_unitests-libft for bonus part
 #        - 3.1| if MY_UNITESTS_PRINTF=1                      🢥  launch My_unitests-ft_printf for mandatory part
@@ -295,7 +295,7 @@ display_resume()
         args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${V0} ✅ PASS${E}" ) 
     else
         args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${E}" )
-        args+=( \ "    ${V0}✅ $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED.${E}" \
+        args+=( \ "   ${V0}✅ $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED.${E}" \
             "    ${R0}❌ ${#lst_fail[@]} functions ${R0}FAILLED:${E}" \
         )
         for fun in "${lst_fail[@]}";do
@@ -585,4 +585,4 @@ if [[ ${MY_UNITESTS_OTHERS} -eq 1 ]];then
 fi
 # -[ DISPLAY UNITESTS RESUME ]--------------------------------------------------------------------------------
 # TODO
-[[ $(( MY_UNITEST_LIBFT + MY_UNITEST_GNL + MY_UNITEST_PRINTF )) -gt 0 ]] && display_resume "Libft's tests"
+[[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS)) -gt 0 ]] && display_resume "Libft's tests"
