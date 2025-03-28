@@ -63,6 +63,7 @@ bonus_start:
 print:
 	@echo "libft.a found at:'$(LIBFT_A)'"
 	@echo "libft.h found at:'$(LIBFT_H)' --> -I$(INCLUDE)"
+
 m: mandatory_start $(1MANDATORY) $(42MANDATORY) $(10MMANDATORY) cleanMandatory
 b: bonus_start $(1MBONUS) $(42MBONUS) $(10MMBONUS) $(1BONUS) $(42BONUS) $(10MBONUS) cleanBonus
 a: m b

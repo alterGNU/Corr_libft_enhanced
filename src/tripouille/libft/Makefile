@@ -12,7 +12,6 @@ MANDATORY		= memset bzero memcpy memmove memchr memcmp strlen isalpha isdigit is
 				putendl_fd putnbr_fd striteri
 BONUS			= lstnew lstadd_front lstsize lstlast lstadd_back lstdelone lstclear lstiter lstmap
 VSOPEN			= $(addprefix vs, $(MANDATORY)) $(addprefix vs, $(BONUS))
-
 CC		= clang++
 CFLAGS	= -g3 -ldl -gdwarf-4 -std=c++11 -I utils/ -I$(INCLUDE) -no-pie
 UNAME = $(shell uname -s)
@@ -20,24 +19,14 @@ ifeq ($(UNAME), Linux)
 	VALGRIND = valgrind -q --leak-check=full
 endif
 
-$(MANDATORY): %: mandatory_start
+$(MANDATORY): %:
 	@$(CC) $(CFLAGS) $(UTILS) $(TESTS_PATH)ft_$*_test.cpp $(LIBFT_A) && $(VALGRIND) ./a.out && rm -f a.out
 
-$(BONUS): %: bonus_start
+$(BONUS): %:
 	@$(CC) $(CFLAGS) $(UTILS) $(TESTS_PATH)ft_$*_test.cpp $(LIBFT_A) && $(VALGRIND) ./a.out && rm -f a.out
 
 $(VSOPEN): vs%:
 	@code $(TESTS_PATH)ft_$*_test.cpp
-
-mandatory_start:
-	@tput setaf 6
-	make -C $(LIBFT_PATH)
-	@tput setaf 4 && echo [Mandatory]
-
-bonus_start:
-	@tput setaf 6
-	make bonus -C $(LIBFT_PATH)
-	@tput setaf 5 && echo [Bonus]
 
 m: $(MANDATORY)
 b: $(BONUS)
@@ -49,4 +38,4 @@ clean:
 fclean:
 	rm -rf a.out*
 
-.PHONY:	mandatory_start m bonus_start b a fclean clean $(VSOPEN)
+.PHONY:	m b a fclean clean $(VSOPEN)
