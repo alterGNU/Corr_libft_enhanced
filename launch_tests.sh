@@ -310,7 +310,7 @@ display_resume()
             [[ -n "${link4}" ]] && args+=( "      ${R0}⤷ Missing function, not found in object file.${E}" )
         done
     fi
-    print_in_box -t 2 -c b "${args[@]}"
+    print_in_box -t 2 -c y "${args[@]}"
 }
 
 # ============================================================================================================
