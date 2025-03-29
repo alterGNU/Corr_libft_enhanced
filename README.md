@@ -27,10 +27,10 @@ I have also written my own tests, grouped under and refers as **my_unitests**, w
     ```
 - 4: If **My_unitests** is run, you can check its log files:
     - log folder is created at `./log/<date>/<time>/` with all the tests outputs sort by function's name:
-        - ./log/<date>/<time>/list_errors.log            --> File contains list of all encountred errors, format="<fun_name>\t<error_type>"
-        - ./log/<date>/<time>/<fun_name>/comp_stderr.txt --> File created only when compilation failed
-        - ./log/<date>/<time>/<fun_name>/exec.log        --> File contains execution's outputs (stdout && stderr)
-        - ./log/<date>/<time>/<fun_name>/leaks.log       --> File contains valgrind's outputs (stdout && stderr)
+        - `./log/<date>/<time>/list_errors.log`            --> File contains list of all encountred errors, format="<fun_name>\t<error_type>"
+        - `./log/<date>/<time>/<fun_name>/comp_stderr.txt` --> File created only when compilation failed
+        - `./log/<date>/<time>/<fun_name>/exec.log`        --> File contains execution's outputs (stdout && stderr)
+        - `./log/<date>/<time>/<fun_name>/leaks.log`       --> File contains valgrind's outputs (stdout && stderr)
 
 ## Script arguments availlable:
 | Argument                        | Description                                                                                        |
@@ -46,34 +46,42 @@ I have also written my own tests, grouped under and refers as **my_unitests**, w
 | `-o`, `--other`                 | Enable ONLY My_unitest tester for others functions found (anything but a libft+gnl+ft_printf fun.) |
  
 ## MAIN PSEUDO-CODE:
-- STEP 1. Display enabled options and functions present in libft.a (home-made and built-in).
-- STEP 2. Norminette-check (if enabled).
-- STEP 3. Run Tripouille tests (libft, printf, gnl, with bonus support if enabled).
-- STEP 4. Run My_unitests tests (libft, printf, gnl, other personal functions with matching tests).
+- **STEP 0. :** Display enabled options and functions present in libft.a (home-made and built-in).
+- **STEP 1. :** Norminette-check (if enabled).
+- **STEP 2. :** Run Tripouille tests (libft, printf, gnl, with bonus support if enabled).
+- **STEP 3. :** Run My_unitests tests (libft, printf, gnl, other personal functions with matching tests).
 
 ## Examples:
 - `./launch_tests.sh` : (DEFAULT BEHAVIOR)
-    - Run **norminette-checker**
-    - Run **My_unitest libft mandatory part** unitests.
-    - If any libft bonus part function is detected in libft.a, run **My_unitest libft bonus part** unitests.
-    - If get_next_line() function detected in libft.a, run **My_unitest get_next_line mandatory part** unitests.
-    - If ft_printf() function detected in libft.a, run **My_unitest ft_printf mandatory part** unitests.
+    - **STEP 0.:** Display enabled options and functions present in libft.a (home-made and built-in).
+    - **STEP 1.:** Run **norminette-checker**
+    - **~~STEP 2.~~: Tripouille testert NOT ENABLE**
+    - **STEP 3.:** Run **My_unitest libft mandatory part** unitests.
+        - If any libft bonus part function is detected in libft.a, run **My_unitest libft bonus part** unitests.
+        - If get_next_line() function detected in libft.a, run **My_unitest get_next_line mandatory part** unitests.
+        - If ft_printf() function detected in libft.a, run **My_unitest ft_printf mandatory part** unitests.
 - `./launch_tests.sh -v` : 
-    - Display script usage (~man)
+    - **Display script usage (~man)**
+    - **~~STEP 0.~~: Desable**
+    - **~~STEP 1.~~: Desable
+    - **~~STEP 2.~~: Not enable**
+    - **~~STEP 3.~~: Desable
 - `./launch_tests.sh -n -t -b` :
-    - Desable **norminette-checker** step.
-    - Desable **My-unitests** testers.
-    - Enable All  **Tripouille tester with bonus part**
+    - **STEP 0.:** Display enabled options and functions present in libft.a (home-made and built-in).
+    - **~~STEP 1.:~~ Desable norminette-checker** step.
+    - **STEP 2.: Enable All Tripouille tester with bonus part**
         - Run **Tripouille libft mandatory AND bonus parts**
-        - if ft_printf() found in static library, Run **Tripouille ft_printf mandatory and bonus part**
-        - if get_next_line() found in static library, Run **Tripouille get_next_line mandatory and bonus part**
+        - If ft_printf() found in static library, Run **Tripouille ft_printf mandatory and bonus part**
+        - If get_next_line() found in static library, Run **Tripouille get_next_line mandatory and bonus part**
+    - **~~STEP 3.:~~ Desable My-unitests** testers.
 - `./launch_tests.sh -a -b` :
-    - Run **norminette-checker**
-    - Enable All  **Tripouille tester with bonus part**
+    - **STEP 0.:** Display enabled options and functions present in libft.a (home-made and built-in).
+    - **STEP 1.:** Run **norminette-checker**
+    - **STEP 2.:** Enable All  **Tripouille tester with bonus part**
         - Run **Tripouille libft mandatory AND bonus parts**
-        - if ft_printf() found in static library, Run **Tripouille ft_printf mandatory and bonus part**
-        - if get_next_line() found in static library, Run **Tripouille get_next_line mandatory and bonus part**
-    - Enable All  **My_unitests tester with bonus part**
+        - If ft_printf() found in static library, Run **Tripouille ft_printf mandatory and bonus part**
+        - If get_next_line() found in static library, Run **Tripouille get_next_line mandatory and bonus part**
+    - **STEP 3.:** Enable All  **My_unitests tester with bonus part**
         - Run **My_unitests libft mandatory AND bonus parts**
-        - if ft_printf() found in static library, Run **My_unitest ft_printf mandatory and bonus part**
-        - if get_next_line() found in static library, Run **My_unitest get_next_line mandatory and bonus part**
+        - If ft_printf() found in static library, Run **My_unitest ft_printf mandatory and bonus part**
+        - If get_next_line() found in static library, Run **My_unitest get_next_line mandatory and bonus part**
