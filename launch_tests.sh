@@ -4,16 +4,16 @@
 # Launch libft.a tests
 # This script take options as arguments:
 #  - ARGUMENTS:
-#    - NO-ARGS                        🢥  Default behavior:enable all MY_UNITESTS_{LIBFT,GNL,PRINTF,OTHERS}->{MY_UNITESTS}
-#    - ARGS ∈ {--help, -h}            🢥  Enable HELP option that display script usage---------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {--no-norm, -n}         🢥  Desable the NORMINETTE tester------------------------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {--bonus, -b}           🢥  Enable Bonus option for all tester-------------------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {--all, -a}             🢥  Enable ALL TRIPOUILLE AND MY_UNITESTS OPTION WITHOUT BONUS-------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {--tripouille, -t}      🢥  Enable ALL TRIPOUILLE && Disable ALL MY_UNITESTS------------------>{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {--libft, -lft}         🢥  Enable test for LIBFT--------------------------------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {--ft_printf, -p}       🢥  Enable test for FT_PRINTF----------------------------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {--get_next_line, -gnl} 🢥  Enable test for GET_NEXT_LINE------------------------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {--other, -o}           🢥  Enable test for OTHERS FUNCTIONS FOUND---------------------------->{MY_UNITESTS}
+#    - NO-ARGS                            🢥  Default behavior:enable all MY_UNITESTS_{LIBFT,GNL,PRINTF,OTHERS}->{MY_UNITESTS}
+#    - ARGS ∈ {-h, --help}                🢥  Enable HELP option that display script usage---------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {-n, --no-norm}             🢥  Desable the NORMINETTE tester------------------------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {-b, --bonus}               🢥  Enable Bonus option for all tester-------------------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {-a, --all}                 🢥  Enable ALL TRIPOUILLE AND MY_UNITESTS OPTION WITHOUT BONUS-------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {-t, --tripouille}          🢥  Enable ALL TRIPOUILLE && Disable ALL MY_UNITESTS------------------>{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {-l, --libft, -lft}         🢥  Enable test for LIBFT--------------------------------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {-f, --ft_printf}           🢥  Enable test for FT_PRINTF----------------------------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {-g, --get_next_line, -gnl} 🢥  Enable test for GET_NEXT_LINE------------------------------------->{MY_UNITESTS, TRIPOUILLE}
+#    - ARGS ∈ {-o, --other}               🢥  Enable test for OTHERS FUNCTIONS FOUND---------------------------->{MY_UNITESTS}
 #  - MAIN PSEUDO-CODE:
 #    - 0| IN ANY CASE:
 #        - 0.0| display all enabled options
@@ -504,7 +504,7 @@ if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
         "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┏┳┓┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
         "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┛┗┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
     make -s -C ${PARENT_DIR}/src/tripouille/libft m
-    # -[ LIBFT_BONUS if BONUS opt or if any libft_bonus fun detected in libft.a ]-----------------------------
+    # -[ Run BONUS-TESTER if explicitly asked ]---------------------------------------------------------------
     if [[ ${BONUS} -eq 1 ]];then 
         print_in_box -t 3 -c b \
         "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
@@ -512,8 +512,9 @@ if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
         "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
         make -s -C ${PARENT_DIR}/src/tripouille/libft b
     else
+    # -[ Run BONUS-TESTER if any libft_bonus fun. founded in static library ]---------------------------------
         for fun in ${HOMEMADE_FUNUSED[@]};do
-            if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+            if [[ " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
                 print_in_box -t 3 -c b \
                     "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
                     "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
@@ -526,34 +527,42 @@ if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
 fi
 # -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
 if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
-    print_in_box -t 3 -c b \
-        "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
-        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-    make -s -C ${PARENT_DIR}/src/tripouille/ft_printf m
-    # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
-    if [[ ${BONUS} -eq 1 ]];then
+    if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf " ]];then
         print_in_box -t 3 -c b \
-            "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
-            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
-            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
-        make -s -C ${PARENT_DIR}/src/tripouille/ft_printf b
+            "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
+            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+        make -s -C ${PARENT_DIR}/src/tripouille/ft_printf m
+        # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
+        if [[ ${BONUS} -eq 1 ]];then
+            print_in_box -t 3 -c b \
+                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
+                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
+                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
+                                        make -s -C ${PARENT_DIR}/src/tripouille/ft_printf b
+        fi
+    else
+        print_in_box -t 3 -c r "${R0}ft_printf() function not found in static library${E}"
     fi
 fi
 # -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
 if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
-    print_in_box -t 3 -c b \
-        "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
-        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-    make -s -C ${PARENT_DIR}/src/tripouille/get_next_line m
-    # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
-    if [[ ${BONUS} -eq 1 ]];then
+    if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line " ]];then
         print_in_box -t 3 -c b \
-            "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
-            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
-            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
-        make -s -C ${PARENT_DIR}/src/tripouille/get_next_line b
+            "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
+            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+        make -s -C ${PARENT_DIR}/src/tripouille/get_next_line m
+        # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
+        if [[ ${BONUS} -eq 1 ]];then
+            print_in_box -t 3 -c b \
+                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
+                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
+                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
+            make -s -C ${PARENT_DIR}/src/tripouille/get_next_line b
+        fi
+    else
+        print_in_box -t 3 -c r "${R0}get_next_line() function not found in static library${E}"
     fi
 fi
 # =[ MY_UNITESTS ]============================================================================================
