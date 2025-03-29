@@ -63,9 +63,9 @@ I have also written my own tests, grouped under and refers as **my_unitests**, w
 - `./launch_tests.sh -v` : 
     - **Display script usage (~man)**
     - **~~STEP 0.~~: Desable**
-    - **~~STEP 1.~~: Desable
+    - **~~STEP 1.~~: Desable**
     - **~~STEP 2.~~: Not enable**
-    - **~~STEP 3.~~: Desable
+    - **~~STEP 3.~~: Desable**
 - `./launch_tests.sh -n -t -b` :
     - **STEP 0.:** Display enabled options and functions present in libft.a (home-made and built-in).
     - **~~STEP 1.:~~ Desable norminette-checker** step.
