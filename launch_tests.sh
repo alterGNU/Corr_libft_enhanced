@@ -43,6 +43,7 @@ LIBFT_DIR=$(dirname ${PARENT_DIR})                                 # ☒ Name of
 LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"            # ☒ Name of the log folder
 LOG_FAIL="${LOG_DIR}/list_errors.log"                              # ☒ File contains list of function that failed
 SRC_DIR="${PARENT_DIR}/src"                                        # ☒ Path to src folder
+BSL="${SRC_DIR}/BSL"                                               # ☒ Path to BSL folder
 MY_UNITESTS="${SRC_DIR}/my_unitests"                               # ☒ Path to my_unitests folder
 TRIPOUILLE="${SRC_DIR}/tripouille"                                 # ☒ Path to tripouille folder
 BIN_DIR="${PARENT_DIR}/bin"                                        # ☒ Path to bin folder (test binary)
