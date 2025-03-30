@@ -25,8 +25,12 @@
 #        - 2.0| if TRIPOUILLE_LIBFT=1                        🢥  launch Tripouille-libft for mandatory part
 #          - if BONUS=1 OR if any libft_bonus fun. detected  🢥  launch Tripouille-libft for bonus part
 #        - 2.1| if TRIPOUILLE_PRINTF=1                       🢥  launch Tripouille-ft_printf for mandatory part
+#          - if set using -a option                          🢥  launch Tripouille-ft_printf only if found in static libft libft.a
+#          - if set using -f option                          🢥  launch Tripouille-ft_printf, if not in libft.a == count as an ERROR
 #          - if BONUS=1                                      🢥  launch Tripouille-ft_printf for bonus part
 #        - 2.2| if TRIPOUILLE_GNL=1                          🢥  launch Tripouille-get_next_line for mandatory part
+#          - if set using -a option                          🢥  launch Tripouille-get_next_line only if found in static libft libft.a
+#          - if set using -f option                          🢥  launch Tripouille-get_next_line, if not in libft.a == count as an ERROR
 #          - if BONUS=1                                      🢥  launch Tripouille-get_next_line for bonus part
 #    - 3| MY_UNITESTS-TESTER:
 #        - 3.0| if MY_UNITESTS_LIBFT=1                       🢥  launch My_unitests-libft for mandatory part
@@ -133,8 +137,12 @@ script_usage()
     echo -e "       ${B0}‣ ${GU}2.0)${E} if TRIPOUILLE_LIBFT=1                        ${BC0}🢥 ${E} launch Tripouille-libft for mandatory part"
     echo -e "         ${B0}⮡${E} if BONUS=1 ${B0}OR${E} if any libft_bonus fun. detected  ${BC0}🢥 ${E} launch Tripouille-libft for bonus part"
     echo -e "       ${B0}‣ ${GU}2.1)${E} if TRIPOUILLE_PRINTF=1                       ${BC0}🢥 ${E} launch Tripouille-ft_printf for mandatory part"
+    echo -e "         ${B0}⮡${E} if setted using -a option                       ${BC0}🢥 ${E} launch Tripouille-ft_printf only if fun. detected in libft.a"
+    echo -e "         ${B0}⮡${E} if setted using -p option                       ${BC0}🢥 ${E} launch Tripouille-ft_printf, if fun. not detected in libft.a count as an ERROR"
     echo -e "         ${B0}⮡${E} if BONUS=1                                      ${BC0}🢥 ${E} launch Tripouille-ft_printf for bonus part"
     echo -e "       ${B0}‣ ${GU}2.2)${E} if TRIPOUILLE_GNL=1                          ${BC0}🢥 ${E} launch Tripouille-get_next_line for mandatory part"
+    echo -e "         ${B0}⮡${E} if setted using -a option                       ${BC0}🢥 ${E} launch Tripouille-get_next_line only if fun. detected in libft.a"
+    echo -e "         ${B0}⮡${E} if setted using -p option                       ${BC0}🢥 ${E} launch Tripouille-get_next_line, if fun. not detected in libft.a count as an ERROR"
     echo -e "         ${B0}⮡${E} if BONUS=1                                      ${BC0}🢥 ${E} launch Tripouille-get_next_line for bonus part"
     echo -e "    🔹 ${GU}3) MY_UNITEST-TESTER:${E}"
     echo -e "       ${B0}‣ ${GU}3.0)${E} if MY_UNITESTS_LIBFT=1                       ${BC0}🢥 ${E} launch My_unitests-libft for mandatory part"
@@ -527,33 +535,47 @@ if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
 fi
 # -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
 if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
-    if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf " ]];then
+    # -[ CAS1: explicitly asks-->if not found:error. ]--------------------------------------------------------
+    if [[ ${has_p} -eq 1 ]];then
         print_in_box -t 3 -c b \
             "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
             "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
             "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
         make -s -C ${PARENT_DIR}/src/tripouille/ft_printf m
-        # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
         if [[ ${BONUS} -eq 1 ]];then
             print_in_box -t 3 -c b \
                 "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
                 "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
                 "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
-                                        make -s -C ${PARENT_DIR}/src/tripouille/ft_printf b
+            make -s -C ${PARENT_DIR}/src/tripouille/ft_printf b
         fi
+    # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
     else
-        print_in_box -t 3 -c r "${R0}ft_printf() function not found in static library${E}"
+        if [[ ((${has_a} -eq 1) && (" ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf ")) ]];then
+            print_in_box -t 3 -c b \
+                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
+                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+            make -s -C ${PARENT_DIR}/src/tripouille/ft_printf m
+        fi
+        if [[ ${BONUS} -eq 1 ]];then
+            print_in_box -t 3 -c b \
+                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
+                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
+                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
+            make -s -C ${PARENT_DIR}/src/tripouille/ft_printf b
+        fi
     fi
 fi
 # -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
 if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
-    if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line " ]];then
+    # -[ CAS1: explicitly asks if -g option-->if not found:error. ]-------------------------------------------
+    if [[ ${has_g} -eq 1 ]];then
         print_in_box -t 3 -c b \
             "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
             "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
             "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
         make -s -C ${PARENT_DIR}/src/tripouille/get_next_line m
-        # -[     GNL_BONUS ONLY IF OPTION ACTIVATED ]-------------------------------------------------------------
         if [[ ${BONUS} -eq 1 ]];then
             print_in_box -t 3 -c b \
                 "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
@@ -561,8 +583,22 @@ if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
                 "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
             make -s -C ${PARENT_DIR}/src/tripouille/get_next_line b
         fi
+    # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
     else
-        print_in_box -t 3 -c r "${R0}get_next_line() function not found in static library${E}"
+        if [[ ((${has_a} -eq 1) && (" ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line ")) ]];then
+            print_in_box -t 3 -c b \
+                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
+                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+            make -s -C ${PARENT_DIR}/src/tripouille/get_next_line m
+        fi
+        if [[ ${BONUS} -eq 1 ]];then
+            print_in_box -t 3 -c b \
+                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
+                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
+                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
+            make -s -C ${PARENT_DIR}/src/tripouille/get_next_line b
+        fi
     fi
 fi
 # =[ MY_UNITESTS ]============================================================================================
@@ -611,9 +647,7 @@ if [[ ${MY_UNITESTS_PRINTF} -eq 1 ]];then
 fi
 # -[ PERSONNAL FUNCTIONS ]------------------------------------------------------------------------------------
 if [[ ${MY_UNITESTS_OTHERS} -eq 1 ]];then
-    #exec_anim_in_box "launch_my_unitests PERSO_FUN_TO_TEST" "Tests ${#PERSO_FUN_TO_TEST[@]} personnal functions"
     exec_anim_in_box "launch_my_unitests PERSO_FUN" "Tests ${#PERSO_FUN_TO_TEST[@]}/${#PERSO_FUN[@]} of personnal functions"
 fi
 # -[ DISPLAY UNITESTS RESUME ]--------------------------------------------------------------------------------
-# TODO
 [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS)) -gt 0 ]] && display_resume "Libft's tests"
