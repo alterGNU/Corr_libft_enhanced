@@ -1,66 +1,50 @@
 #!/usr/bin/env bash
 
 # ============================================================================================================
-# Launch libft.a tests
-# This script take options as arguments:
-#  - ARGUMENTS:
-#    - NO-ARGS                            🢥  Default behavior:enable all MY_UNITESTS_{LIBFT,GNL,PRINTF,OTHERS}->{MY_UNITESTS}
-#    - ARGS ∈ {-h, --help}                🢥  Enable HELP option that display script usage---------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {-n, --no-norm}             🢥  Desable the NORMINETTE tester------------------------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {-b, --bonus}               🢥  Enable Bonus option for all tester-------------------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {-a, --all}                 🢥  Enable ALL TRIPOUILLE AND MY_UNITESTS OPTION WITHOUT BONUS-------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {-t, --tripouille}          🢥  Enable ALL TRIPOUILLE && Disable ALL MY_UNITESTS------------------>{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {-l, --libft, -lft}         🢥  Enable test for LIBFT--------------------------------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {-f, --ft_printf}           🢥  Enable test for FT_PRINTF----------------------------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {-g, --get_next_line, -gnl} 🢥  Enable test for GET_NEXT_LINE------------------------------------->{MY_UNITESTS, TRIPOUILLE}
-#    - ARGS ∈ {-o, --other}               🢥  Enable test for OTHERS FUNCTIONS FOUND---------------------------->{MY_UNITESTS}
-#  - MAIN PSEUDO-CODE:
-#    - 0| IN ANY CASE:
-#        - 0.0| display all enabled options
-#        - 0.1| display list all home-made fun in libft.a
-#        - 0.2| display list all build-in fun in libft.a (ca be use to see forbidden function)
-#    - 1| NORMINETTE-CHECKER:
-#        - 1.1| if NORMI=1                                   🢥  launch norminette-checker, excluding Corr_libft_enhanced folder
-#    - 2| TRIPOUILLE-TESTER:
-#        - 2.0| if TRIPOUILLE_LIBFT=1                        🢥  launch Tripouille-libft for mandatory part
-#          - if BONUS=1 OR if any libft_bonus fun. detected  🢥  launch Tripouille-libft for bonus part
-#        - 2.1| if TRIPOUILLE_PRINTF=1                       🢥  launch Tripouille-ft_printf for mandatory part
-#          - if set using -a option                          🢥  launch Tripouille-ft_printf only if found in static libft libft.a
-#          - if set using -f option                          🢥  launch Tripouille-ft_printf, if not in libft.a == count as an ERROR
-#          - if BONUS=1                                      🢥  launch Tripouille-ft_printf for bonus part
-#        - 2.2| if TRIPOUILLE_GNL=1                          🢥  launch Tripouille-get_next_line for mandatory part
-#          - if set using -a option                          🢥  launch Tripouille-get_next_line only if found in static libft libft.a
-#          - if set using -f option                          🢥  launch Tripouille-get_next_line, if not in libft.a == count as an ERROR
-#          - if BONUS=1                                      🢥  launch Tripouille-get_next_line for bonus part
-#    - 3| MY_UNITESTS-TESTER:
-#        - 3.0| if MY_UNITESTS_LIBFT=1                       🢥  launch My_unitests-libft for mandatory part
-#          - if BONUS=1 OR if any libft_bonus fun. detected  🢥  launch My_unitests-libft for bonus part
-#        - 3.1| if MY_UNITESTS_PRINTF=1                      🢥  launch My_unitests-ft_printf for mandatory part
-#          - if BONUS=1                                      🢥  launch My_unitests-ft_printf for bonus part
-#        - 3.2| if MY_UNITESTS_GNL=1                         🢥  launch My_unitests-get_next_line for mandatory part
-#          - if BONUS=1                                      🢥  launch My_unitests-get_next_line for bonus part
-#        - 3.3| if MY_UNITESTS_OTHERS=1                      🢥  launch My_unitests-others (personnal fun for which a matching test was found)
+# This script runs tests on the static library libft.a where get_next_line(), ft_print() and other personnal
+# functions could have been added.
+#
+# To do so, it runs Tripouille's tester for libft, get_next_line and ft_printf functions, but also my own
+# tester refered as My_unitests.
+#
+# - This script take options as arguments:
+#   - NO-ARGS                            🢥  Default behavior:enable all MY_UNITESTS_{LIBFT,GNL,PRINTF,OTHERS}
+#   - ARGS ∈ {-h, --help}                🢥  Enable HELP option that display script usage
+#   - ARGS ∈ {-n, --no-norm}             🢥  Desable the NORMINETTE tester
+#   - ARGS ∈ {-b, --bonus}               🢥  Enable Bonus option for all tester
+#   - ARGS ∈ {-a, --all}                 🢥  Enable ALL TRIPOUILLE AND MY_UNITESTS OPTION WITHOUT BONUS
+#   - ARGS ∈ {-t, --tripouille}          🢥  Enable ALL TRIPOUILLE && Disable ALL MY_UNITESTS
+#   - ARGS ∈ {-l, -lft, --libft}         🢥  Enable test for LIBFT
+#   - ARGS ∈ {-f, --ft_printf}           🢥  Enable test for FT_PRINTF
+#   - ARGS ∈ {-g, -gnl, --get_next_line} 🢥  Enable test for GET_NEXT_LINE
+#   - ARGS ∈ {-o, --other}               🢥  Enable test for OTHERS FUNCTIONS FOUND
+#
+# - NOTES:
+#   - To test a personnal function add to libft.a, just add its unitests like:
+#     ${MY_UNITESTS}/tests_<fun_name>.c and launch this script using -a or -o options:
 # ============================================================================================================
  
 # =[ VARIABLES ]==============================================================================================
 # -[ SCRIPT OPTIONS ]-----------------------------------------------------------------------------------------
-HELP=0                                                             # ☑ set:1🢥 Display script usage
-BONUS=0                                                            # ☑ set:1🢥 launch all test with bonus option
-NORM=1                                                             # ☑ set:1🢥 launch NORMINETTE TESTER
-MY_UNITESTS_LIBFT=0                                                # ☑ set:1🢥 launch my tester for LIBFT(DEFAULT)
-MY_UNITESTS_GNL=0                                                  # ☑ set:1🢥 launch my tester for GNL(DEFAULT)
-MY_UNITESTS_PRINTF=0                                               # ☑ set:1🢥 launch my tester for PRINTF(DEFAULT)
-MY_UNITESTS_OTHERS=0                                               # ☑ set:1🢥 launch my tester for OTHERS_FUNCTION_FOUND(DEFAULT)
-TRIPOUILLE_LIBFT=0                                                 # ☑ set:1🢥 launch Tripouille for libft()
-TRIPOUILLE_GNL=0                                                   # ☑ set:1🢥 launch Tripouille for get_next_line()
-TRIPOUILLE_PRINTF=0                                                # ☑ set:1🢥 launch Tripouille for ft_printf()
+HELP=0                                                             # ☑ if set at 1🢥 Display script usage
+BONUS=0                                                            # ☑ if set at 1🢥 launch all test with bonus option
+NORM=1                                                             # ☑ if set at 1🢥 launch NORMINETTE TESTER
+MY_UNITESTS_LIBFT=0                                                # ☑ if set at 1🢥 launch my tester for LIBFT(DEFAULT)
+MY_UNITESTS_GNL=0                                                  # ☑ if set at 1🢥 launch my tester for GNL(DEFAULT)
+MY_UNITESTS_PRINTF=0                                               # ☑ if set at 1🢥 launch my tester for PRINTF(DEFAULT)
+MY_UNITESTS_OTHERS=0                                               # ☑ if set at 1🢥 launch my tester for OTHERS_FUNCTION_FOUND(DEFAULT)
+TRIPOUILLE_LIBFT=0                                                 # ☑ if set at 1🢥 launch Tripouille for libft()
+TRIPOUILLE_GNL=0                                                   # ☑ if set at 1🢥 launch Tripouille for get_next_line()
+TRIPOUILLE_PRINTF=0                                                # ☑ if set at 1🢥 launch Tripouille for ft_printf()
 # -[ PATH/FOLDER/FILE ]---------------------------------------------------------------------------------------
 SCRIPTNAME=${0##*\/}                                               # ☒ Script's name (no path)
 PARENT_DIR=$(dirname $(realpath ${0}))                             # ☒ Name of parent directory
 LIBFT_DIR=$(dirname ${PARENT_DIR})                                 # ☒ Name of libft_enhanced (grandparent folder)
 LOG_DIR="${PARENT_DIR}/log/$(date +%Y_%m_%d/%Hh%Mm%Ss)"            # ☒ Name of the log folder
 LOG_FAIL="${LOG_DIR}/list_errors.log"                              # ☒ File contains list of function that failed
-BSL_DIR="${PARENT_DIR}/src/BSL"                                    # ☒ Path to BSL folder
+SRC_DIR="${PARENT_DIR}/src"                                        # ☒ Path to src folder
+MY_UNITESTS="${SRC_DIR}/my_unitests"                               # ☒ Path to my_unitests folder
+TRIPOUILLE="${SRC_DIR}/tripouille"                                 # ☒ Path to tripouille folder
 BIN_DIR="${PARENT_DIR}/bin"                                        # ☒ Path to bin folder (test binary)
 LIBFT_A=$(find ${LIBFT_DIR} -type f -name "libft.a")               # ☒ static library name libft.a 
 LIBFT_INC=$(dirname $(find ${LIBFT_DIR} -type f -name "libft.h"))  # ☒ Folder that contains to libft.h HEADER
@@ -104,8 +88,8 @@ LIBFT_BONUS=( "ft_lstnew" "ft_lstadd_front" "ft_lstsize" "ft_lstlast" "ft_lstadd
 TOT_TESTS="${#LIBFT_MANDA[@]}"                                     # ☒ Count how many fun are tested
 TOT_FAILS=0                                                        # ☒ Count how many fun have failed
 # =[ SOURCES ]================================================================================================
-source ${BSL_DIR}/src/check42_norminette.sh
-source ${BSL_DIR}/src/print.sh
+source ${BSL}/src/check42_norminette.sh
+source ${BSL}/src/print.sh
 # =[ FUNCTIONS ]==============================================================================================
 # -[ USAGE ]--------------------------------------------------------------------------------------------------
 # Display usage:
@@ -245,8 +229,8 @@ launch_my_unitests()
         if [[ " ${FUN_FOUND[@]} " =~ " ${fun} " ]];then
             local FUN_LOG_DIR="${LOG_DIR}/${fun}"
             [[ ! -d ${FUN_LOG_DIR} ]] && mkdir -p ${FUN_LOG_DIR}
-            local test_main=$(find "${PARENT_DIR}/src" -type f -name *"${fun}.c")
-            local test_txt=$(find "${PARENT_DIR}/src" -type f -name *"${fun}.txt")
+            local test_main=$(find "${MY_UNITESTS}" -type f -name *"${fun}.c")
+            local test_txt=$(find "${MY_UNITESTS}" -type f -name *"${fun}.txt")
             if [[ -n "${test_main}" ]];then
                 # STEP 1 : COMPILATION --> IF NO BINARY OR IF SOURCES NEWER THAN BINARY
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
@@ -415,7 +399,7 @@ fi
 PERSO_FUN+=($(printf "%s\n" "${HOMEMADE_FUNUSED[@]}" | grep -vxF -f <(printf "%s\n" "${LIBFT_MANDA[@]}" "${LIBFT_BONUS[@]}" "ft_printf" "get_next_line" )))
 # -[ SET PERSONNAL FUNCTION TO TEST ]-------------------------------------------------------------------------
 for fun in ${PERSO_FUN[@]};do
-    test_fun=$(find "${PARENT_DIR}/src" -type f -name *"${fun}.c")
+    test_fun=$(find "${MY_UNITESTS}" -type f -name *"${fun}.c")
     [[ -n "${test_fun}" ]] && PERSO_FUN_TO_TEST+=( "${fun}" )
 done
 # -[ SET OPTIONS LIST ]---------------------------------------------------------------------------------------
@@ -523,14 +507,14 @@ if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
         "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏           ┓         ${E}" \
         "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┏┳┓┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
         "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┛┗┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-    make -s -C ${PARENT_DIR}/src/tripouille/libft m
+    make -s -C ${TRIPOUILLE}/libft m
     # -[ Run BONUS-TESTER if explicitly asked ]---------------------------------------------------------------
     if [[ ${BONUS} -eq 1 ]];then 
         print_in_box -t 3 -c b \
         "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
         "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
         "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
-        make -s -C ${PARENT_DIR}/src/tripouille/libft b
+        make -s -C ${TRIPOUILLE}/libft b
     else
     # -[ Run BONUS-TESTER if any libft_bonus fun. founded in static library ]---------------------------------
         for fun in ${HOMEMADE_FUNUSED[@]};do
@@ -539,7 +523,7 @@ if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
                     "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
                     "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
                     "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
-                make -s -C ${PARENT_DIR}/src/tripouille/libft b
+                make -s -C ${TRIPOUILLE}/libft b
                 break
             fi
         done
@@ -553,13 +537,13 @@ if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
             "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
             "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
             "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-        make -s -C ${PARENT_DIR}/src/tripouille/ft_printf m
+        make -s -C ${TRIPOUILLE}/ft_printf m
         if [[ ${BONUS} -eq 1 ]];then
             print_in_box -t 3 -c b \
                 "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
                 "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
                 "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${PARENT_DIR}/src/tripouille/ft_printf b
+            make -s -C ${TRIPOUILLE}/ft_printf b
         fi
     # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
     else
@@ -568,14 +552,14 @@ if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
                 "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
                 "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
                 "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-            make -s -C ${PARENT_DIR}/src/tripouille/ft_printf m
+            make -s -C ${TRIPOUILLE}/ft_printf m
         fi
         if [[ ${BONUS} -eq 1 ]];then
             print_in_box -t 3 -c b \
                 "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
                 "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
                 "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${PARENT_DIR}/src/tripouille/ft_printf b
+            make -s -C ${TRIPOUILLE}/ft_printf b
         fi
     fi
 fi
@@ -587,13 +571,13 @@ if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
             "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
             "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
             "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-        make -s -C ${PARENT_DIR}/src/tripouille/get_next_line m
+        make -s -C ${TRIPOUILLE}/get_next_line m
         if [[ ${BONUS} -eq 1 ]];then
             print_in_box -t 3 -c b \
                 "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
                 "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
                 "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${PARENT_DIR}/src/tripouille/get_next_line b
+            make -s -C ${TRIPOUILLE}/get_next_line b
         fi
     # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
     else
@@ -602,14 +586,14 @@ if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
                 "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
                 "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
                 "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-            make -s -C ${PARENT_DIR}/src/tripouille/get_next_line m
+            make -s -C ${TRIPOUILLE}/get_next_line m
         fi
         if [[ ${BONUS} -eq 1 ]];then
             print_in_box -t 3 -c b \
                 "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
                 "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
                 "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${PARENT_DIR}/src/tripouille/get_next_line b
+            make -s -C ${TRIPOUILLE}/get_next_line b
         fi
     fi
 fi
