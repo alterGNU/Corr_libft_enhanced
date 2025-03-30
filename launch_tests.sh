@@ -108,51 +108,63 @@ source ${BSL_DIR}/src/check42_norminette.sh
 source ${BSL_DIR}/src/print.sh
 # =[ FUNCTIONS ]==============================================================================================
 # -[ USAGE ]--------------------------------------------------------------------------------------------------
-# Display usage with arg1 as error_msg and arg2 as exit_code
-# TODO UPDATE usage to add options.
+# Display usage:
+# without arguments, display a default entete and return zero
+# with arguments, displaye entete with arg1 as error_msg and return arg2 as the exit_value.
 script_usage()
 {
-    echo -e "${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME}\`${E}"
-    echo -e " 🔹 ${V0}${SCRIPTNAME}${E} has as a prerequisites:"
+    local exit_value=0
+    local entete="\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME}\` ${M0}[-h, -n, -a, -t, -b, -l, -f, -g, -o]${E}"
+    if [[ ${#} -eq 2 ]];then
+        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME}\` ${M0}[-h, -n, -a, -t, -b, -l, -f, -g, -o]${E}"
+        local exit_value=${2}
+    fi
+    echo -e "${entete}"
+    echo -e " 🔹 ${BU}PRE-REQUISITES:${E}"
     echo -e "    ${B0}‣ ${R0}i) ${E}: To be cloned inside the project ${M0}path/libft/${E} to be tested, with the ${M0}--recursive-submodules${E} option."
     echo -e "    ${B0}‣ ${R0}ii)${E}: The static lib ${M0}path/libft/*/${B0}libft.a${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
-    echo -e " 🔹 ${V0}${SCRIPTNAME}${E} have multiples options:"
+    echo -e " 🔹 ${BU}OPTIONS:${E}"
     echo -e "    ${B0}‣ ${M0}[-h, --help]          ${BC0}🢥  ${E}Enable HELP option that display script usage."
     echo -e "    ${B0}‣ ${M0}[-n, --no-norm]       ${BC0}🢥  ${E}Desable step NORMINETTE tester."
-    echo -e "    ${B0}‣ ${M0}[-b, --bonus]         ${BC0}🢥  ${E}Enable Bonus option for all testers."
     echo -e "    ${B0}‣ ${M0}[-a, --all]           ${BC0}🢥  ${E}Enable ALL tripouille and my_unitests OPTIONS (WITHOUT BONUS)."
     echo -e "    ${B0}‣ ${M0}[-t, --tripouille]    ${BC0}🢥  ${E}Enable ONLY tripouille tester."
+    echo -e "    ${B0}‣ ${M0}[-b, --bonus]         ${BC0}🢥  ${E}Enable Bonus option for all testers."
     echo -e "    ${B0}‣ ${M0}[-l, --libft]         ${BC0}🢥  ${E}Enable both tripouille and my_unitests testers for LIBFT."
     echo -e "    ${B0}‣ ${M0}[-f, --ft_printf]     ${BC0}🢥  ${E}Enable both tripouille and my_unitests testers for FT_PRINTF."
     echo -e "    ${B0}‣ ${M0}[-g, --get_next_line] ${BC0}🢥  ${E}Enable both tripouille and my_unitests testers for GET_NEXT_LINE."
     echo -e "    ${B0}‣ ${M0}[-o, --other]         ${BC0}🢥  ${E}Enable both tripouille and my_unitests testers for OTHERS FUNCTIONS FOUND."
-    echo -e " 🔹 ${V0}${SCRIPTNAME}${E} PSEUDO-CODE:"
-    echo -e "    🔹 ${GU}0) IN ANY CASE:${E}"
-    echo -e "       ${B0}‣ ${GU}0.0)${E} display all enabled options"
-    echo -e "       ${B0}‣ ${GU}0.1)${E} display list all home-made fun in libft.a"
-    echo -e "       ${B0}‣ ${GU}0.2)${E} display list all build-in fun in libft.a (ca be use to see forbidden function)"
-    echo -e "    🔹 ${GU}1) NORMINETTE-CHECKER:${E}"
-    echo -e "       ${B0}‣ ${GU}1.1)${E} if NORMI=1                                   ${BC0}🢥 ${E} launch norminette-checker, excluding Corr_libft_enhanced folder"
-    echo -e "    🔹 ${BU}2) TRIPOUILLE-TESTER:${E}"
-    echo -e "       ${B0}‣ ${GU}2.0)${E} if TRIPOUILLE_LIBFT=1                        ${BC0}🢥 ${E} launch Tripouille-libft for mandatory part"
-    echo -e "         ${B0}⮡${E} if BONUS=1 ${B0}OR${E} if any libft_bonus fun. detected  ${BC0}🢥 ${E} launch Tripouille-libft for bonus part"
-    echo -e "       ${B0}‣ ${GU}2.1)${E} if TRIPOUILLE_PRINTF=1                       ${BC0}🢥 ${E} launch Tripouille-ft_printf for mandatory part"
-    echo -e "         ${B0}⮡${E} if setted using -a option                       ${BC0}🢥 ${E} launch Tripouille-ft_printf only if fun. detected in libft.a"
-    echo -e "         ${B0}⮡${E} if setted using -p option                       ${BC0}🢥 ${E} launch Tripouille-ft_printf, if fun. not detected in libft.a count as an ERROR"
-    echo -e "         ${B0}⮡${E} if BONUS=1                                      ${BC0}🢥 ${E} launch Tripouille-ft_printf for bonus part"
-    echo -e "       ${B0}‣ ${GU}2.2)${E} if TRIPOUILLE_GNL=1                          ${BC0}🢥 ${E} launch Tripouille-get_next_line for mandatory part"
-    echo -e "         ${B0}⮡${E} if setted using -a option                       ${BC0}🢥 ${E} launch Tripouille-get_next_line only if fun. detected in libft.a"
-    echo -e "         ${B0}⮡${E} if setted using -p option                       ${BC0}🢥 ${E} launch Tripouille-get_next_line, if fun. not detected in libft.a count as an ERROR"
-    echo -e "         ${B0}⮡${E} if BONUS=1                                      ${BC0}🢥 ${E} launch Tripouille-get_next_line for bonus part"
-    echo -e "    🔹 ${GU}3) MY_UNITEST-TESTER:${E}"
-    echo -e "       ${B0}‣ ${GU}3.0)${E} if MY_UNITESTS_LIBFT=1                       ${BC0}🢥 ${E} launch My_unitests-libft for mandatory part"
-    echo -e "         ${B0}⮡${E} if BONUS=1 ${B0}OR${E} if any libft_bonus fun. detected  ${BC0}🢥 ${E} launch My_unitests-libft for bonus part"
-    echo -e "       ${B0}‣ ${GU}3.1)${E} if MY_UNITESTS_PRINTF=1                      ${BC0}🢥 ${E} launch My_unitests-ft_printf for mandatory part"
-    echo -e "         ${B0}⮡${E} if BONUS=1                                      ${BC0}🢥 ${E} launch My_unitests-ft_printf for bonus part"
-    echo -e "       ${B0}‣ ${GU}3.2)${E} if MY_UNITESTS_GNL=1                         ${BC0}🢥 ${E} launch My_unitests-get_next_line for mandatory part"
-    echo -e "         ${B0}⮡${E} if BONUS=1                                      ${BC0}🢥 ${E} launch My_unitests-get_next_line for bonus part"
-    echo -e "       ${B0}‣ ${GU}3.3)${E} if MY_UNITESTS_OTHERS=1                      ${BC0}🢥 ${E} launch My_unitests-others (personnal fun for which a matching test was found)"
-    exit ${2}
+    echo -e " 🔹 ${BU}STEPS:${E}"
+    echo -e "    🔹 ${BCU}0) IN ANY CASE:${E}"
+    echo -e "       ${BC0}‣ ${GU}0.0)${E} display all enabled options"
+    echo -e "       ${BC0}‣ ${GU}0.1)${E} display list all home-made fun in libft.a"
+    echo -e "       ${BC0}‣ ${GU}0.2)${E} display list all build-in fun in libft.a (ca be use to see forbidden function)"
+    echo -e "    🔹 ${BCU}1) NORMINETTE-CHECKER:${E}"
+    echo -e "       ${BC0}‣ ${GU}1.1)${E} if option ${M0}'-n'${E} not used ${BC0}───────────────────────▶ ${E}run norminette-checker, excluding Corr_libft_enhanced folder"
+    echo -e "    🔹 ${BCU}2) TRIPOUILLE:${E}"
+    echo -e "       ${BC0}‣ ${GU}2.0) Libft's fun() tester:${E} "
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-t, -l${E} used ${BC0}───────────────────────────▶ ${E}run Tripouille-libft for mandatory part"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used OR libft_bonus fun. detected ${BC0}─▶ ${E}run Tripouille-libft for bonus part"
+    echo -e "       ${BC0}‣ ${GU}2.1) ft_printf() tester:${E}"       
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-a'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-ft_printf ${GU}only${E} if fun. detected in libft.a"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-p'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-ft_printf, if fun. not detected in libft.a ${GU}count as an ERROR${E}"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-ft_printf for bonus part"
+    echo -e "       ${BC0}‣ ${GU}2.1) get_next_line() tester:${E}"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-a'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-get_next_line ${GU}only${E} if fun. detected in libft.a"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-g'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-get_next_line, if fun. not detected in libft.a ${GU}count as an ERROR${E}"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-get_next_line for bonus part"
+    echo -e "    🔹 ${BCU}3) MY_UNITEST:${E}"
+    echo -e "       ${BC0}‣ ${GU}2.0) Libft's fun() tester:${E} "
+    echo -e "         ${BC0}⮡${E} if not desabled using option ${M0}'-t'${E}, always run ${BC0}────▶ ${E}run My_unitests-libft for mandatory part"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used OR libft_bonus fun. detected ${BC0}─▶ ${E}run My_unitests-libft for bonus part"
+    echo -e "       ${BC0}‣ ${GU}2.1) ft_printf() tester:${E}"       
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-a, -p'${E} used OR if fun. detected ${BC0}──────▶ ${E}run My_unitests-ft_printf for mandatory part"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used AND fun. detected${BC0}─────────────▶ ${E}run My_unitests-ft_printf for bonus part"
+    echo -e "       ${BC0}‣ ${GU}2.2) get_next_line() tester:${E}"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-a, -p'${E} used OR if fun. detected ${BC0}──────▶ ${E}run My_unitests-get_next_line for mandatory part"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used AND fun. detected${BC0}─────────────▶ ${E}run My_unitests-get_next_line for bonus part"
+    echo -e "       ${BC0}‣ ${GU}2.3) Others functions tester:${E}"
+    echo -e "         ${BC0}⮡${E} if option ${M0}'-a, -o'${E} used  ${BC0}─────────────────────────▶ ${E}run My_unitests for any fun detected for which an unitest was found"
+    exit ${exit_value}
 }
 # -[ PRINT_RELATIF_PATH() ]-----------------------------------------------------------------------------------
 # substract pwd from arg1 abs-path given
@@ -382,7 +394,7 @@ done
 [[ ${has_h} -eq 1 ]] && HELP=1
 [[ ${has_n} -eq 1 ]] && NORM=0
 # =[ DISPLAY USAGE THEN STOP IF --help OPTION ]===============================================================
-[[ ${HELP} -eq 1 ]] && script_usage "Help asked for" 0
+[[ ${HELP} -eq 1 ]] && script_usage
 # =[ SET MY_UNITEST LIBFT AS DEFAULT BEHAVIOR ]===============================================================
 [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS + TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -eq 0 ]] && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_OTHERS=1;
 # =[ SET LISTS ]==============================================================================================
