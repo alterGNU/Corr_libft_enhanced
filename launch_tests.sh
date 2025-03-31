@@ -527,7 +527,6 @@ if [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS
         if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line " ]];then
             OPTIONS+=( "      🔸 ${YU}get_next_line():${E}" "         ${V0}✓ MANDATORY part ${G0}(detected)${E}" )
             [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
-            break
         fi
     fi
     if [[ ${has_p} -eq 1 ]];then
@@ -537,7 +536,6 @@ if [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS
         if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf " ]];then
             OPTIONS+=( "      🔸 ${YU}ft_printf():${E}" "         ${V0}✓ MANDATORY part ${G0}(detected)${E}" )
             [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
-            break
         fi
     fi
     if [[ ${MY_UNITESTS_OTHERS} -eq 1 ]];then
