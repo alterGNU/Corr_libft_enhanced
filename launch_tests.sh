@@ -319,7 +319,7 @@ run_myunitests_gnl()
             else
                 local log_comp_fail=$(print_shorter_path ${FUN_LOG_DIR}/comp_stderr.log)
                 nb_err=$(( nb_err + 1 ))
-                echo -e "${fun}\tcompilation\t${log_comp_fail}" >> ${LOG_FAIL}
+                echo -e "get_next_line\tcompilation\t${log_comp_fail}" >> ${LOG_FAIL}
                 echo -en " ❌ ${R0}Compilation failed.${E}\n"
                 sed 's/^/\x1b[0;31m       /' ${log_comp_fail}
                 continue
@@ -344,14 +344,14 @@ run_myunitests_gnl()
             else
                 local diff_log_file=$(print_shorter_path ${diff_txt})
                 nb_err=$(( nb_err + 1 ))
-                echo -e "gnl\terrors\t${diff_log_file}" >> ${LOG_FAIL}
-                echo -en " ❌ ${R0} Error detected while readind ${my_file} with gnl, file != original\n"
+                echo -e "get_next_line\tdiff\t${diff_log_file}" >> ${LOG_FAIL}
+                echo -en " ❌ ${R0} Error detected: original_file != produced_file\n"
                 echo "        🔸${Y0}check diff log file 👉 ${M0}${diff_log_file}${E}"
             fi
         else
             nb_err=$(( nb_err + 1 ))
-            echo -e "gnl\terrors\t${copy_txt}" >> ${LOG_FAIL}
-            echo -e " ❌ ${R0} Error detected : reading ${my_file} with gnl() did not create '${copy_txt}' file${E}\n"
+            echo -e "get_next_line\tmissing\t${copy_txt}" >> ${LOG_FAIL}
+            echo -en " ❌ ${R0} Error detected : missing file${E}\n"
         fi
         # STEP 3 : VALGRIND
         echo -en "   ${BC0} ⤷${E} 🚰 ${GU}Valgrind   :${E}"
@@ -362,11 +362,12 @@ run_myunitests_gnl()
         else
             local leaks_log_file=$(print_shorter_path ${leak_txt})
             nb_err=$(( nb_err + 1 ))
-            echo -e "gnl\tleaks\t${leaks_log_file}" >> ${LOG_FAIL}
+            echo -e "get_next_line\tleaks\t${leaks_log_file}" >> ${LOG_FAIL}
             echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
             echo "        🔸${Y0}check log file 👉 ${M0}${leaks_log_file}${E}"
         fi
     done
+    return ${nb_err}
 }
 # -[ DISPLAY_RESUME() ]---------------------------------------------------------------------------------------
 # Display the resume of test (norminette, tests results, log files produces ...)
@@ -380,28 +381,35 @@ display_resume()
         args+=( " 🔸 ${YU}Norminette:${G0} ✖️  Test Desabled${E}" )
     fi
     local short_log_dir=$(print_shorter_path ${LOG_DIR})
-    local tot_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
-    local lst_fail=( )
-    local causes=( )
-    local causes=( )
-    [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! " ${lst_fail[@]} " =~ " ${ff} " ]] && lst_fail+=( "${ff}" );done
-    if [[ ${#lst_fail[@]} -eq 0 ]];then
-        args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${V0} ✅ PASS${E}" ) 
+    local tot_fun_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
+    local lst_uniq_fail_fun=( )
+    if [[ -f "${LOG_FAIL}" ]];then
+        while IFS= read -r line;do
+            local ff=$(echo "${line}" | awk '{print $1}')
+            if [[ -n "${ff}" ]];then
+                [[ ! " ${lst_uniq_fail_fun[@]} " =~ " ${ff} " ]] && lst_uniq_fail_fun+=( "${ff}" )
+            fi
+        done < "${LOG_FAIL}"
+    fi
+    if [[ ${#lst_uniq_fail_fun[@]} -eq 0 ]];then
+        args+=( " 🔸 ${YU}${tot_fun_tested} function(s) have been tested:${V0} ✅ ALL PASSED${E}" ) 
     else
-        args+=( " 🔸 ${YU}${tot_tested} functions have been tested:${E}" )
-        args+=( \ "   ${V0}✅ $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED.${E}" \
-            "    ${R0}❌ ${#lst_fail[@]} functions ${R0}FAILLED:${E}" \
+        args+=( " 🔸 ${YU}${tot_fun_tested} function(s) have been tested:${E}" )
+        args+=( \ "   ${V0}✅ $(( tot_fun_tested - ${#lst_uniq_fail_fun[@]} )) fonction(s) ${V0}PASSED.${E}" \
+            "    ${R0}❌ ${#lst_uniq_fail_fun[@]} function(s) ${R0}FAILLED:${E}" \
         )
-        for fun in "${lst_fail[@]}";do
+        for fun in ${lst_uniq_fail_fun[@]};do
             args+=( "      ${R0}✘ ${RU}${fun}():${E}" )
             local link1=$(awk -v f="${fun}" '$1 == f &&  $2 == "compilation" {print $3}' ${LOG_FAIL})
             local link2=$(awk -v f="${fun}" '$1 == f &&  $2 == "errors" {print $3}' ${LOG_FAIL})
             local link3=$(awk -v f="${fun}" '$1 == f &&  $2 == "leaks" {print $3}' ${LOG_FAIL})
             local link4=$(awk -v f="${fun}" '$1 == f &&  $2 == "missing" {print $3}' ${LOG_FAIL})
-            [[ -n "${link1}" ]] && args+=( "      ${R0}⤷ Error occure will compilling ${M0}👉 ${link1}${E}" )
-            [[ -n "${link2}" ]] && args+=( "      ${R0}⤷ Error detected ${M0}👉 ${link2}${E}" )
-            [[ -n "${link3}" ]] && args+=( "      ${R0}⤷ Leaks detected ${M0}👉 ${link3}${E}" )
-            [[ -n "${link4}" ]] && args+=( "      ${R0}⤷ Missing function, not found in object file.${E}" )
+            local link5=$(awk -v f="${fun}" '$1 == f &&  $2 == "diff" {print $3}' ${LOG_FAIL})
+            [[ -n "${link1}" ]] && for l in ${link1}; do args+=( "        ${R0}⤷ Error occure will compilling ${M0}👉 ${l}${E}" );done
+            [[ -n "${link2}" ]] && for l in ${link2}; do args+=( "        ${R0}⤷ Error detected ${M0}👉 ${l}${E}" );done
+            [[ -n "${link3}" ]] && for l in ${link3}; do args+=( "        ${R0}⤷ Leaks detected ${M0}👉 ${l}${E}" );done
+            [[ -n "${link4}" ]] && for l in ${link4}; do args+=( "        ${R0}⤷ Missing fun. or file.${E}" );done
+            [[ -n "${link5}" ]] && for l in ${link5}; do args+=( "        ${R0}⤷ Diff. found ${M0}👉 ${l}${E}" );done
         done
     fi
     print_in_box -t 2 -c y "${args[@]}"
@@ -512,21 +520,21 @@ if [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS
             done
         fi
     fi
-    if [[ ${MY_UNITESTS_GNL} -eq 1 ]];then
+    if [[ ${has_g} -eq 1 ]];then
         OPTIONS+=( "      🔸 ${YU}get_next_line():${E}" "         ${V0}✓ MANDATORY part ${G0}(asked for)${E}" )
         [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
     else
-        if [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line " ]];then
+        if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line " ]];then
             OPTIONS+=( "      🔸 ${YU}get_next_line():${E}" "         ${V0}✓ MANDATORY part ${G0}(detected)${E}" )
             [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
             break
         fi
     fi
-    if [[ ${MY_UNITESTS_PRINTF} -eq 1 ]];then
+    if [[ ${has_p} -eq 1 ]];then
         OPTIONS+=( "      🔸 ${YU}ft_printf():${E}" "         ${V0}✓ MANDATORY part ${G0}(asked for)${E}" )
         [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
     else
-        if [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf " ]];then
+        if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf " ]];then
             OPTIONS+=( "      🔸 ${YU}ft_printf():${E}" "         ${V0}✓ MANDATORY part ${G0}(detected)${E}" )
             [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
             break
@@ -560,111 +568,111 @@ if [[ ${NORM} -eq 1 ]];then
     exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
     res_normi=${?}
 fi
-# =[ LAUNCH TRIPOUILLE ]======================================================================================
-if [[ $(( TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -gt 0 ]];then
-    print_in_box -t 2 -c y \
-        "   ${Y0}  _____         _                       _   _   _           _____              _        ${E}" \
-        "   ${Y0} |_   _|  _ _  (_)  _ __   ___   _  _  (_) | | | |  ___    |_   _|  ___   ___ | |_   ___${E}" \
-        "   ${Y0}   | |   | '_| | | | '_ \ / _ \ | || | | | | | | | / -_)     | |   / -_) (_-< |  _| (_-<${E}" \
-        "   ${Y0}   |_|   |_|   |_| | .__/ \___/  \_,_| |_| |_| |_| \___|     |_|   \___| /__/  \__| /__/${E}" \
-        "   ${Y0}                   |_|                                                                  ${E}"
-fi
-# -[ LIBFT ]--------------------------------------------------------------------------------------------------
-if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
-    print_in_box -t 3 -c b \
-        "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏           ┓         ${E}" \
-        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┏┳┓┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┛┗┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-    make -s -C ${TRIPOUILLE}/libft m
-    # -[ Run BONUS-TESTER if explicitly asked ]---------------------------------------------------------------
-    if [[ ${BONUS} -eq 1 ]];then 
-        print_in_box -t 3 -c b \
-        "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
-        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
-        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
-        make -s -C ${TRIPOUILLE}/libft b
-    else
-    # -[ Run BONUS-TESTER if any libft_bonus fun. founded in static library ]---------------------------------
-        for fun in ${HOMEMADE_FUNUSED[@]};do
-            if [[ " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
-                print_in_box -t 3 -c b \
-                    "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
-                    "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
-                    "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
-                make -s -C ${TRIPOUILLE}/libft b
-                break
-            fi
-        done
-    fi
-fi
-# -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
-if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
-    # -[ CAS1: explicitly asks-->if not found:error. ]--------------------------------------------------------
-    if [[ ${has_p} -eq 1 ]];then
-        print_in_box -t 3 -c b \
-            "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
-            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-        make -s -C ${TRIPOUILLE}/ft_printf m
-        if [[ ${BONUS} -eq 1 ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${TRIPOUILLE}/ft_printf b
-        fi
-    # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
-    else
-        if [[ ((${has_a} -eq 1) && (" ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf ")) ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-            make -s -C ${TRIPOUILLE}/ft_printf m
-        fi
-        if [[ ${BONUS} -eq 1 ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${TRIPOUILLE}/ft_printf b
-        fi
-    fi
-fi
-# -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
-if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
-    # -[ CAS1: explicitly asks if -g option-->if not found:error. ]-------------------------------------------
-    if [[ ${has_g} -eq 1 ]];then
-        print_in_box -t 3 -c b \
-            "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
-            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-        make -s -C ${TRIPOUILLE}/get_next_line m
-        if [[ ${BONUS} -eq 1 ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${TRIPOUILLE}/get_next_line b
-        fi
-    # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
-    else
-        if [[ ((${has_a} -eq 1) && (" ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line ")) ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-            make -s -C ${TRIPOUILLE}/get_next_line m
-        fi
-        if [[ ${BONUS} -eq 1 ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${TRIPOUILLE}/get_next_line b
-        fi
-    fi
-fi
+## =[ LAUNCH TRIPOUILLE ]======================================================================================
+#if [[ $(( TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -gt 0 ]];then
+#    print_in_box -t 2 -c y \
+#        "   ${Y0}  _____         _                       _   _   _           _____              _        ${E}" \
+#        "   ${Y0} |_   _|  _ _  (_)  _ __   ___   _  _  (_) | | | |  ___    |_   _|  ___   ___ | |_   ___${E}" \
+#        "   ${Y0}   | |   | '_| | | | '_ \ / _ \ | || | | | | | | | / -_)     | |   / -_) (_-< |  _| (_-<${E}" \
+#        "   ${Y0}   |_|   |_|   |_| | .__/ \___/  \_,_| |_| |_| |_| \___|     |_|   \___| /__/  \__| /__/${E}" \
+#        "   ${Y0}                   |_|                                                                  ${E}"
+#fi
+## -[ LIBFT ]--------------------------------------------------------------------------------------------------
+#if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
+#    print_in_box -t 3 -c b \
+#        "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏           ┓         ${E}" \
+#        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┏┳┓┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+#        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┛┗┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+#    make -s -C ${TRIPOUILLE}/libft m
+#    # -[ Run BONUS-TESTER if explicitly asked ]---------------------------------------------------------------
+#    if [[ ${BONUS} -eq 1 ]];then 
+#        print_in_box -t 3 -c b \
+#        "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
+#        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
+#        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
+#        make -s -C ${TRIPOUILLE}/libft b
+#    else
+#    # -[ Run BONUS-TESTER if any libft_bonus fun. founded in static library ]---------------------------------
+#        for fun in ${HOMEMADE_FUNUSED[@]};do
+#            if [[ " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+#                print_in_box -t 3 -c b \
+#                    "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
+#                    "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
+#                    "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
+#                make -s -C ${TRIPOUILLE}/libft b
+#                break
+#            fi
+#        done
+#    fi
+#fi
+## -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
+#if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
+#    # -[ CAS1: explicitly asks-->if not found:error. ]--------------------------------------------------------
+#    if [[ ${has_p} -eq 1 ]];then
+#        print_in_box -t 3 -c b \
+#            "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
+#            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+#            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+#        make -s -C ${TRIPOUILLE}/ft_printf m
+#        if [[ ${BONUS} -eq 1 ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
+#            make -s -C ${TRIPOUILLE}/ft_printf b
+#        fi
+#    # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
+#    else
+#        if [[ ((${has_a} -eq 1) && (" ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf ")) ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+#            make -s -C ${TRIPOUILLE}/ft_printf m
+#        fi
+#        if [[ ${BONUS} -eq 1 ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
+#            make -s -C ${TRIPOUILLE}/ft_printf b
+#        fi
+#    fi
+#fi
+## -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
+#if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
+#    # -[ CAS1: explicitly asks if -g option-->if not found:error. ]-------------------------------------------
+#    if [[ ${has_g} -eq 1 ]];then
+#        print_in_box -t 3 -c b \
+#            "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
+#            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+#            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+#        make -s -C ${TRIPOUILLE}/get_next_line m
+#        if [[ ${BONUS} -eq 1 ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
+#            make -s -C ${TRIPOUILLE}/get_next_line b
+#        fi
+#    # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
+#    else
+#        if [[ ((${has_a} -eq 1) && (" ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line ")) ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+#            make -s -C ${TRIPOUILLE}/get_next_line m
+#        fi
+#        if [[ ${BONUS} -eq 1 ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
+#            make -s -C ${TRIPOUILLE}/get_next_line b
+#        fi
+#    fi
+#fi
 # =[ MY_UNITESTS ]============================================================================================
 print_in_box -t 2 -c y \
     "           ${Y0}  __  __                _   _          _   _                _        ${E}" \
@@ -680,7 +688,7 @@ if [[ ${MY_UNITESTS_LIBFT} -eq 1 ]];then
         exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
     else
         for fun in ${HOMEMADE_FUNUSED[@]};do
-            if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+            if [[ " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
                 exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
                 break
             fi
@@ -688,12 +696,12 @@ if [[ ${MY_UNITESTS_LIBFT} -eq 1 ]];then
     fi
 fi
 # -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
-if [[ ${MY_UNITESTS_GNL} -eq 1 ]];then
+if [[ (${has_g} -eq 1) || (" ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line ") ]];then
     exec_anim_in_box "run_myunitests_gnl" "Run My_unitests for get_next_line()"
     [[ ${BONUS} -eq 1 ]] && exec_anim_in_box "echo \"TODO: create run_myunitests_gnl_bonus()\"" # TODO
 fi
 # -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
-if [[ ${MY_UNITESTS_PRINTF} -eq 1 ]];then
+if [[ (${has_p} -eq 1) || (" ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf ") ]];then
     exec_anim_in_box "echo \"TODO: create run_myunitests_ft_printf()\"" # TODO
     [[ ${BONUS} -eq 1 ]] && exec_anim_in_box "echo \"TODO: create run_myunitests_ft_printf_bonus()\"" # TODO
 fi
