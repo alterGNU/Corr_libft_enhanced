@@ -1,0 +1,7 @@
+First line followed by one empy line
+
+Second line
+Third line followed by 3 empty lines
+
+
+Last line without a backslash n at the end
