@@ -8,16 +8,17 @@
 # tester refered as My_unitests.
 #
 # - This script take options as arguments:
-#   - NO-ARGS                            🢥  Default behavior:enable all MY_UNITESTS_{LIBFT,GNL,PRINTF,OTHERS}
-#   - ARGS ∈ {-h, --help}                🢥  Enable HELP option that display script usage
-#   - ARGS ∈ {-n, --no-norm}             🢥  Desable the NORMINETTE tester
-#   - ARGS ∈ {-b, --bonus}               🢥  Enable Bonus option for all tester
-#   - ARGS ∈ {-a, --all}                 🢥  Enable ALL TRIPOUILLE AND MY_UNITESTS OPTION WITHOUT BONUS
-#   - ARGS ∈ {-t, --tripouille}          🢥  Enable ALL TRIPOUILLE && Disable ALL MY_UNITESTS
-#   - ARGS ∈ {-l, -lft, --libft}         🢥  Enable test for LIBFT
-#   - ARGS ∈ {-f, --ft_printf}           🢥  Enable test for FT_PRINTF
-#   - ARGS ∈ {-g, -gnl, --get_next_line} 🢥  Enable test for GET_NEXT_LINE
-#   - ARGS ∈ {-o, --other}               🢥  Enable test for OTHERS FUNCTIONS FOUND
+#   - NO-ARGS
+#   - ARGS ∈ {-+h, --++help}                 🢥  -+Enable HELP option that display script usage
+#   - ARGS ∈ {-+n, --++no-norm}              🢥  -Desable +Enable the NORM-CHECKER STEP
+#   - ARGS ∈ {-+bi, --++built-in}            🢥  -Desable +Enable Display built-in found
+#   - ARGS ∈ {-+bo, --++bonus}               🢥  -Desable +Enable Bonus option for all tester
+#   - ARGS ∈ {-+a, --++all}                  🢥  -Desable +Enable ALL TRIPOUILLE AND MY_UNITESTS OPTION WITHOUT BONUS
+#   - ARGS ∈ {-+t, --++tripouille}           🢥  -Desable +Enable ALL TRIPOUILLE && Disable ALL MY_UNITESTS
+#   - ARGS ∈ {-+l, -+lft, --++libft}         🢥  -Desable +Enable tests for LIBFT
+#   - ARGS ∈ {-+f, --++ft_printf}            🢥  -Desable +Enable tests for FT_PRINTF
+#   - ARGS ∈ {-+g, -gnl, --++get_next_line}  🢥  -Desable +Enable tests for GET_NEXT_LINE
+#   - ARGS ∈ {-+o, --++other}                🢥  -Desable +Enable tests OTHERS FUNCTIONS FOUND (USER-MADE fun)
 #
 # - NOTES:
 #   - To test a personnal function add to libft.a, just add its unitests like:
@@ -27,15 +28,16 @@
 # =[ VARIABLES ]==============================================================================================
 # -[ SCRIPT OPTIONS ]-----------------------------------------------------------------------------------------
 HELP=0                                                             # ☑ if set at 1🢥 Display script usage
-BONUS=0                                                            # ☑ if set at 1🢥 launch all test with bonus option
-NORM=1                                                             # ☑ if set at 1🢥 launch NORMINETTE TESTER
-MY_UNITESTS_LIBFT=0                                                # ☑ if set at 1🢥 launch my tester for LIBFT(DEFAULT)
-MY_UNITESTS_GNL=0                                                  # ☑ if set at 1🢥 launch my tester for GNL(DEFAULT)
-MY_UNITESTS_PRINTF=0                                               # ☑ if set at 1🢥 launch my tester for PRINTF(DEFAULT)
-MY_UNITESTS_OTHERS=0                                               # ☑ if set at 1🢥 launch my tester for OTHERS_FUNCTION_FOUND(DEFAULT)
-TRIPOUILLE_LIBFT=0                                                 # ☑ if set at 1🢥 launch Tripouille for libft()
-TRIPOUILLE_GNL=0                                                   # ☑ if set at 1🢥 launch Tripouille for get_next_line()
-TRIPOUILLE_PRINTF=0                                                # ☑ if set at 1🢥 launch Tripouille for ft_printf()
+BONUS=0                                                            # ☑ if set at 1🢥 Launch all test with bonus option
+NORM=1                                                             # ☑ if set at 1🢥 Launch NORMINETTE TESTER
+BUIN=1                                                             # ☒ if set at 1🢥 Display list of built-in fun used
+MY_UNITESTS_LIBFT=0                                                # ☑ if set at 1🢥 Launch my tester for LIBFT(DEFAULT)
+MY_UNITESTS_GNL=0                                                  # ☑ if set at 1🢥 Launch my tester for GNL(DEFAULT)
+MY_UNITESTS_PRINTF=0                                               # ☑ if set at 1🢥 Launch my tester for PRINTF(DEFAULT)
+MY_UNITESTS_OTHERS=0                                               # ☑ if set at 1🢥 Launch my tester for OTHERS_FUNCTION_FOUND(DEFAULT)
+TRIPOUILLE_LIBFT=0                                                 # ☑ if set at 1🢥 Launch Tripouille for libft()
+TRIPOUILLE_GNL=0                                                   # ☑ if set at 1🢥 Launch Tripouille for get_next_line()
+TRIPOUILLE_PRINTF=0                                                # ☑ if set at 1🢥 Launch Tripouille for ft_printf()
 # -[ PATH/FOLDER/FILE ]---------------------------------------------------------------------------------------
 SCRIPTNAME=${0##*\/}                                               # ☒ Script's name (no path)
 PARENT_DIR=$(dirname $(realpath ${0}))                             # ☒ Name of parent directory
@@ -99,9 +101,9 @@ source ${BSL}/src/print.sh
 script_usage()
 {
     local exit_value=0
-    local entete="\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME}\` ${M0}[-h, -n, -a, -t, -b, -l, -f, -g, -o]${E}"
+    local entete="\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME}\` ${M0}+-[h, n, a, t, bi, bo, l, f, g, o]${E}"
     if [[ ${#} -eq 2 ]];then
-        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME}\` ${M0}[-h, -n, -a, -t, -b, -l, -f, -g, -o]${E}"
+        local entete="${RU}[Err:${2}] Wrong usage${R0}: ${1}${E}\n${BU}Usage:${R0}  \`${V0}./${SCRIPTNAME}\` ${M0}+-[h, n, a, t, bi, bo, l, f, g, o]${E}"
         local exit_value=${2}
     fi
     echo -e "${entete}"
@@ -109,46 +111,23 @@ script_usage()
     echo -e "    ${B0}‣ ${R0}i) ${E}: To be cloned inside the project ${M0}path/libft/${E} to be tested, with the ${M0}--recursive-submodules${E} option."
     echo -e "    ${B0}‣ ${R0}ii)${E}: The static lib ${M0}path/libft/*/${B0}libft.a${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
     echo -e " 🔹 ${BU}OPTIONS:${E}"
-    echo -e "    ${B0}‣ ${M0}[-h, --help]          ${BC0}🢥  ${E}Enable HELP option that display script usage."
-    echo -e "    ${B0}‣ ${M0}[-n, --no-norm]       ${BC0}🢥  ${E}Desable step NORMINETTE tester."
-    echo -e "    ${B0}‣ ${M0}[-a, --all]           ${BC0}🢥  ${E}Enable ALL tripouille and my_unitests OPTIONS (WITHOUT BONUS)."
-    echo -e "    ${B0}‣ ${M0}[-t, --tripouille]    ${BC0}🢥  ${E}Enable ONLY tripouille tester."
-    echo -e "    ${B0}‣ ${M0}[-b, --bonus]         ${BC0}🢥  ${E}Enable Bonus option for all testers."
-    echo -e "    ${B0}‣ ${M0}[-l, --libft]         ${BC0}🢥  ${E}Enable both tripouille and my_unitests testers for LIBFT."
-    echo -e "    ${B0}‣ ${M0}[-f, --ft_printf]     ${BC0}🢥  ${E}Enable both tripouille and my_unitests testers for FT_PRINTF."
-    echo -e "    ${B0}‣ ${M0}[-g, --get_next_line] ${BC0}🢥  ${E}Enable both tripouille and my_unitests testers for GET_NEXT_LINE."
-    echo -e "    ${B0}‣ ${M0}[-o, --other]         ${BC0}🢥  ${E}Enable both tripouille and my_unitests testers for OTHERS FUNCTIONS FOUND."
-    echo -e " 🔹 ${BU}STEPS:${E}"
-    echo -e "    🔹 ${BCU}0) IN ANY CASE:${E}"
-    echo -e "       ${BC0}‣ ${GU}0.0)${E} display all enabled options"
-    echo -e "       ${BC0}‣ ${GU}0.1)${E} display list all home-made fun in libft.a"
-    echo -e "       ${BC0}‣ ${GU}0.2)${E} display list all build-in fun in libft.a (ca be use to see forbidden function)"
-    echo -e "    🔹 ${BCU}1) NORMINETTE-CHECKER:${E}"
-    echo -e "       ${BC0}‣ ${GU}1.1)${E} if option ${M0}'-n'${E} not used ${BC0}───────────────────────▶ ${E}run norminette-checker, excluding Corr_libft_enhanced folder"
-    echo -e "    🔹 ${BCU}2) TRIPOUILLE:${E}"
-    echo -e "       ${BC0}‣ ${GU}2.0) Libft's fun() tester:${E} "
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-t, -l${E} used ${BC0}───────────────────────────▶ ${E}run Tripouille-libft for mandatory part"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used OR libft_bonus fun. detected ${BC0}─▶ ${E}run Tripouille-libft for bonus part"
-    echo -e "       ${BC0}‣ ${GU}2.1) ft_printf() tester:${E}"       
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-a'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-ft_printf ${GU}only${E} if fun. detected in libft.a"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-p'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-ft_printf, if fun. not detected in libft.a ${GU}count as an ERROR${E}"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-ft_printf for bonus part"
-    echo -e "       ${BC0}‣ ${GU}2.1) get_next_line() tester:${E}"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-a'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-get_next_line ${GU}only${E} if fun. detected in libft.a"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-g'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-get_next_line, if fun. not detected in libft.a ${GU}count as an ERROR${E}"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used ${BC0}──────────────────────────────▶ ${E}run Tripouille-get_next_line for bonus part"
-    echo -e "    🔹 ${BCU}3) MY_UNITEST:${E}"
-    echo -e "       ${BC0}‣ ${GU}2.0) Libft's fun() tester:${E} "
-    echo -e "         ${BC0}⮡${E} if not desabled using option ${M0}'-t'${E}, always run ${BC0}────▶ ${E}run My_unitests-libft for mandatory part"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used OR libft_bonus fun. detected ${BC0}─▶ ${E}run My_unitests-libft for bonus part"
-    echo -e "       ${BC0}‣ ${GU}2.1) ft_printf() tester:${E}"       
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-a, -p'${E} used OR if fun. detected ${BC0}──────▶ ${E}run My_unitests-ft_printf for mandatory part"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used AND fun. detected${BC0}─────────────▶ ${E}run My_unitests-ft_printf for bonus part"
-    echo -e "       ${BC0}‣ ${GU}2.2) get_next_line() tester:${E}"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-a, -p'${E} used OR if fun. detected ${BC0}──────▶ ${E}run My_unitests-get_next_line for mandatory part"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-b'${E} used AND fun. detected${BC0}─────────────▶ ${E}run My_unitests-get_next_line for bonus part"
-    echo -e "       ${BC0}‣ ${GU}2.3) Others functions tester:${E}"
-    echo -e "         ${BC0}⮡${E} if option ${M0}'-a, -o'${E} used  ${BC0}─────────────────────────▶ ${E}run My_unitests for any fun detected for which an unitest was found"
+    echo -e "    ${B0}‣ ${M0}[-+h, --++help]          ${BC0}🢥  ${E}+-Enable HELP option that display script usage."
+    echo -e "    ${B0}‣ ${M0}[-+n, --++no-norm]       ${BC0}🢥  ${E}+Enable -Desable step NORM-Checker step."
+    echo -e "    ${B0}‣ ${M0}[-+a, --++all]           ${BC0}🢥  ${E}+Enable -Desable ALL tripouille and my_unitests OPTIONS (WITHOUT BONUS)."
+    echo -e "    ${B0}‣ ${M0}[-+t, --++tripouille]    ${BC0}🢥  ${E}+Enable -Desable ONLY tripouille tester."
+    echo -e "    ${B0}‣ ${M0}[-+bi, --++build-in]     ${BC0}🢥  ${E}+Enable -Desable Built-in listing step."
+    echo -e "    ${B0}‣ ${M0}[-+b, --++bonus]         ${BC0}🢥  ${E}+Enable -Desable Bonus option for all testers."
+    echo -e "    ${B0}‣ ${M0}[-+l, --++libft]         ${BC0}🢥  ${E}+Enable -Desable both tripouille and my_unitests testers for LIBFT."
+    echo -e "    ${B0}‣ ${M0}[-+f, --++ft_printf]     ${BC0}🢥  ${E}+Enable -Desable both tripouille and my_unitests testers for FT_PRINTF."
+    echo -e "    ${B0}‣ ${M0}[-+g, --++get_next_line] ${BC0}🢥  ${E}+Enable -Desable both tripouille and my_unitests testers for GET_NEXT_LINE."
+    echo -e "    ${B0}‣ ${M0}[-+o, --++other]         ${BC0}🢥  ${E}+Enable -Desable both tripouille and my_unitests testers for OTHERS FUNCTIONS FOUND."
+    echo -e " 🔹 ${BCU}STEPS:${E}"
+    echo -e "    ${B0}‣ ${BC0}|STEP 0| ${GU}List-Options${E}               ${BC0} 🢥  ${E}Display the list of enabled/desabled options."
+    echo -e "    ${B0}‣ ${BC0}|STEP 1| ${GU}List-Builtin${E}               ${BC0} 🢥  ${E}Display the libft buit-in functions used."
+    echo -e "    ${B0}‣ ${BC0}|STEP 2| ${GU}Norme-checker${E}              ${BC0} 🢥  ${E}Run the norminette."
+    echo -e "    ${B0}‣ ${BC0}|STEP 3| ${GU}Tripouille-tests${E}           ${BC0} 🢥  ${E}Run Tripouille's tester on libft functions."
+    echo -e "    ${B0}‣ ${BC0}|STEP 4| ${GU}My-Unitests${E}                ${BC0} 🢥  ${E}Run unitests on minishell user-made functions."
+    echo -e "    ${B0}‣ ${BC0}|STEP 5| ${GU}Display a My-unitests Resume${E}${BC0}🢥  ${E}Display a resume of failed/passed unitests."
     exit ${exit_value}
 }
 # -[ PRINT_RELATIF_PATH() ]-----------------------------------------------------------------------------------
@@ -180,6 +159,30 @@ exec_anim_in_box()
     done < "${tmpfile}"
     print_last -t 3 -c ${color}
     return ${exit_code}
+}
+
+# -[ DISPLAY_START ]------------------------------------------------------------------------------------------
+display_start()
+{
+    local OPTIONS=( " ${YU}LIBFT's OPTIONS:${E}" )
+    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 1)${Y0} BUILT-IN LISTER:    ${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 1)${Y0} BUILT-IN LISTER:           ${R0}✘ Desable${E}" )
+    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 2)${Y0} NORM CHECKER:       ${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 2)${Y0} NORM CHECKER:              ${R0}✘ Desable${E}" )
+    OPTIONS+=( "    🔸${YU}STEP 3)${Y0} TRIPOUILLE'S TESTER:")
+    [ ${TRIPOUILLE_LIBFT} -gt 0 ]]   && OPTIONS+=( "      ${Y0}▸ Libft tester:               ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ Libft tester:               ${R0}✘ Desable${E}" )
+    [ ${TRIPOUILLE_GNL} -gt 0 ]]     && OPTIONS+=( "      ${Y0}▸ get_next_line tester:       ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ get_next_line tester:       ${R0}✘ Desable${E}" )
+    [ ${TRIPOUILLE_PRINTF} -gt 0 ]]  && OPTIONS+=( "      ${Y0}▸ ft_printf tester:           ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ ft_printf tester:           ${R0}✘ Desable${E}" )
+    OPTIONS+=( "    🔸${YU}STEP 3)${Y0} MY_UNITESTS TESTER:")
+    [ ${MY_UNITESTS_LIBFT} -gt 0 ]]  && OPTIONS+=( "      ${Y0}▸ Libft tester:               ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ Libft tester:               ${R0}✘ Desable${E}" )
+    [ ${MY_UNITESTS_GNL} -gt 0 ]]    && OPTIONS+=( "      ${Y0}▸ get_next_line tester:       ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ get_next_line tester:       ${R0}✘ Desable${E}" )
+    [ ${MY_UNITESTS_PRINTF} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸ ft_printf tester:           ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ ft_printf tester:           ${R0}✘ Desable${E}" )
+    [ ${MY_UNITESTS_OTHERS} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸ other user-made fun. tester:${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ other user-made fun. tester:${R0}✘ Desable${E}" )
+    print_in_box -t 2 -c y \
+        "           ${Y0}  _     ___  ___  ___  _____       _   _        _  _             _        ${E}" \
+        "           ${Y0} | |   |_ _|| _ )| __||_   _|     | | | | _ _  (_)| |_  ___  ___| |_  ___ ${E}" \
+        "           ${Y0} | |__  | | | _ \| _|   | |       | |_| || ' \ | ||  _|/ -_)(_-<|  _|(_-< ${E}" \
+        "           ${Y0} |____||___||___/|_|    |_|        \___/ |_||_||_| \__|\___|/__/ \__|/__/ ${E}" \
+        "           ${Y0}                                                                          ${E}" \
+        "  🔶 ${OPTIONS[@]}"
 }
 
 # -[ LAUNCH_MY_UNITESTS ]-------------------------------------------------------------------------------------
@@ -422,41 +425,76 @@ display_resume()
 [[ -z ${LIBFT_A} ]] && { script_usage "${R0}Static lib not found: No ${BC0}libft.a${R0} file inside ${M0}${LIBFT_DIR}/${R0} folder.${E}" 2; }
 # =[ HANDLE SCRIPTS OPTIONS ]=================================================================================
 NB_ARG="${#}"
-has_a=0 ; has_t=0 ; has_l=0 ; has_g=0 ; has_p=0 ; has_b=0 ; has_h=0; has_n=0; has_o=0
 for args in "$@";do
     shift
     case "${args}" in
-        --[Aa]ll | -[Aa]) has_a=1 ;;
-        --[Tt]ripouille | -[Tt]) has_t=1 ;;
-        --[Li]bft | -[Ll][Ff][Tt] | -[Ll]) has_l=1 ;;
-        --[Gg]et[Nn]ext[Ll]ine | --[Gg]et_[Nn]ext_[Ll]ine | -[Gg][Nn][Ll] | -[Gg]) has_g=1 ;;
-        --ft_printf | --printf | --print | -[Pp] ) has_p=1 ;;
-        --[Bb]onus | -[Bb] ) has_b=1 ;;
-        --[Hh]elp | -[Hh] ) has_h=1 ;;
-        --[Nn]o-[Nn]orm | -[Nn] ) has_n=1 ;;
-        --[Oo]ther | --[Oo]thers | -[Oo] ) has_o=1 ;;
+        --[Aa]ll | -[Aa])
+            MY_UNITESTS_LIBFT=$(( MY_UNITESTS_LIBFT - 1 ))
+            MY_UNITESTS_GNL=$(( MY_UNITESTS_GNL - 1 ))
+            MY_UNITESTS_PRINTF=$(( MY_UNITESTS_PRINTF - 1 ))
+            MY_UNITESTS_OTHERS=$(( MY_UNITESTS_OTHERS - 1 ))
+            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT - 1 ))
+            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL - 1 ))
+            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF - 1 ))
+            ;;
+        ++[Aa]ll | +[Aa])
+            MY_UNITESTS_LIBFT=$(( MY_UNITESTS_LIBFT + 1 ))
+            MY_UNITESTS_GNL=$(( MY_UNITESTS_GNL + 1 ))
+            MY_UNITESTS_PRINTF=$(( MY_UNITESTS_PRINTF + 1 ))
+            MY_UNITESTS_OTHERS=$(( MY_UNITESTS_OTHERS + 1 ))
+            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT + 1 ))
+            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL + 1 ))
+            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF + 1 ))
+            ;;
+        --[Tt]ripouille | -[Tt])
+            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT - 1 ))
+            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL - 1 ))
+            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF - 1 ))
+            ;;
+        ++[Tt]ripouille | +[Tt])
+            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT + 1 ))
+            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL + 1 ))
+            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF + 1 ))
+            ;;
+        --[Li]bft | -[Ll][Ff][Tt] | -[Ll])
+            MY_UNITESTS_LIBFT=$(( MY_UNITESTS_LIBFT - 1 ))
+            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT - 1 ))
+            ;;
+        ++[Li]bft | +[Ll][Ff][Tt] | +[Ll])
+            MY_UNITESTS_LIBFT=$(( MY_UNITESTS_LIBFT + 1 ))
+            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT + 1 ))
+            ;;
+        --[Gg]et[Nn]ext[Ll]ine | --[Gg]et_[Nn]ext_[Ll]ine | -[Gg][Nn][Ll] | -[Gg])
+            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL - 1 ))
+            MY_UNITESTS_GNL=$(( MY_UNITESTS_GNL - 1 ))
+            ;;
+        ++[Gg]et[Nn]ext[Ll]ine | ++[Gg]et_[Nn]ext_[Ll]ine | +[Gg][Nn][Ll] | +[Gg])
+            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL + 1 ))
+            MY_UNITESTS_GNL=$(( MY_UNITESTS_GNL + 1 ))
+            ;;
+        --ft_printf | --printf | --print | -[Pp] )
+            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF - 1 ))
+            MY_UNITESTS_PRINTF=$(( MY_UNITESTS_PRINTF - 1 ))
+            ;;
+        ++ft_printf | ++printf | ++print | +[Pp] )
+            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF + 1 ))
+            MY_UNITESTS_PRINTF=$(( MY_UNITESTS_PRINTF + 1 ))
+            ;;
+        --[Bb]onus | -[Bb][Oo] ) BONUS=$(( BONUS - 1 )) ;;
+        ++[Bb]onus | +[Bb][Oo] ) BONUS=$(( BONUS + 1 )) ;;
+        --[Bb]uil[td]-in | -[Bb][Ii] ) BUIN=$(( BUIN - 1 )) ;;
+        ++[Bb]uil[td]-in | +[Bb][Ii] ) BUIN=$(( BUIN + 1 )) ;;
+        [+-][+-][Hh]elp | [+-][Hh] ) HELP=$(( HELP + 1 ));;
+        --[Nn]o-[Nn]orm | -[Nn] ) NORM=$(( NORM - 1 ));;
+        ++[Nn]o+[Nn]orm | +[Nn] ) NORM=$(( NORM + 1 ));;
+        --[Oo]ther | --[Oo]thers | -[Oo] ) MY_UNITESTS_OTHERS=$( MY_UNITESTS_OTHERS - 1) ;;
+        ++[Oo]ther | ++[Oo]thers | +[Oo] ) MY_UNITESTS_OTHERS=$( MY_UNITESTS_OTHERS + 1) ;;
         *) script_usage "Error: Unknown option '${args}'" 1 ;;
     esac
 done
-# -[ CHECK FORBIDDEN OPTIONS COMBINATION ]--------------------------------------------------------------------
-[[ ( ${has_h} -eq 1 ) && ( ${NB_ARG} -gt 1 ) ]] && script_usage "--help option can not be paired with other option" 3
-[[ ( ${has_a} -eq 1 ) && ( ${ARG_COUNT} -gt 2 || ( ${ARG_COUNT} -eq 2 && ${has_b} -eq 0 && ${has_n} -eq 0 )) ]] && script_usage "--all option can only be paired with --bonus option" 3
-[[ ( ${has_t} -eq 1 ) && ( ${ARG_COUNT} -gt 2 || ( ${ARG_COUNT} -eq 2 && ${has_b} -eq 0 && ${has_n} -eq 0 )) ]] && script_usage "--tripouille option can only be paired with --bonus option" 3
-[[ ${ARG_COUNT} -eq 2 && ${has_b} -eq 1 && ${has_o} -eq 1 ]] && script_usage "--bonus option does not means anything for --others option" 3
-# -[ SET OPTIONS VARIABLES ]----------------------------------------------------------------------------------
-[[ ${has_a} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_GNL=1 && MY_UNITESTS_PRINTF=1 && MY_UNITESTS_OTHERS=1
-[[ ${has_t} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && TRIPOUILLE_GNL=1 && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_LIBFT=0 && MY_UNITESTS_GNL=0 && MY_UNITESTS_PRINTF=0
-[[ ${has_l} -eq 1 ]] && TRIPOUILLE_LIBFT=1 && MY_UNITESTS_LIBFT=1
-[[ ${has_g} -eq 1 ]] && TRIPOUILLE_GNL=1 && MY_UNITESTS_GNL=1
-[[ ${has_p} -eq 1 ]] && TRIPOUILLE_PRINTF=1 && MY_UNITESTS_PRINTF=1
-[[ ${has_o} -eq 1 ]] && MY_UNITESTS_OTHERS=1
-[[ ${has_b} -eq 1 ]] && BONUS=1
-[[ ${has_h} -eq 1 ]] && HELP=1
-[[ ${has_n} -eq 1 ]] && NORM=0
 # =[ DISPLAY USAGE THEN STOP IF --help OPTION ]===============================================================
+[[ ( ${has_h} -gt 0 ) && ( ${NB_ARG} -gt 1 ) ]] && script_usage "--help option can not be paired with other option" 3
 [[ ${HELP} -eq 1 ]] && script_usage
-# =[ SET MY_UNITEST LIBFT AS DEFAULT BEHAVIOR ]===============================================================
-[[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS + TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -eq 0 ]] && MY_UNITESTS_LIBFT=1 && MY_UNITESTS_OTHERS=1;
 # =[ SET LISTS ]==============================================================================================
 # -[ SET HOMEMADE AND BUILTIN LISTS ]-------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
@@ -478,234 +516,159 @@ for fun in ${PERSO_FUN[@]};do
     test_fun=$(find "${MY_UNITESTS}" -type f -name *"${fun}.c")
     [[ -n "${test_fun}" ]] && PERSO_FUN_TO_TEST+=( "${fun}" )
 done
-# -[ SET OPTIONS LIST ]---------------------------------------------------------------------------------------
-OPTIONS+=( "    🔸 ${YU}Norminette checkeur:${E}" )
-[[ ${NORM} -eq 1 ]] && OPTIONS+=( "       ${V0}✓ Enable${E}" ) || OPTIONS+=( "       ${R0}✘ Desable${E}" )
-if [[ $(( TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -gt 0 ]];then
-    OPTIONS+=( "    🔸 ${YU}Tripouille tester:${E}" )
-    if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
-        OPTIONS+=( "      🔸 ${YU}libft functions:${E}" "         ${V0}✓ MANDATORY part${E}" )
-        if [[ ${has_b} -eq 1 ]];then
-            OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
-        else
-            for fun in ${HOMEMADE_FUNUSED[@]};do
-                if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
-                    OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(detected)${E}" )
-                    break
-                fi
-            done
-        fi
-    fi
-    if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
-        OPTIONS+=( "      🔸 ${YU}get_next_line():${E}" "         ${V0}✓ MANDATORY part${E}" )
-        [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
-    fi
-    if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
-        OPTIONS+=( "      🔸 ${YU}ft_printf():${E}" "         ${V0}✓ MANDATORY part${E}" )
-        [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
-    fi
-fi
-if [[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS)) -gt 0 ]];then
-    OPTIONS+=( "    🔸 ${YU}My_unitests tester:${E}" )
-    if [[ ${MY_UNITESTS_LIBFT} -eq 1 ]];then
-        OPTIONS+=( "      🔸 ${YU}libft functions:${E}" "         ${V0}✓ MANDATORY part${E}" )
-        if [[ ${has_b} -eq 1 ]];then
-            OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
-        else
-            for fun in ${HOMEMADE_FUNUSED[@]};do
-                if [[ ! " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
-                    OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(detected)${E}" )
-                    break
-                fi
-            done
-        fi
-    fi
-    if [[ ${has_g} -eq 1 ]];then
-        OPTIONS+=( "      🔸 ${YU}get_next_line():${E}" "         ${V0}✓ MANDATORY part ${G0}(asked for)${E}" )
-        [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
-    else
-        if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line " ]];then
-            OPTIONS+=( "      🔸 ${YU}get_next_line():${E}" "         ${V0}✓ MANDATORY part ${G0}(detected)${E}" )
-            [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
-        fi
-    fi
-    if [[ ${has_p} -eq 1 ]];then
-        OPTIONS+=( "      🔸 ${YU}ft_printf():${E}" "         ${V0}✓ MANDATORY part ${G0}(asked for)${E}" )
-        [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
-    else
-        if [[ " ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf " ]];then
-            OPTIONS+=( "      🔸 ${YU}ft_printf():${E}" "         ${V0}✓ MANDATORY part ${G0}(detected)${E}" )
-            [[ ${has_b} -eq 1 ]] && OPTIONS+=( "         ${V0}✓ BONUS part ${G0}(asked for)${E}" )
-        fi
-    fi
-    if [[ ${MY_UNITESTS_OTHERS} -eq 1 ]];then
-        OPTIONS+=( "      🔸 ${YU}${#PERSO_FUN[@]} Personnal/Other functions detected:${E}" )
-        if [[ ${#PERSO_FUN_TO_TEST[@]} -eq 0 ]];then
-            OPTIONS+=( "         ${R0}✘ no matching tester found${E}" )
-        else
-            OPTIONS+=( "         ${V0}✓ ${#PERSO_FUN_TO_TEST[@]} matching tester(s) found${E}" )
-        fi
-    fi
-fi
-# =[ 0.1 | DISPLAY ENABLED OPTIONS ]==========================================================================
-print_in_box -t 2 -c y \
-    "           ${Y0}  _     ___  ___  ___  _____       _   _        _  _             _        ${E}" \
-    "           ${Y0} | |   |_ _|| _ )| __||_   _|     | | | | _ _  (_)| |_  ___  ___| |_  ___ ${E}" \
-    "           ${Y0} | |__  | | | _ \| _|   | |       | |_| || ' \ | ||  _|/ -_)(_-<|  _|(_-< ${E}" \
-    "           ${Y0} |____||___||___/|_|    |_|        \___/ |_||_||_| \__|\___|/__/ \__|/__/ ${E}" \
-    "           ${Y0}                                                                          ${E}" \
-    "  🔶 ${OPTIONS[@]}"
-# =[ 0.2 | DISPLAY LIST HOME-MADE FUN ]=======================================================================
-# TODO
-#print_in_box -t 1 -c b "🟦 ${HOMEMADE_FUNUSED[@]}"
-# =[ 0.3 | DISPLAY LIST BUILD-IN FUN ]========================================================================
-# TODO
-#print_in_box -t 1 -c b "🟦 ${BUILTIN_FUNUSED[@]}"
-# =[ 0.4 | CHECK NORMINETTE ]=================================================================================
-if [[ ${NORM} -eq 1 ]];then
-    exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
-    res_normi=${?}
-fi
-# =[ LAUNCH TRIPOUILLE ]======================================================================================
-if [[ $(( TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -gt 0 ]];then
-    print_in_box -t 2 -c y \
-        "   ${Y0}  _____         _                       _   _   _           _____              _        ${E}" \
-        "   ${Y0} |_   _|  _ _  (_)  _ __   ___   _  _  (_) | | | |  ___    |_   _|  ___   ___ | |_   ___${E}" \
-        "   ${Y0}   | |   | '_| | | | '_ \ / _ \ | || | | | | | | | / -_)     | |   / -_) (_-< |  _| (_-<${E}" \
-        "   ${Y0}   |_|   |_|   |_| | .__/ \___/  \_,_| |_| |_| |_| \___|     |_|   \___| /__/  \__| /__/${E}" \
-        "   ${Y0}                   |_|                                                                  ${E}"
-fi
-# -[ LIBFT ]--------------------------------------------------------------------------------------------------
-if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
-    print_in_box -t 3 -c b \
-        "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏           ┓         ${E}" \
-        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┏┳┓┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┛┗┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-    make -s -C ${TRIPOUILLE}/libft m
-    # -[ Run BONUS-TESTER if explicitly asked ]---------------------------------------------------------------
-    if [[ ${BONUS} -eq 1 ]];then 
-        print_in_box -t 3 -c b \
-        "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
-        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
-        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
-        make -s -C ${TRIPOUILLE}/libft b
-    else
-    # -[ Run BONUS-TESTER if any libft_bonus fun. founded in static library ]---------------------------------
-        for fun in ${HOMEMADE_FUNUSED[@]};do
-            if [[ " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
-                print_in_box -t 3 -c b \
-                    "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
-                    "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
-                    "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
-                make -s -C ${TRIPOUILLE}/libft b
-                break
-            fi
-        done
-    fi
-fi
-# -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
-if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
-    # -[ CAS1: explicitly asks-->if not found:error. ]--------------------------------------------------------
-    if [[ ${has_p} -eq 1 ]];then
-        print_in_box -t 3 -c b \
-            "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
-            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-        make -s -C ${TRIPOUILLE}/ft_printf m
-        if [[ ${BONUS} -eq 1 ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${TRIPOUILLE}/ft_printf b
-        fi
-    # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
-    else
-        if [[ ((${has_a} -eq 1) && (" ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf ")) ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-            make -s -C ${TRIPOUILLE}/ft_printf m
-        fi
-        if [[ ${BONUS} -eq 1 ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${TRIPOUILLE}/ft_printf b
-        fi
-    fi
-fi
-# -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
-if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
-    # -[ CAS1: explicitly asks if -g option-->if not found:error. ]-------------------------------------------
-    if [[ ${has_g} -eq 1 ]];then
-        print_in_box -t 3 -c b \
-            "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
-            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-        make -s -C ${TRIPOUILLE}/get_next_line m
-        if [[ ${BONUS} -eq 1 ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${TRIPOUILLE}/get_next_line b
-        fi
-    # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
-    else
-        if [[ ((${has_a} -eq 1) && (" ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line ")) ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
-            make -s -C ${TRIPOUILLE}/get_next_line m
-        fi
-        if [[ ${BONUS} -eq 1 ]];then
-            print_in_box -t 3 -c b \
-                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
-                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
-                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
-            make -s -C ${TRIPOUILLE}/get_next_line b
-        fi
-    fi
-fi
-# =[ MY_UNITESTS ]============================================================================================
-print_in_box -t 2 -c y \
-    "           ${Y0}  __  __                _   _          _   _                _        ${E}" \
-    "           ${Y0} |  \/  |  _  _   ___  | | | |  _ _   (_) | |_   ___   ___ | |_   ___${E}" \
-    "           ${Y0} | |\/| | | || | |___| | |_| | | ' \  | | |  _| / -_) (_-< |  _| (_-<${E}" \
-    "           ${Y0} |_|  |_|  \_, |        \___/  |_||_| |_|  \__| \___| /__/  \__| /__/${E}" \
-    "           ${Y0}           |__/                                                      ${E}"
-# -[ LIBFT ]--------------------------------------------------------------------------------------------------
-if [[ ${MY_UNITESTS_LIBFT} -eq 1 ]];then
-    exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_MANDA" "Tests libft mandatory functions"
-    # -[ LIBFT_BONUS if BONUS opt or if any libft_bonus fun detected in libft.a ]-----------------------------
-    if [[ ${BONUS} -eq 1 ]];then 
-        exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
-    else
-        for fun in ${HOMEMADE_FUNUSED[@]};do
-            if [[ " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
-                exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
-                break
-            fi
-        done
-    fi
-fi
-# -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
-if [[ (${has_a} -eq 1) || (${has_g} -eq 1) || (" ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line ") ]];then
-    exec_anim_in_box "run_myunitests_gnl" "Run My_unitests for get_next_line()"
-    [[ ${BONUS} -eq 1 ]] && exec_anim_in_box "echo \"TODO: create run_myunitests_gnl_bonus()\"" # TODO
-fi
-# -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
-if [[ (${has_a} -eq 1) || (${has_p} -eq 1) || (" ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf ") ]];then
-    exec_anim_in_box "echo \"TODO: create run_myunitests_ft_printf()\"" # TODO
-    [[ ${BONUS} -eq 1 ]] && exec_anim_in_box "echo \"TODO: create run_myunitests_ft_printf_bonus()\"" # TODO
-fi
-# -[ PERSONNAL FUNCTIONS ]------------------------------------------------------------------------------------
-if [[ ${MY_UNITESTS_OTHERS} -eq 1 ]];then
-    exec_anim_in_box "launch_my_unitests PERSO_FUN" "Tests ${#PERSO_FUN_TO_TEST[@]}/${#PERSO_FUN[@]} of personnal functions"
-fi
-# -[ DISPLAY UNITESTS RESUME ]--------------------------------------------------------------------------------
-[[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS)) -gt 0 ]] && display_resume "Libft's tests"
+# =[ DISPLAY_START() ]========================================================================================
+display_start
+## =[ 0.2 | DISPLAY LIST HOME-MADE FUN ]=======================================================================
+## TODO
+##print_in_box -t 1 -c b "🟦 ${HOMEMADE_FUNUSED[@]}"
+## =[ 0.3 | DISPLAY LIST BUILD-IN FUN ]========================================================================
+## TODO
+##print_in_box -t 1 -c b "🟦 ${BUILTIN_FUNUSED[@]}"
+## =[ 0.4 | CHECK NORMINETTE ]=================================================================================
+#if [[ ${NORM} -eq 1 ]];then
+#    exec_anim_in_box "check42_norminette ${LIBFT_DIR}" "Check Norminette"
+#    res_normi=${?}
+#fi
+## =[ LAUNCH TRIPOUILLE ]======================================================================================
+#if [[ $(( TRIPOUILLE_LIBFT + TRIPOUILLE_GNL + TRIPOUILLE_PRINTF )) -gt 0 ]];then
+#    print_in_box -t 2 -c y \
+#        "   ${Y0}  _____         _                       _   _   _           _____              _        ${E}" \
+#        "   ${Y0} |_   _|  _ _  (_)  _ __   ___   _  _  (_) | | | |  ___    |_   _|  ___   ___ | |_   ___${E}" \
+#        "   ${Y0}   | |   | '_| | | | '_ \ / _ \ | || | | | | | | | / -_)     | |   / -_) (_-< |  _| (_-<${E}" \
+#        "   ${Y0}   |_|   |_|   |_| | .__/ \___/  \_,_| |_| |_| |_| \___|     |_|   \___| /__/  \__| /__/${E}" \
+#        "   ${Y0}                   |_|                                                                  ${E}"
+#fi
+## -[ LIBFT ]--------------------------------------------------------------------------------------------------
+#if [[ ${TRIPOUILLE_LIBFT} -eq 1 ]];then
+#    print_in_box -t 3 -c b \
+#        "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏           ┓         ${E}" \
+#        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┏┳┓┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+#        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┛┗┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+#    make -s -C ${TRIPOUILLE}/libft m
+#    # -[ Run BONUS-TESTER if explicitly asked ]---------------------------------------------------------------
+#    if [[ ${BONUS} -eq 1 ]];then 
+#        print_in_box -t 3 -c b \
+#        "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
+#        "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
+#        "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
+#        make -s -C ${TRIPOUILLE}/libft b
+#    else
+#    # -[ Run BONUS-TESTER if any libft_bonus fun. founded in static library ]---------------------------------
+#        for fun in ${HOMEMADE_FUNUSED[@]};do
+#            if [[ " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+#                print_in_box -t 3 -c b \
+#                    "     ${BC0}┏┳┓  •      •┓┓    ┓•┓ ┏   ┓        ${E}" \
+#                    "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┣┓╋╋  ┣┓┏┓┏┓┓┏┏${E}" \
+#                    "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┗┗┛┛┗  ┗┛┗┛┛┗┗┛┛${E}"
+#                make -s -C ${TRIPOUILLE}/libft b
+#                break
+#            fi
+#        done
+#    fi
+#fi
+## -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
+#if [[ ${TRIPOUILLE_PRINTF} -eq 1 ]];then
+#    # -[ CAS1: explicitly asks-->if not found:error. ]--------------------------------------------------------
+#    if [[ ${has_p} -eq 1 ]];then
+#        print_in_box -t 3 -c b \
+#            "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
+#            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+#            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+#        make -s -C ${TRIPOUILLE}/ft_printf m
+#        if [[ ${BONUS} -eq 1 ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
+#            make -s -C ${TRIPOUILLE}/ft_printf b
+#        fi
+#    # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
+#    else
+#        if [[ ((${has_a} -eq 1) && (" ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf ")) ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┳┓     ┓         ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+#            make -s -C ${TRIPOUILLE}/ft_printf m
+#        fi
+#        if [[ ${BONUS} -eq 1 ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓      •   ┏  ┳┓       ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┣ ╋ ┏┓┏┓┓┏┓╋╋  ┣┫┏┓┏┓┓┏┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┻ ┗━┣┛┛ ┗┛┗┗┛  ┻┛┗┛┛┗┗┛┛${E}"
+#            make -s -C ${TRIPOUILLE}/ft_printf b
+#        fi
+#    fi
+#fi
+## -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
+#if [[ ${TRIPOUILLE_GNL} -eq 1 ]];then
+#    # -[ CAS1: explicitly asks if -g option-->if not found:error. ]-------------------------------------------
+#    if [[ ${has_g} -eq 1 ]];then
+#        print_in_box -t 3 -c b \
+#            "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
+#            "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+#            "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+#        make -s -C ${TRIPOUILLE}/get_next_line m
+#        if [[ ${BONUS} -eq 1 ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
+#            make -s -C ${TRIPOUILLE}/get_next_line b
+#        fi
+#    # -[ CAS2: add using -all options-->if not found, not launch and therefor not considered as an error. ]---
+#    else
+#        if [[ ((${has_a} -eq 1) && (" ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line ")) ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┳┓     ┓         ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┃┃┃┏┓┏┓┏┫┏┓╋┏┓┏┓┓┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┛ ┗┗┻┛┗┗┻┗┻┗┗┛┛ ┗┫${E}"
+#            make -s -C ${TRIPOUILLE}/get_next_line m
+#        fi
+#        if [[ ${BONUS} -eq 1 ]];then
+#            print_in_box -t 3 -c b \
+#                "     ${BC0}┏┳┓  •      •┓┓    ┏┓     ┳┓       ┓ •      ┳┓       ${E}" \
+#                "     ${BC0} ┃ ┏┓┓┏┓┏┓┓┏┓┃┃┏┓  ┃┓┏┓╋  ┃┃┏┓┓┏╋  ┃ ┓┏┓┏┓  ┣┫┏┓┏┓┓┏┏${E}" \
+#                "     ${BC0} ┻ ┛ ┗┣┛┗┛┗┛┗┗┗┗   ┗┛┗ ┗  ┛┗┗ ┛┗┗  ┗┛┗┛┗┗   ┻┛┗┛┛┗┗┛┛${E}"
+#            make -s -C ${TRIPOUILLE}/get_next_line b
+#        fi
+#    fi
+#fi
+## =[ MY_UNITESTS ]============================================================================================
+#print_in_box -t 2 -c y \
+#    "           ${Y0}  __  __                _   _          _   _                _        ${E}" \
+#    "           ${Y0} |  \/  |  _  _   ___  | | | |  _ _   (_) | |_   ___   ___ | |_   ___${E}" \
+#    "           ${Y0} | |\/| | | || | |___| | |_| | | ' \  | | |  _| / -_) (_-< |  _| (_-<${E}" \
+#    "           ${Y0} |_|  |_|  \_, |        \___/  |_||_| |_|  \__| \___| /__/  \__| /__/${E}" \
+#    "           ${Y0}           |__/                                                      ${E}"
+## -[ LIBFT ]--------------------------------------------------------------------------------------------------
+#if [[ ${MY_UNITESTS_LIBFT} -eq 1 ]];then
+#    exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_MANDA" "Tests libft mandatory functions"
+#    # -[ LIBFT_BONUS if BONUS opt or if any libft_bonus fun detected in libft.a ]-----------------------------
+#    if [[ ${BONUS} -eq 1 ]];then 
+#        exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
+#    else
+#        for fun in ${HOMEMADE_FUNUSED[@]};do
+#            if [[ " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+#                exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
+#                break
+#            fi
+#        done
+#    fi
+#fi
+## -[ GET_NEXT_LINE ]------------------------------------------------------------------------------------------
+#if [[ (${has_a} -eq 1) || (${has_g} -eq 1) || (" ${HOMEMADE_FUNUSED[@]} " =~ " get_next_line ") ]];then
+#    exec_anim_in_box "run_myunitests_gnl" "Run My_unitests for get_next_line()"
+#    [[ ${BONUS} -eq 1 ]] && exec_anim_in_box "echo \"TODO: create run_myunitests_gnl_bonus()\"" # TODO
+#fi
+## -[ FT_PRINTF ]----------------------------------------------------------------------------------------------
+#if [[ (${has_a} -eq 1) || (${has_p} -eq 1) || (" ${HOMEMADE_FUNUSED[@]} " =~ " ft_printf ") ]];then
+#    exec_anim_in_box "echo \"TODO: create run_myunitests_ft_printf()\"" # TODO
+#    [[ ${BONUS} -eq 1 ]] && exec_anim_in_box "echo \"TODO: create run_myunitests_ft_printf_bonus()\"" # TODO
+#fi
+## -[ PERSONNAL FUNCTIONS ]------------------------------------------------------------------------------------
+#if [[ ${MY_UNITESTS_OTHERS} -eq 1 ]];then
+#    exec_anim_in_box "launch_my_unitests PERSO_FUN" "Tests ${#PERSO_FUN_TO_TEST[@]}/${#PERSO_FUN[@]} of personnal functions"
+#fi
+## -[ DISPLAY UNITESTS RESUME ]--------------------------------------------------------------------------------
+#[[ $(( MY_UNITESTS_LIBFT + MY_UNITESTS_GNL + MY_UNITESTS_PRINTF + MY_UNITESTS_OTHERS)) -gt 0 ]] && display_resume "Libft's tests"
