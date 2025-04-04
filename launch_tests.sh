@@ -16,7 +16,7 @@
 #   - ARGS ∈ {-+a, --++all}                  🢥  -Desable +Enable ALL TRIPOUILLE AND MY_UNITESTS OPTION WITHOUT BONUS
 #   - ARGS ∈ {-+t, --++tripouille}           🢥  -Desable +Enable ALL TRIPOUILLE && Disable ALL MY_UNITESTS
 #   - ARGS ∈ {-+l, -+lft, --++libft}         🢥  -Desable +Enable tests for LIBFT
-#   - ARGS ∈ {-+f, --++ft_printf}            🢥  -Desable +Enable tests for FT_PRINTF
+#   - ARGS ∈ {-+p, --++ft_printf}            🢥  -Desable +Enable tests for FT_PRINTF
 #   - ARGS ∈ {-+g, -gnl, --++get_next_line}  🢥  -Desable +Enable tests for GET_NEXT_LINE
 #   - ARGS ∈ {-+o, --++other}                🢥  -Desable +Enable tests OTHERS FUNCTIONS FOUND (USER-MADE fun)
 #
@@ -31,10 +31,10 @@ HELP=0                                                             # ☑ if set 
 BONUS=0                                                            # ☑ if set at 1🢥 Launch all test with bonus option
 NORM=1                                                             # ☑ if set at 1🢥 Launch NORMINETTE TESTER
 BUIN=1                                                             # ☒ if set at 1🢥 Display list of built-in fun used
-MY_UNITESTS_LIBFT=0                                                # ☑ if set at 1🢥 Launch my tester for LIBFT(DEFAULT)
+MY_UNITESTS_LIBFT=1                                                # ☑ if set at 1🢥 Launch my tester for LIBFT(DEFAULT)
 MY_UNITESTS_GNL=0                                                  # ☑ if set at 1🢥 Launch my tester for GNL(DEFAULT)
 MY_UNITESTS_PRINTF=0                                               # ☑ if set at 1🢥 Launch my tester for PRINTF(DEFAULT)
-MY_UNITESTS_OTHERS=0                                               # ☑ if set at 1🢥 Launch my tester for OTHERS_FUNCTION_FOUND(DEFAULT)
+MY_UNITESTS_OTHERS=1                                               # ☑ if set at 1🢥 Launch my tester for OTHERS_FUNCTION_FOUND(DEFAULT)
 TRIPOUILLE_LIBFT=0                                                 # ☑ if set at 1🢥 Launch Tripouille for libft()
 TRIPOUILLE_GNL=0                                                   # ☑ if set at 1🢥 Launch Tripouille for get_next_line()
 TRIPOUILLE_PRINTF=0                                                # ☑ if set at 1🢥 Launch Tripouille for ft_printf()
@@ -107,20 +107,6 @@ script_usage()
         local exit_value=${2}
     fi
     echo -e "${entete}"
-    echo -e " 🔹 ${BU}PRE-REQUISITES:${E}"
-    echo -e "    ${B0}‣ ${R0}i) ${E}: To be cloned inside the project ${M0}path/libft/${E} to be tested, with the ${M0}--recursive-submodules${E} option."
-    echo -e "    ${B0}‣ ${R0}ii)${E}: The static lib ${M0}path/libft/*/${B0}libft.a${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
-    echo -e " 🔹 ${BU}OPTIONS:${E}"
-    echo -e "    ${B0}‣ ${M0}[-+h, --++help]          ${BC0}🢥  ${E}+-Enable HELP option that display script usage."
-    echo -e "    ${B0}‣ ${M0}[-+n, --++no-norm]       ${BC0}🢥  ${E}+Enable -Desable step NORM-Checker step."
-    echo -e "    ${B0}‣ ${M0}[-+a, --++all]           ${BC0}🢥  ${E}+Enable -Desable ALL tripouille and my_unitests OPTIONS (WITHOUT BONUS)."
-    echo -e "    ${B0}‣ ${M0}[-+t, --++tripouille]    ${BC0}🢥  ${E}+Enable -Desable ONLY tripouille tester."
-    echo -e "    ${B0}‣ ${M0}[-+bi, --++build-in]     ${BC0}🢥  ${E}+Enable -Desable Built-in listing step."
-    echo -e "    ${B0}‣ ${M0}[-+b, --++bonus]         ${BC0}🢥  ${E}+Enable -Desable Bonus option for all testers."
-    echo -e "    ${B0}‣ ${M0}[-+l, --++libft]         ${BC0}🢥  ${E}+Enable -Desable both tripouille and my_unitests testers for LIBFT."
-    echo -e "    ${B0}‣ ${M0}[-+f, --++ft_printf]     ${BC0}🢥  ${E}+Enable -Desable both tripouille and my_unitests testers for FT_PRINTF."
-    echo -e "    ${B0}‣ ${M0}[-+g, --++get_next_line] ${BC0}🢥  ${E}+Enable -Desable both tripouille and my_unitests testers for GET_NEXT_LINE."
-    echo -e "    ${B0}‣ ${M0}[-+o, --++other]         ${BC0}🢥  ${E}+Enable -Desable both tripouille and my_unitests testers for OTHERS FUNCTIONS FOUND."
     echo -e " 🔹 ${BCU}STEPS:${E}"
     echo -e "    ${B0}‣ ${BC0}|STEP 0| ${GU}List-Options${E}               ${BC0} 🢥  ${E}Display the list of enabled/desabled options."
     echo -e "    ${B0}‣ ${BC0}|STEP 1| ${GU}List-Builtin${E}               ${BC0} 🢥  ${E}Display the libft buit-in functions used."
@@ -128,7 +114,30 @@ script_usage()
     echo -e "    ${B0}‣ ${BC0}|STEP 3| ${GU}Tripouille-tests${E}           ${BC0} 🢥  ${E}Run Tripouille's tester on libft functions."
     echo -e "    ${B0}‣ ${BC0}|STEP 4| ${GU}My-Unitests${E}                ${BC0} 🢥  ${E}Run unitests on minishell user-made functions."
     echo -e "    ${B0}‣ ${BC0}|STEP 5| ${GU}Display a My-unitests Resume${E}${BC0}🢥  ${E}Display a resume of failed/passed unitests."
+    echo -e " 🔹 ${BU}PRE-REQUISITES:${E}"
+    echo -e "    ${B0}‣ ${R0}i) ${E}: To be cloned inside the project ${M0}path/libft/${E} to be tested, with the ${M0}--recursive-submodules${E} option."
+    echo -e "    ${B0}‣ ${R0}ii)${E}: The static lib ${M0}path/libft/*/${B0}libft.a${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
+    echo -e " 🔹 ${BU}OPTIONS:${E} ${V0}+ Enable${E}, ${R0}- Desable${E} option"
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[h] ${BC0} --> ${E}HELP                   :Display this usage."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[a] ${BC0} --> ${E}ALL OPTIONS            :Affect all options."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[bi]${BC0} --> ${E}BUILTIN      (STEP 1  ):Display Built-in fun. founded."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[n] ${BC0} --> ${E}NORMINETTE   (STEP 2  ):Run norminette."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[t] ${BC0} --> ${E}TRIPOUILLE   (STEP 3  ):Run Tripouille's testers."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[l] ${BC0} --> ${E}LIBFT        (STEP 3&4):Run Tripouille & My-unitest's libft testers."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[bo]${BC0} --> ${E}BONUS        (STEP 3&4):Enable Bonus-part evaluation option for all testers."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[p] ${BC0} --> ${E}FT_PRINTF    (STEP 3&4):Run Tripouille & My-unitest's ft_printf testers."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[g] ${BC0} --> ${E}GET_NEXT_LINE(STEP 3&4):Run Tripouille & My-unitest's get_next_line tester."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[o] ${BC0} --> ${E}OTHERS       (STEP 4  ):Run My_unitests for others user-made functions found."
     exit ${exit_value}
+}
+# -[ MAX() ]--------------------------------------------------------------------------------------------------
+max()
+{
+    if (($1 > $2));then
+        echo $1
+    else
+        echo $2
+    fi
 }
 # -[ PRINT_RELATIF_PATH() ]-----------------------------------------------------------------------------------
 # substract pwd from arg1 abs-path given
@@ -165,17 +174,19 @@ exec_anim_in_box()
 display_start()
 {
     local OPTIONS=( " ${YU}LIBFT's OPTIONS:${E}" )
-    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 1)${Y0} BUILT-IN LISTER:    ${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 1)${Y0} BUILT-IN LISTER:           ${R0}✘ Desable${E}" )
-    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "    🔸${YU}STEP 2)${Y0} NORM CHECKER:       ${V0}✓ Enable${E}" ) || OPTIONS+=( "    🔸${YU}STEP 2)${Y0} NORM CHECKER:              ${R0}✘ Desable${E}" )
-    OPTIONS+=( "    🔸${YU}STEP 3)${Y0} TRIPOUILLE'S TESTER:")
-    [ ${TRIPOUILLE_LIBFT} -gt 0 ]]   && OPTIONS+=( "      ${Y0}▸ Libft tester:               ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ Libft tester:               ${R0}✘ Desable${E}" )
-    [ ${TRIPOUILLE_GNL} -gt 0 ]]     && OPTIONS+=( "      ${Y0}▸ get_next_line tester:       ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ get_next_line tester:       ${R0}✘ Desable${E}" )
-    [ ${TRIPOUILLE_PRINTF} -gt 0 ]]  && OPTIONS+=( "      ${Y0}▸ ft_printf tester:           ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ ft_printf tester:           ${R0}✘ Desable${E}" )
-    OPTIONS+=( "    🔸${YU}STEP 3)${Y0} MY_UNITESTS TESTER:")
-    [ ${MY_UNITESTS_LIBFT} -gt 0 ]]  && OPTIONS+=( "      ${Y0}▸ Libft tester:               ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ Libft tester:               ${R0}✘ Desable${E}" )
-    [ ${MY_UNITESTS_GNL} -gt 0 ]]    && OPTIONS+=( "      ${Y0}▸ get_next_line tester:       ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ get_next_line tester:       ${R0}✘ Desable${E}" )
-    [ ${MY_UNITESTS_PRINTF} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸ ft_printf tester:           ${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ ft_printf tester:           ${R0}✘ Desable${E}" )
-    [ ${MY_UNITESTS_OTHERS} -gt 0 ]] && OPTIONS+=( "      ${Y0}▸ other user-made fun. tester:${V0}✓ Enable${E}" ) || OPTIONS+=( "      ${Y0}▸ other user-made fun. tester:${R0}✘ Desable${E}" )
+    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}STEP 1)${Y0} BUILT-IN LISTER:................${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}STEP 1)${Y0} BUILT-IN LISTER:................${R0}✘ Desable${E}" )
+    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}STEP 2)${Y0} NORM CHECKER:...................${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}STEP 2)${Y0} NORM CHECKER:...................${R0}✘ Desable${E}" )
+    OPTIONS+=( "     🔸 ${YU}STEP 3)${Y0} TRIPOUILLE'S TESTER:")
+    [[ ${TRIPOUILLE_LIBFT} -gt 0 ]]   && OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${R0}✘ Desable${E}" )
+    [[ ${TRIPOUILLE_GNL} -gt 0 ]]     && OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${R0}✘ Desable${E}" )
+    [[ ${TRIPOUILLE_PRINTF} -gt 0 ]]  && OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${R0}✘ Desable${E}" )
+    OPTIONS+=( "     🔸 ${YU}STEP 4)${Y0} MY_UNITESTS TESTER:")
+    [[ ${MY_UNITESTS_LIBFT} -gt 0 ]]  && OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${R0}✘ Desable${E}" )
+    [[ ${MY_UNITESTS_GNL} -gt 0 ]]    && OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${R0}✘ Desable${E}" )
+    [[ ${MY_UNITESTS_PRINTF} -gt 0 ]] && OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${R0}✘ Desable${E}" )
+    [[ ${MY_UNITESTS_OTHERS} -gt 0 ]] && OPTIONS+=( "        ${Y0}▸ other user-made fun. tester:..........${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ other user-made fun. tester:..........${R0}✘ Desable${E}" )
+    [[ ( ${MY_UNITESTS_LIBFT} -gt 0 ) || ( ${MY_UNITESTS_GNL} -gt 0 ) || ( ${MY_UNITESTS_PRINTF} -gt 0 ) || (
+    ${MY_UNITESTS_OTHERS} -gt 0 ) ]] && OPTIONS+=( "     🔸 ${YU}STEP 5)${Y0} RESUME:.........................${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}STEP 2)${Y0} RESUME:.........................${R0}✘ Desable${E}" )
     print_in_box -t 2 -c y \
         "           ${Y0}  _     ___  ___  ___  _____       _   _        _  _             _        ${E}" \
         "           ${Y0} | |   |_ _|| _ )| __||_   _|     | | | | _ _  (_)| |_  ___  ___| |_  ___ ${E}" \
@@ -429,15 +440,21 @@ for args in "$@";do
     shift
     case "${args}" in
         --[Aa]ll | -[Aa])
-            MY_UNITESTS_LIBFT=$(( MY_UNITESTS_LIBFT - 1 ))
-            MY_UNITESTS_GNL=$(( MY_UNITESTS_GNL - 1 ))
-            MY_UNITESTS_PRINTF=$(( MY_UNITESTS_PRINTF - 1 ))
-            MY_UNITESTS_OTHERS=$(( MY_UNITESTS_OTHERS - 1 ))
-            TRIPOUILLE_LIBFT=$(( TRIPOUILLE_LIBFT - 1 ))
-            TRIPOUILLE_GNL=$(( TRIPOUILLE_GNL - 1 ))
-            TRIPOUILLE_PRINTF=$(( TRIPOUILLE_PRINTF - 1 ))
+            BONUS=$(max 0 $(( BONUS - 1 )))
+            NORM=$(max 0 $(( NORM - 1 )))
+            BUIN=$(max 0 $(( BUIN - 1 )))
+            MY_UNITESTS_LIBFT=$(max 0 $(( MY_UNITESTS_LIBFT - 1 )))
+            MY_UNITESTS_GNL=$(max 0 $(( MY_UNITESTS_GNL - 1 )))
+            MY_UNITESTS_PRINTF=$(max 0 $(( MY_UNITESTS_PRINTF - 1 )))
+            MY_UNITESTS_OTHERS=$(max 0 $(( MY_UNITESTS_OTHERS - 1 )))
+            TRIPOUILLE_LIBFT=$(max 0 $(( TRIPOUILLE_LIBFT - 1 )))
+            TRIPOUILLE_GNL=$(max 0 $(( TRIPOUILLE_GNL - 1 )))
+            TRIPOUILLE_PRINTF=$(max 0 $(( TRIPOUILLE_PRINTF - 1 )))
             ;;
         ++[Aa]ll | +[Aa])
+            BONUS=$(( BONUS + 1 ))
+            NORM=$(( NORM + 1 ))
+            BUIN=$(( BUIN + 1 ))
             MY_UNITESTS_LIBFT=$(( MY_UNITESTS_LIBFT + 1 ))
             MY_UNITESTS_GNL=$(( MY_UNITESTS_GNL + 1 ))
             MY_UNITESTS_PRINTF=$(( MY_UNITESTS_PRINTF + 1 ))
@@ -487,8 +504,8 @@ for args in "$@";do
         [+-][+-][Hh]elp | [+-][Hh] ) HELP=$(( HELP + 1 ));;
         --[Nn]o-[Nn]orm | -[Nn] ) NORM=$(( NORM - 1 ));;
         ++[Nn]o+[Nn]orm | +[Nn] ) NORM=$(( NORM + 1 ));;
-        --[Oo]ther | --[Oo]thers | -[Oo] ) MY_UNITESTS_OTHERS=$( MY_UNITESTS_OTHERS - 1) ;;
-        ++[Oo]ther | ++[Oo]thers | +[Oo] ) MY_UNITESTS_OTHERS=$( MY_UNITESTS_OTHERS + 1) ;;
+        --[Oo]ther | --[Oo]thers | -[Oo] ) MY_UNITESTS_OTHERS=$(( MY_UNITESTS_OTHERS - 1)) ;;
+        ++[Oo]ther | ++[Oo]thers | +[Oo] ) MY_UNITESTS_OTHERS=$(( MY_UNITESTS_OTHERS + 1)) ;;
         *) script_usage "Error: Unknown option '${args}'" 1 ;;
     esac
 done
