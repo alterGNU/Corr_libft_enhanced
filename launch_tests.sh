@@ -278,7 +278,7 @@ launch_my_unitests()
     local nb_err=0
     for fun in ${FUN_MANDA[@]};do
         echo "🔹${BCU}${fun}():${E}"
-        if [[ " ${FUN_FOUND[@]} " =~ " ${fun} " ]];then
+        if [[ "${FUN_FOUND[@]}" =~ "${fun}" ]];then
             local FUN_LOG_DIR="${LOG_DIR}/${fun}"
             [[ ! -d ${FUN_LOG_DIR} ]] && mkdir -p ${FUN_LOG_DIR}
             local test_main=$(find "${MY_UNITESTS}" -type f -name *"${fun}.c")
@@ -440,7 +440,7 @@ display_resume()
         for function in "${BUILTIN_FUNUSED[@]}";do
             local fun="${function%%\@*}"
             if [[ "${fun}" != "_"* ]];then
-                [[ "${ALLOWED_FUN[@]}" =~ " ${fun} " ]] && OK_BI+=( " ${fun} " ) || KO_BI+=( "       ${R0}✗ ${fun}() ${Y0}➽ ${M0}${function##*\@}${E} " )
+                [[ "${ALLOWED_FUN[@]}" =~ "${fun}" ]] && OK_BI+=( " ${fun} " ) || KO_BI+=( "       ${R0}✗ ${fun}() ${Y0}➽ ${M0}${function##*\@}${E} " )
             fi
         done
         if [[ ${#KO_BI[@]} -eq 0 ]];then
@@ -465,7 +465,7 @@ display_resume()
     local short_log_dir=$(print_shorter_path ${LOG_DIR})
     local tot_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
     local lst_fail=( )
-    [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! " ${lst_fail[@]} " =~ " ${ff} " ]] && lst_fail+=( "${ff}" );done
+    [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! "${lst_fail[@]}" =~ "${ff}" ]] && lst_fail+=( "${ff}" );done
     if [[ ${#lst_fail[@]} -eq 0 ]];then
         args+=( " 🔸 ${YU}STEP 3-UNITESTS)${Y0} ${tot_tested} user-made fun. have been tested:${V0} ✅ ALL PASS${E}" ) 
     else
@@ -578,14 +578,14 @@ done
 # -[ SET HOMEMADE AND BUILTIN LISTS ]-------------------------------------------------------------------------
 if file "${LIBFT_A}" | grep -qE 'relocatable|executable|shared object|ar archive';then
     for fun in $(nm -g "${LIBFT_A}" | grep " T " | awk '{print $NF}' | sort | uniq);do
-        [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " ${fun} " ]] && HOMEMADE_FUNUSED+=( "${fun}" )
-        if [[ " ${FUN_TO_EXCLUDE[@]} " =~ " ${fun} " && " ${fun} " != " main " ]];then
-            [[ ! " ${BUILTIN_FUNUSED[@]} " =~ " ${fun} " ]] && BUILTIN_FUNUSED+=( "${fun}" )
+        [[ ! "${HOMEMADE_FUNUSED[@]}" =~ "${fun}" ]] && HOMEMADE_FUNUSED+=( "${fun}" )
+        if [[ "${FUN_TO_EXCLUDE[@]}" =~ "${fun}" && "${fun}" != "main" ]];then
+            [[ ! "${BUILTIN_FUNUSED[@]}" =~ "${fun}" ]] && BUILTIN_FUNUSED+=( "${fun}" )
         fi
     done
     for fun in $(nm -g "${LIBFT_A}" | grep " U " | awk '{print $NF}' | sort | uniq);do
-        if [[ ! " ${HOMEMADE_FUNUSED[@]} " =~ " ${fun} " ]];then
-            [[ ! " ${BUILTIN_FUNUSED[@]} " =~ " ${fun} " ]] && BUILTIN_FUNUSED+=( "${fun}" )
+        if [[ ! "${HOMEMADE_FUNUSED[@]}" =~ "${fun}" ]];then
+            [[ ! "${BUILTIN_FUNUSED[@]}" =~ "${fun}" ]] && BUILTIN_FUNUSED+=( "${fun}" )
         fi
     done
 else
@@ -678,7 +678,7 @@ if [[ ${TRIPOUILLE_LIBFT} -gt 0 ]];then
         launch_tripouille_libft_bonus
     else
         for fun in ${HOMEMADE_FUNUSED[@]};do
-            if [[ " ${LIBFT_BONUS[@]} " =~ "${fun}" ]];then
+            if [[ "${LIBFT_BONUS[@]}" =~ "${fun}" ]];then
                 launch_tripouille_libft_bonus
                 break
             fi
@@ -712,7 +712,7 @@ if [[ ${MY_UNITESTS_LIBFT} -gt 0 ]];then
         exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
     else
         for fun in ${HOMEMADE_FUNUSED[@]};do
-            if [[ " ${LIBFT_BONUS[@]} " =~ " ${fun} " ]];then
+            if [[ "${LIBFT_BONUS[@]}" =~ "${fun}" ]];then
                 exec_anim_in_box "launch_my_unitests HOMEMADE_FUNUSED LIBFT_BONUS" "Tests libft bonus functions"
                 break
             fi
