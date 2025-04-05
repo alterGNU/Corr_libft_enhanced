@@ -11,7 +11,7 @@ int	main()
 {
 	int	nb_err=0;
 	// =[ CONTENT == STRING ]===================================================
-	t_btree	*n0 = ft_btreetnew(NULL);
+	t_btree	*n0 = ft_btreenew(NULL);
 	print_btree_content_is_char(n0);
 	free(n0);
 	return (nb_err);
