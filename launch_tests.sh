@@ -318,25 +318,32 @@ launch_my_unitests()
                 else
                     local exec_log_file=$(print_shorter_path ${FUN_LOG_DIR}/exec.log)
                     nb_err=$(( nb_err + 1 ))
-                    echo -e "${fun}\terrors\t${exec_log_file}" >> ${LOG_FAIL}
-                    echo -en " ❌ ${R0} Error detected (exec return value=${res_tests})\n"
+                    if [[ ${res_tests} == 139 ]];then
+                        echo -e "${fun}\tsegfault\t${exec_log_file}" >> ${LOG_FAIL}
+                        echo -en " ❌ ${R0} Error detected = 🚩SEGMENTATION FAULT🚩 (exec return value=${res_tests})\n"
+                    else
+                        echo -e "${fun}\terrors\t${exec_log_file}" >> ${LOG_FAIL}
+                        echo -en " ❌ ${R0} Error detected (exec return value=${res_tests})\n"
+                    fi
                     echo "      🔸${Y0}check log file 👉 ${M0}${exec_log_file}${E}"
                 fi
                 # STEP 3 : VALGRIND
-                echo -en " ${BC0} ⤷${E} 🚰 ${GU}Valgrind   :${E}"
-                if [[ -f "${test_txt}" ]];then
-                    local res_val=$(${VALGRIND} ${exe} "$(dirname "${test_txt}")" "${FUN_LOG_DIR}" > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
-                else
-                    local res_val=$(${VALGRIND} ${exe} > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
-                fi
-                if [[ ${res_val} -ne ${VAL_ERR} ]];then
-                    echo -en " ✅ ${V0} No leak detected.${E}\n"
-                else
-                    local leaks_log_file=$(print_shorter_path ${FUN_LOG_DIR}/leaks.log)
-                    nb_err=$(( nb_err + 1 ))
-                    echo -e "${fun}\tleaks\t${leaks_log_file}" >> ${LOG_FAIL}
-                    echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
-                    echo "      🔸${Y0}check log file 👉 ${M0}${leaks_log_file}${E}"
+                if [[ ${res_tests} -ne 139 ]];then
+                    echo -en " ${BC0} ⤷${E} 🚰 ${GU}Valgrind   :${E}"
+                    if [[ -f "${test_txt}" ]];then
+                        local res_val=$(${VALGRIND} ${exe} "$(dirname "${test_txt}")" "${FUN_LOG_DIR}" > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
+                    else
+                        local res_val=$(${VALGRIND} ${exe} > "${FUN_LOG_DIR}/leaks.log" 2>&1 && echo ${?} || echo ${?})
+                    fi
+                    if [[ ${res_val} -ne ${VAL_ERR} ]];then
+                        echo -en " ✅ ${V0} No leak detected.${E}\n"
+                    else
+                        local leaks_log_file=$(print_shorter_path ${FUN_LOG_DIR}/leaks.log)
+                        nb_err=$(( nb_err + 1 ))
+                        echo -e "${fun}\tleaks\t${leaks_log_file}" >> ${LOG_FAIL}
+                        echo -en " ❌ ${R0} Leak detected (valgrind return value=${res_val})\n"
+                        echo "      🔸${Y0}check log file 👉 ${M0}${leaks_log_file}${E}"
+                    fi
                 fi
             else
                 echo " ${BC0} ⤷${E} ✖️  ${G0}Tests not found.${E}"
@@ -426,41 +433,59 @@ run_myunitests_gnl()
 display_resume()
 {
     [[ -n "${1}" ]] && local args=( "🔶 ${YU}RESUME ${1}:${E}" ) || local args=( "🔶 ${YU}RESUME :${E}" )
-    if [[ ${NORM} -gt 0 ]];then
-        [[ ${res_normi} -eq 0 ]] && args+=( " 🔸 ${YU}Norminette:${V0} ✅ PASS${E}" ) || args+=( " 🔸 ${YU}Norminette:${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
-    else
-        args+=( " 🔸 ${YU}Norminette:${G0} ✖️  Test Desabled${E}" )
-    fi
-    local short_log_dir=$(print_shorter_path ${LOG_DIR})
-    local tot_fun_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
-    local lst_uniq_fail_fun=( )
-    if [[ -f "${LOG_FAIL}" ]];then
-        while IFS= read -r line;do
-            local ff=$(echo "${line}" | awk '{print $1}')
-            if [[ -n "${ff}" ]];then
-                [[ ! " ${lst_uniq_fail_fun[@]} " =~ " ${ff} " ]] && lst_uniq_fail_fun+=( "${ff}" )
+    # -[ BUILT-IN STEP ]--------------------------------------------------------------------------------------
+    if [[ ${BUIN} -gt 0 ]];then
+        local OK_BI=( )
+        local KO_BI=( )
+        for function in "${BUILTIN_FUNUSED[@]}";do
+            local fun="${function%%\@*}"
+            if [[ "${fun}" != "_"* ]];then
+                [[ "${ALLOWED_FUN[@]}" =~ " ${fun} " ]] && OK_BI+=( " ${fun} " ) || KO_BI+=( "       ${R0}✗ ${fun}() ${Y0}➽ ${M0}${function##*\@}${E} " )
             fi
-        done < "${LOG_FAIL}"
-    fi
-    if [[ ${#lst_uniq_fail_fun[@]} -eq 0 ]];then
-        args+=( " 🔸 ${YU}${tot_fun_tested} function(s) have been tested:${V0} ✅ ALL PASSED${E}" ) 
+        done
+        if [[ ${#KO_BI[@]} -eq 0 ]];then
+            args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${Y0} ${#OK_BI[@]} built-in fun. detected:${V0} ✅ ALL PASS${E}" )
+        else
+            local TOT_BI=$(( ${#OK_BI[@]} + ${#KO_BI[@]} ))
+            args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${Y0} ${TOT_BI} built-in fun. detected:${E}" )
+            args+=( "    ✅ ${V0}${#OK_BI[@]} Allowed${E}" )
+            args+=( "    ❌ ${R0}${#KO_BI[@]} NOT Allowed${E}" )
+            args+=( "${KO_BI[@]}" )
+        fi
     else
-        args+=( " 🔸 ${YU}${tot_fun_tested} function(s) have been tested:${E}" )
-        args+=( \ "   ${V0}✅ $(( tot_fun_tested - ${#lst_uniq_fail_fun[@]} )) fonction(s) ${V0}PASSED.${E}" \
-            "    ${R0}❌ ${#lst_uniq_fail_fun[@]} function(s) ${R0}FAILLED:${E}" \
+        args+=( " 🔸 ${YU}STEP 1-BUILT-IN)${E}${G0} ✖️  Step Desabled${E}" )
+    fi
+    # -[ NORMINETTE STEP ]------------------------------------------------------------------------------------
+    if [[ ${NORM} -gt 0 ]];then
+        [[ ${res_normi} -eq 0 ]] && args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${V0} ✅ ALL PASS${E}" ) || args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${R0} ❌ FAIL (${res_normi} wrong files detected)${E}" )
+    else
+        args+=( " 🔸 ${YU}STEP 2-NORM-CHECK)${E}${G0} ✖️  Step Desabled${E}" )
+    fi
+    # -[ UNITESTS STEP ]--------------------------------------------------------------------------------------
+    local short_log_dir=$(print_shorter_path ${LOG_DIR})
+    local tot_tested=$(find ${short_log_dir} -mindepth 1 -maxdepth 1 -type d | wc -l )
+    local lst_fail=( )
+    [[ -f "${LOG_FAIL}" ]] && for ff in $(cat ${LOG_FAIL} | awk '{print $1}' | sort -u);do [[ ! " ${lst_fail[@]} " =~ " ${ff} " ]] && lst_fail+=( "${ff}" );done
+    if [[ ${#lst_fail[@]} -eq 0 ]];then
+        args+=( " 🔸 ${YU}STEP 3-UNITESTS)${Y0} ${tot_tested} user-made fun. have been tested:${V0} ✅ ALL PASS${E}" ) 
+    else
+        args+=( " 🔸 ${YU}STEP 3-UNITESTS)${Y0} ${tot_tested} user-made fun. have been tested:${E}" )
+        args+=( \
+            "    ${V0}✅ $(( tot_tested - ${#lst_fail[@]} )) functions ${V0}PASSED.${E}" \
+            "    ${R0}❌ ${#lst_fail[@]} functions ${R0}FAILLED:${E}" \
         )
-        for fun in ${lst_uniq_fail_fun[@]};do
+        for fun in "${lst_fail[@]}";do
             args+=( "      ${R0}✘ ${RU}${fun}():${E}" )
             local link1=$(awk -v f="${fun}" '$1 == f &&  $2 == "compilation" {print $3}' ${LOG_FAIL})
             local link2=$(awk -v f="${fun}" '$1 == f &&  $2 == "errors" {print $3}' ${LOG_FAIL})
             local link3=$(awk -v f="${fun}" '$1 == f &&  $2 == "leaks" {print $3}' ${LOG_FAIL})
             local link4=$(awk -v f="${fun}" '$1 == f &&  $2 == "missing" {print $3}' ${LOG_FAIL})
-            local link5=$(awk -v f="${fun}" '$1 == f &&  $2 == "diff" {print $3}' ${LOG_FAIL})
-            [[ -n "${link1}" ]] && for l in ${link1}; do args+=( "        ${R0}⤷ Error occure will compilling ${M0}👉 ${l}${E}" );done
-            [[ -n "${link2}" ]] && for l in ${link2}; do args+=( "        ${R0}⤷ Error detected ${M0}👉 ${l}${E}" );done
-            [[ -n "${link3}" ]] && for l in ${link3}; do args+=( "        ${R0}⤷ Leaks detected ${M0}👉 ${l}${E}" );done
-            [[ -n "${link4}" ]] && for l in ${link4}; do args+=( "        ${R0}⤷ Missing fun. or file.${E}" );done
-            [[ -n "${link5}" ]] && for l in ${link5}; do args+=( "        ${R0}⤷ Diff. found ${M0}👉 ${l}${E}" );done
+            local link5=$(awk -v f="${fun}" '$1 == f &&  $2 == "segfault" {print $3}' ${LOG_FAIL})
+            [[ -n "${link1}" ]] && args+=( "      ${R0}⤷ Error occure will compilling ${M0}👉 ${link1}${E}" )
+            [[ -n "${link2}" ]] && args+=( "      ${R0}⤷ Error detected ${M0}👉 ${link2}${E}" )
+            [[ -n "${link3}" ]] && args+=( "      ${R0}⤷ Leaks detected ${M0}👉 ${link3}${E}" )
+            [[ -n "${link4}" ]] && args+=( "      ${R0}⤷ Missing function, not found in object file.${E}" )
+            [[ -n "${link5}" ]] && args+=( "      ${R0}⤷ Segmentation Fault${M0}👉 ${link5}${E}" )
         done
     fi
     print_in_box -t 2 -c y "${args[@]}"
