@@ -1,5 +1,23 @@
 #include "libft.h"  // struct t_list
 #include "string.h" // strcmp, strdup
+#define LEN 90
+#define PASS "> \033[37;42m ✓ \033[0m\n"
+#define	FAIL "> \033[30;41m ✗ \033[0m\n"
+
+int	printntime(char c, int n)
+{
+	for (int i = 0 ; i < n; i++)
+		ft_printf("%c", c);
+	return (n);
+}
+
+void print_title(const char *title)
+{
+	ft_printf("\033[97;100m");
+	int print_sofar = ft_printf("=[ %s ]", title);
+	printntime('=', LEN - print_sofar);
+	ft_printf("\033[0m\n");
+}
 
 // =[ TEST CONTENT == STRING ]==================================================
 int	print_btree_content_is_char(t_btree *btree_node)
@@ -24,31 +42,30 @@ void free_btree_node_char(t_btree *node)
 
 int	test_char(const char *str)
 {
-	ft_printf("ft_btreenew(%s)-->", str);
+
+	int psf = ft_printf("ft_btreenew(%s) = ", str);
 	t_btree *node;
 
 	if (!str)
 	{
 		node = ft_btreenew(NULL);
-		print_btree_content_is_char(node);
-		ft_printf("\n");
+		psf += print_btree_content_is_char(node);
 		if (!node)
-			return (1);
+			return (printntime('-', LEN - psf - 5), ft_printf(FAIL), 1);
 		if (!node->content)
-			return (free_btree_node_char(node), 0);
-		return (free_btree_node_char(node), 1);
+			return (free_btree_node_char(node), printntime('-', LEN - psf - 5), ft_printf(PASS), 0);
+		return (free_btree_node_char(node), printntime('-', LEN - psf - 5), ft_printf(FAIL), 1);
 	}
 	char *content = ft_strdup(str);
 	if (!content)
 		exit(42);
 	node = ft_btreenew(content);
-	print_btree_content_is_char(node);
-	ft_printf("\n");
+	psf += print_btree_content_is_char(node);
 	if (!node)
-		return (free(content), 1);
+		return (free(content), printntime('-', LEN - psf - 5), ft_printf(FAIL), 1);
 	if (!strcmp(node->content, str))
-		return (free_btree_node_char(node), 0);
-	return (free_btree_node_char(node), 1);
+		return (free_btree_node_char(node), printntime('-', LEN - psf - 5), ft_printf(PASS), 0);
+	return (free_btree_node_char(node), printntime('-', LEN - psf - 5), ft_printf(FAIL), 1);
 }
 
 // =[ TEST CONTENT == STRING ARRAY ]============================================
@@ -80,21 +97,23 @@ void free_btree_node_chararray(t_btree *node)
 int	test_chararray(const char **array)
 {
 	// Print this test
-	ft_printf("ft_btreenew(");
-	ft_print_str_array((char **)array);
-	ft_printf(")-->");
+	int psf = ft_printf("ft_btreenew(");
+	psf += ft_print_str_array((char **)array);
+	psf += ft_printf(")");
+	printntime('-', LEN - psf);
 	t_btree *node;
 	// CASE 1: array == NULL
 	if (!array || !*array)
 	{
 		node = ft_btreenew(NULL);
-		print_btree_content_is_char(node);
+		ft_printf("\nbtree_node = ");
+		print_btree_content_is_chararray(node);
 		ft_printf("\n");
 		if (!node)
-			return (1);
+			return (printntime('-', LEN - 5), ft_printf(FAIL), 1);
 		if (!node->content)
-			return (free_btree_node_chararray(node), 0);
-		return (free_btree_node_chararray(node), 1);
+			return (free_btree_node_chararray(node), printntime('-', LEN - 5), ft_printf(PASS), 0);
+		return (free_btree_node_chararray(node), printntime('-', LEN - 5), ft_printf(FAIL), 1);
 	}
 	// CASE 2: array != NULL
 	// Duplicate const char **array dynamically and create node->content
@@ -115,42 +134,45 @@ int	test_chararray(const char **array)
 		}
 	}
 	node = ft_btreenew(content);
+	ft_printf("\nbtree_node = ");
 	print_btree_content_is_chararray(node);
 	ft_printf("\n");
 	// Check results
 	if (!node || !node->content)
-		return (ft_free_str_array(&content), 1);
+		return (ft_free_str_array(&content), printntime('-', LEN - 5), ft_printf(FAIL), 1);
 	i = 0;
 	char **act = (char **)(node->content);
 	while (act[i] && array[i])
 	{
 		if (strcmp(act[i], array[i]))
-			return (free_btree_node_chararray(node), 1);
+			return (free_btree_node_chararray(node), printntime('-', LEN - 5), ft_printf(FAIL), 1);
 		i++;
 	}
 	if (act[i] || array[i])
-		return (free_btree_node_chararray(node), 1);
-	return (free_btree_node_chararray(node), 0);
+		return (free_btree_node_chararray(node), printntime('-', LEN - 5), ft_printf(FAIL), 1);
+	return (free_btree_node_chararray(node), printntime('-', LEN - 5), ft_printf(PASS), 0);
 }
 
 int	main()
 {
 	int	nb_err=0;
 	// =[ CONTENT == STRING ]===================================================
+	print_title("Content == string");
 	nb_err+=test_char(NULL);          // content == NULL
 	nb_err+=test_char("");            // content == empty string
 	nb_err+=test_char("0a");          // content != empty string
 	nb_err+=test_char(" 0a");         // content != empty string
 	nb_err+=test_char("01234 abcde"); // content != empty string
 	// =[ CONTENT == STRING ARRAY ]=============================================
+	print_title("Content == string arrays");
+	nb_err+=test_chararray(NULL);    // arr  == NULL
 	const char *t0[1] = {NULL};
+	nb_err+=test_chararray(t0);      // *arr == NULL
 	const char *t1[2] = {"", NULL};
+	nb_err+=test_chararray(t1);      // arr not empty but str empty
 	const char *t2[4] = {"", "", "", NULL};
+	nb_err+=test_chararray(t2);      // arr not empty but full of str empty
 	const char *t3[4] = {"coucou", "petite", "perruche", NULL};
-	nb_err+=test_chararray(NULL);
-	nb_err+=test_chararray(t0);
-	nb_err+=test_chararray(t1);
-	nb_err+=test_chararray(t2);
-	nb_err+=test_chararray(t3);
+	nb_err+=test_chararray(t3);      // arr and its str not empty
 	return (nb_err);
 }
