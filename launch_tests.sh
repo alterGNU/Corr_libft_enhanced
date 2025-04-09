@@ -19,6 +19,7 @@
 #   - ARGS ∈ {-+p, --++ft_printf}            🢥  -Desable +Enable tests for FT_PRINTF
 #   - ARGS ∈ {-+g, -gnl, --++get_next_line}  🢥  -Desable +Enable tests for GET_NEXT_LINE
 #   - ARGS ∈ {-+o, --++other}                🢥  -Desable +Enable tests OTHERS FUNCTIONS FOUND (USER-MADE fun)
+#   - ARGS ∈ {+c, --comp}                    🢥  -Desable +Enable Force compilation
 #
 # - NOTES:
 #   - To test a personnal function add to libft.a, just add its unitests like:
@@ -30,7 +31,8 @@
 HELP=0                                                             # ☑ if set at 1🢥 Display script usage
 BONUS=0                                                            # ☑ if set at 1🢥 Launch all test with bonus option
 NORM=1                                                             # ☑ if set at 1🢥 Launch NORMINETTE TESTER
-BUIN=1                                                             # ☒ if set at 1🢥 Display list of built-in fun used
+BUIN=1                                                             # ☑ if set at 1🢥 Display list of built-in fun used
+COMP=0                                                             # ☑ if set at 1🢥 Force compilation
 MY_UNITESTS_LIBFT=1                                                # ☑ if set at 1🢥 Launch my tester for LIBFT(DEFAULT)
 MY_UNITESTS_GNL=0                                                  # ☑ if set at 1🢥 Launch my tester for GNL(DEFAULT)
 MY_UNITESTS_PRINTF=0                                               # ☑ if set at 1🢥 Launch my tester for PRINTF(DEFAULT)
@@ -119,16 +121,17 @@ script_usage()
     echo -e "    ${B0}‣ ${R0}i) ${E}: To be cloned inside the project ${M0}path/libft/${E} to be tested, with the ${M0}--recursive-submodules${E} option."
     echo -e "    ${B0}‣ ${R0}ii)${E}: The static lib ${M0}path/libft/*/${B0}libft.a${E} has to be compiled before using ${V0}./${SCRIPTNAME}${E}."
     echo -e " 🔹 ${BU}OPTIONS:${E} ${V0}+ Enable${E}, ${R0}- Desable${E} option"
-    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[h] ${BC0} --> ${E}HELP                   :Display this usage."
     echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[a] ${BC0} --> ${E}ALL OPTIONS            :Affect all options."
     echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[bi]${BC0} --> ${E}BUILTIN      (STEP 1  ):Display Built-in fun. founded."
-    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[n] ${BC0} --> ${E}NORMINETTE   (STEP 2  ):Run norminette."
-    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[t] ${BC0} --> ${E}TRIPOUILLE   (STEP 3  ):Run Tripouille's testers."
-    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[l] ${BC0} --> ${E}LIBFT        (STEP 3&4):Run Tripouille & My-unitest's libft testers."
     echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[bo]${BC0} --> ${E}BONUS        (STEP 3&4):Enable Bonus-part evaluation option for all testers."
-    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[p] ${BC0} --> ${E}FT_PRINTF    (STEP 3&4):Run Tripouille & My-unitest's ft_printf testers."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[c] ${BC0} --> ${E}COMP         (STEP 4)  :Force compilation."
     echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[g] ${BC0} --> ${E}GET_NEXT_LINE(STEP 3&4):Run Tripouille & My-unitest's get_next_line tester."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[h] ${BC0} --> ${E}HELP                   :Display this usage."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[l] ${BC0} --> ${E}LIBFT        (STEP 3&4):Run Tripouille & My-unitest's libft testers."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[n] ${BC0} --> ${E}NORMINETTE   (STEP 2  ):Run norminette."
     echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[o] ${BC0} --> ${E}OTHERS       (STEP 4  ):Run My_unitests for others user-made functions found."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[p] ${BC0} --> ${E}FT_PRINTF    (STEP 3&4):Run Tripouille & My-unitest's ft_printf testers."
+    echo -e "    ${B0}‣ ${V0}+${R0}-${M0}[t] ${BC0} --> ${E}TRIPOUILLE   (STEP 3  ):Run Tripouille's testers."
     exit ${exit_value}
 }
 # -[ MAX() ]--------------------------------------------------------------------------------------------------
@@ -174,19 +177,42 @@ exec_anim_in_box()
 display_start()
 {
     local OPTIONS=( " ${YU}LIBFT's OPTIONS:${E}" )
-    [[ ${BUIN} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}STEP 1)${Y0} BUILT-IN LISTER:................${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}STEP 1)${Y0} BUILT-IN LISTER:................${R0}✘ Desable${E}" )
-    [[ ${NORM} -gt 0 ]] && OPTIONS+=( "     🔸 ${YU}STEP 2)${Y0} NORM CHECKER:...................${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}STEP 2)${Y0} NORM CHECKER:...................${R0}✘ Desable${E}" )
-    OPTIONS+=( "     🔸 ${YU}STEP 3)${Y0} TRIPOUILLE'S TESTER:")
-    [[ ${TRIPOUILLE_LIBFT} -gt 0 ]]   && OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${R0}✘ Desable${E}" )
-    [[ ${TRIPOUILLE_GNL} -gt 0 ]]     && OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${R0}✘ Desable${E}" )
-    [[ ${TRIPOUILLE_PRINTF} -gt 0 ]]  && OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${R0}✘ Desable${E}" )
-    OPTIONS+=( "     🔸 ${YU}STEP 4)${Y0} MY_UNITESTS TESTER:")
-    [[ ${MY_UNITESTS_LIBFT} -gt 0 ]]  && OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${R0}✘ Desable${E}" )
-    [[ ${MY_UNITESTS_GNL} -gt 0 ]]    && OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${R0}✘ Desable${E}" )
-    [[ ${MY_UNITESTS_PRINTF} -gt 0 ]] && OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${R0}✘ Desable${E}" )
-    [[ ${MY_UNITESTS_OTHERS} -gt 0 ]] && OPTIONS+=( "        ${Y0}▸ other user-made fun. tester:..........${V0}✓ Enable${E}" ) || OPTIONS+=( "        ${Y0}▸ other user-made fun. tester:..........${R0}✘ Desable${E}" )
-    [[ ( ${MY_UNITESTS_LIBFT} -gt 0 ) || ( ${MY_UNITESTS_GNL} -gt 0 ) || ( ${MY_UNITESTS_PRINTF} -gt 0 ) || (
-    ${MY_UNITESTS_OTHERS} -gt 0 ) ]] && OPTIONS+=( "     🔸 ${YU}STEP 5)${Y0} RESUME:.........................${V0}✓ Enable${E}" ) || OPTIONS+=( "     🔸 ${YU}STEP 2)${Y0} RESUME:.........................${R0}✘ Desable${E}" )
+    [[ ${BUIN} -gt 0 ]]                   && OPTIONS+=( "     🔸 ${YU}STEP 1)${Y0} BUILT-IN LISTER:................${V0}✓ Enable${E}" )\
+                                          || OPTIONS+=( "     🔸 ${YU}STEP 1)${Y0} BUILT-IN LISTER:................${R0}✘ Desable${E}" )
+    [[ ${NORM} -gt 0 ]]                   && OPTIONS+=( "     🔸 ${YU}STEP 2)${Y0} NORM CHECKER:...................${V0}✓ Enable${E}" )\
+                                          || OPTIONS+=( "     🔸 ${YU}STEP 2)${Y0} NORM CHECKER:...................${R0}✘ Desable${E}" )
+                                             OPTIONS+=( "     🔸 ${YU}STEP 3)${Y0} TRIPOUILLE'S TESTER:")
+    [[ ${TRIPOUILLE_LIBFT} -gt 0 ]]       && OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${V0}✓ Enable${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${R0}✘ Desable${E}" )
+    [[ ${TRIPOUILLE_GNL} -gt 0 ]]         && OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${V0}✓ Enable${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${R0}✘ Desable${E}" )
+    [[ ${TRIPOUILLE_PRINTF} -gt 0 ]]      && OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${V0}✓ Enable${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${R0}✘ Desable${E}" )
+                                             OPTIONS+=( "     🔸 ${YU}STEP 4)${Y0} MY_UNITESTS TESTER:")
+    if [[  ${COMP} -gt 0 ]];then
+        [[ ${MY_UNITESTS_LIBFT} -gt 0 ]]  && OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${V0}✓ Enable${G0}--> (with forced compilation)${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${R0}✘ Desable${E}" )
+        [[ ${MY_UNITESTS_GNL} -gt 0 ]]    && OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${V0}✓ Enable${G0}--> (with forced compilation)${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${R0}✘ Desable${E}" )
+        [[ ${MY_UNITESTS_PRINTF} -gt 0 ]] && OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${V0}✓ Enable${G0}--> (with forced compilation)${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${R0}✘ Desable${E}" )
+        [[ ${MY_UNITESTS_OTHERS} -gt 0 ]] && OPTIONS+=( "        ${Y0}▸ other user-made fun. tester:..........${V0}✓ Enable${G0}--> (with forced compilation)${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ other user-made fun. tester:..........${R0}✘ Desable${E}" )
+    else
+        [[ ${MY_UNITESTS_LIBFT} -gt 0 ]]  && OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${V0}✓ Enable${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ Libft tester:.........................${R0}✘ Desable${E}" )
+        [[ ${MY_UNITESTS_GNL} -gt 0 ]]    && OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${V0}✓ Enable${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ get_next_line tester:.................${R0}✘ Desable${E}" )
+        [[ ${MY_UNITESTS_PRINTF} -gt 0 ]] && OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${V0}✓ Enable${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ ft_printf tester:.....................${R0}✘ Desable${E}" )
+        [[ ${MY_UNITESTS_OTHERS} -gt 0 ]] && OPTIONS+=( "        ${Y0}▸ other user-made fun. tester:..........${V0}✓ Enable${E}" )\
+                                          || OPTIONS+=( "        ${Y0}▸ other user-made fun. tester:..........${R0}✘ Desable${E}" )
+    fi
+    if [[ ( ${MY_UNITESTS_LIBFT} -gt 0 ) || ( ${MY_UNITESTS_GNL} -gt 0 ) || ( ${MY_UNITESTS_PRINTF} -gt 0 ) || ( ${MY_UNITESTS_OTHERS} -gt 0 ) ]];then
+                                             OPTIONS+=( "     🔸 ${YU}STEP 5)${Y0} RESUME:.........................${V0}✓ Enable${E}" )
+    else
+                                             OPTIONS+=( "     🔸 ${YU}STEP 2)${Y0} RESUME:.........................${R0}✘ Desable${E}" )
+    fi
     print_in_box -t 2 -c y \
         "           ${Y0}  _     ___  ___  ___  _____       _   _        _  _             _        ${E}" \
         "           ${Y0} | |   |_ _|| _ )| __||_   _|     | | | | _ _  (_)| |_  ___  ___| |_  ___ ${E}" \
@@ -288,11 +314,11 @@ launch_my_unitests()
                 [[ ! -d ${BIN_DIR} ]] && mkdir -p ${BIN_DIR}
                 exe="${BIN_DIR}/test_${fun}"
                 echo -en " ${BC0} ⤷${E} ⚙️  ${GU}Compilation:${E}"
-                # cases where compilation needed: (1:no binary),(2:sources newer than binary),(3:text exist and newer than binary)
-                if [[ ! -f "${exe}" || "${test_main}" -nt "${exe}" || "${LIBFT_A}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) ]];then
+                # cases where compilation needed: (0:forced by option),(1:no binary),(2:sources newer than binary),(3:libft.a newer than exe),(4:text exist and newer than binary)
+                if [[ ( "${COMP}" -gt 0 ) || ( ! -f "${exe}" ) || "${test_main}" -nt "${exe}" || "${LIBFT_A}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) ]];then
                     local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
                     if [[ "${res_compile}" -eq 0 ]];then
-                        echo -en " ✅ ${V0} Successfull.${E}\n"
+                        [[ ${COMP} -gt 0 ]] && echo -en " ✅ ${V0} Successfull. ${G0}(forced)${E}\n" || echo -en " ✅ ${V0} Successfull.${E}\n"
                         rm "${FUN_LOG_DIR}/comp_stderr.log"
                     else
                         local log_comp_fail=$(print_shorter_path ${FUN_LOG_DIR}/comp_stderr.log)
@@ -369,10 +395,10 @@ run_myunitests_gnl()
         exe="${BIN_DIR}/test_get_next_line"
         echo -en " ⚙️  ${BCU}Compilation:${E}"
         # cases where compilation needed: (1:no binary),(2:sources newer than binary),(3:text exist and newer than binary)
-        if [[ ! -f "${exe}" || "${test_main}" -nt "${exe}" || "${LIBFT_A}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) ]];then
+        if [[ ( ${COMP} -gt 0 ) || ( ! -f "${exe}" ) || "${test_main}" -nt "${exe}" || "${LIBFT_A}" -nt "${exe}" || ( -n "${test_txt}" && "${test_txt}" -nt "${exe}" ) ]];then
             local res_compile=$(${CC} ${test_main} ${LIBFT_A} -o ${exe} -lbsd > "${FUN_LOG_DIR}/comp_stderr.log" 2>&1 && echo ${?} || echo ${?})
             if [[ "${res_compile}" -eq 0 ]];then
-                echo -en " ✅ ${V0} Successfull.${E}\n"
+                [[ ${COMP} -gt 0 ]] && echo -en " ✅ ${V0} Successfull. ${G0}(forced)${E}\n" || echo -en " ✅ ${V0} Successfull.${E}\n"
                 rm "${FUN_LOG_DIR}/comp_stderr.log"
             else
                 local log_comp_fail=$(print_shorter_path ${FUN_LOG_DIR}/comp_stderr.log)
@@ -568,6 +594,8 @@ for args in "$@";do
         ++[Nn]o+[Nn]orm | +[Nn] ) NORM=$(( NORM + 1 ));;
         --[Oo]ther | --[Oo]thers | -[Oo] ) MY_UNITESTS_OTHERS=$(( MY_UNITESTS_OTHERS - 1)) ;;
         ++[Oo]ther | ++[Oo]thers | +[Oo] ) MY_UNITESTS_OTHERS=$(( MY_UNITESTS_OTHERS + 1)) ;;
+        --[Ff]orce-compil | -[Ff] | -[Cc] ) COMP=$(( COMP - 1 )) ;;
+        ++[Ff]orce-compil | +[Ff] | +[Cc] ) COMP=$(( COMP + 1 )) ;;
         *) script_usage "Error: Unknown option '${args}'" 1 ;;
     esac
 done
