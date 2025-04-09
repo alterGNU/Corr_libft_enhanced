@@ -93,6 +93,25 @@ int	print_btree_content_is_chararray(t_btree *btree_node)
 	return (print_sofar);
 }
 
+void	free_content(void *ptr)
+{
+	char	**tab;
+	int		i;
+
+	if (!ptr)
+		return ;
+	tab = (char **)ptr;
+	i = 0;
+	while (tab[i])
+	{
+		free(tab[i]);
+		tab[i] = NULL;
+		i++;
+	}
+	free(ptr);
+	ptr = NULL;
+}
+
 //int	ft_btreedelone(t_btree **btree_add, void (*del)(void *))
 int	test_chararray(const char **array)
 {
@@ -112,8 +131,8 @@ int	test_chararray(const char **array)
 		if (!node)
 			return (printntime('-', LEN - 5), ft_printf(FAIL), 1);
 		if (!node->content)
-			return (ft_btreedelone(&node, free_btree_node_chararray), printntime('-', LEN - 5), ft_printf(PASS), 0);
-		return (ft_btreedelone(&node, free_btree_node_chararray), printntime('-', LEN - 5), ft_printf(FAIL), 1);
+			return (ft_btreedelone(&node, free_content), printntime('-', LEN - 5), ft_printf(PASS), 0);
+		return (ft_btreedelone(&node, free_content), printntime('-', LEN - 5), ft_printf(FAIL), 1);
 	}
 	// CASE 2: array != NULL
 	// Duplicate const char **array dynamically and create node->content
@@ -160,43 +179,36 @@ int	test_chararray(const char **array)
 	while (array[len_arr])
 		len_arr++;
 	if (len_arr != len_node)
-	{
-		ft_btreedelone(&node, ft_free_str_array);
-		printntime('-', LEN - 5);
-		ft_printf(FAIL);
-		return (1);
-	}
+		return (ft_btreedelone(&node, free_content), printntime('-', LEN - 5), ft_printf(FAIL), 1);
 	i = 0;
-	while (act[i] && array[i])
+	while (i < len_node)
 	{
 		if (strcmp(act[i], array[i]))
-			return (ft_btreedelone(&node, ft_free_str_array), printntime('-', LEN - 5), ft_printf(FAIL), 1);
+			return (ft_btreedelone(&node, free_content), printntime('-', LEN - 5), ft_printf(FAIL), 1);
 		i++;
 	}
-	if (act[len_node] || array[len_arr])
-		return (ft_btreedelone(&node, ft_free_str_array), printntime('-', LEN - 5), ft_printf(FAIL), 1);
-	return (ft_btreedelone(&node, ft_free_str_array), printntime('-', LEN - 5), ft_printf(PASS), 0);
+	return (ft_btreedelone(&node, free_content), printntime('-', LEN - 5), ft_printf(PASS), 0);
 }
 
 int	main()
 {
 	int	nb_err=0;
-	//// =[ CONTENT == STRING ]===================================================
-	//print_title("Content == string");
-	//nb_err+=test_char(NULL);          // content == NULL
-	//nb_err+=test_char("");            // content == empty string
-	//nb_err+=test_char("0a");          // content != empty string
-	//nb_err+=test_char(" 0a");         // content != empty string
-	//nb_err+=test_char("01234 abcde"); // content != empty string
+	// =[ CONTENT == STRING ]===================================================
+	print_title("Content == string");
+	nb_err+=test_char(NULL);          // content == NULL
+	nb_err+=test_char("");            // content == empty string
+	nb_err+=test_char("0a");          // content != empty string
+	nb_err+=test_char(" 0a");         // content != empty string
+	nb_err+=test_char("01234 abcde"); // content != empty string
 	// =[ CONTENT == STRING ARRAY ]=============================================
 	print_title("Content == string arrays");
-	//nb_err+=test_chararray(NULL);    // arr  == NULL
-	//const char *t0[1] = {NULL};
-	//nb_err+=test_chararray(t0);      // *arr == NULL
-	//const char *t1[2] = {"", NULL};
-	//nb_err+=test_chararray(t1);      // arr not empty but str empty
-	//const char *t2[4] = {"", "", "", NULL};
-	//nb_err+=test_chararray(t2);      // arr not empty but full of str empty
+	nb_err+=test_chararray(NULL);    // arr  == NULL
+	const char *t0[1] = {NULL};
+	nb_err+=test_chararray(t0);      // *arr == NULL
+	const char *t1[2] = {"", NULL};
+	nb_err+=test_chararray(t1);      // arr not empty but str empty
+	const char *t2[4] = {"", "", "", NULL};
+	nb_err+=test_chararray(t2);      // arr not empty but full of str empty
 	const char *t3[4] = {"coucou", "petite", "perruche", NULL};
 	nb_err+=test_chararray(t3);      // arr and its str not empty
 	return (nb_err);
