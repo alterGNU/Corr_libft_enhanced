@@ -1,6 +1,5 @@
 #include "libft.h"  // struct t_btree
 #include <string.h> // strcmp, strdup
-#include <stdio.h> // strcmp, strdup
 #define LEN 90
 #define CE "\033[0m"    // COLOR END
 #define CR "\033[0;31m" // COLOR RED
@@ -33,19 +32,6 @@ int	print_btree_content_is_char(t_btree *btree_node)
 	if (!btree_node)
 		return (ft_printf("NULL"));
 	return (ft_printf("{c->%s ,l->%p, r->%p}", btree_node->content, btree_node->left, btree_node->right));
-}
-
-void free_btree_node_char(t_btree *node)
-{
-	if (!node)
-		return;
-	if (node->content)
-	{
-		free(node->content);
-		node->content = NULL;
-	}
-	free(node);
-	node = NULL;
 }
 
 int	test_char(const char *str)
@@ -112,7 +98,6 @@ void	free_content(void *ptr)
 	ptr = NULL;
 }
 
-//int	ft_btreedelone(t_btree **btree_add, void (*del)(void *))
 int	test_chararray(const char **array)
 {
 	// Print this test
