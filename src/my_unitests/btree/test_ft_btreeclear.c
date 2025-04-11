@@ -96,6 +96,7 @@ int	main()
 	const char *a0[2] = {"XX", NULL};
 	print_obj(a0);
 	t_btree *t0 = NULL;
+	ft_printf("ft_btreeprint():\n");
 	ft_btreeprint(t0, print_btree_char, MAX_LEN);
 	ft_btreeclear(&t0, free);
 	// -[ PERFECT TREE OF 1 LVL ]-----------------------------------------------
@@ -108,6 +109,7 @@ int	main()
 	const char *a1[3] = {"  01", "XX  XX", NULL};
 	print_obj(a1);
 	t_btree *tpa1 = create_tbtree_node("01");
+	ft_printf("ft_btreeprint():\n");
 	ft_btreeprint(tpa1, print_btree_char, MAX_LEN);
 	ft_btreeclear(&tpa1, free);
 	// -[ PERFECT TREE OF 2 LVL ]-----------------------------------------------
@@ -118,13 +120,14 @@ int	main()
  	 *  2 |XX  XX  XX  XX sep: 1
  	 */
 	print_title("Clear on perfect tree of 2 levels == 3nodes");
-	const char *a2[4] = {"    01", "  02      03","XX  XX  XX  XX", NULL};
+	const char *a2[4] = {"      01", "  02      03","XX  XX  XX  XX", NULL};
 	print_obj(a2);
 	t_btree *tpb1 = create_tbtree_node("01");
 	t_btree *tpb2 = create_tbtree_node("02");
 	t_btree *tpb3 = create_tbtree_node("03");
 	tpb1->left = tpb2;
 	tpb1->right = tpb3;
+	ft_printf("ft_btreeprint():\n");
 	ft_btreeprint(tpb1, print_btree_char, MAX_LEN);
 	ft_btreeclear(&tpb1, free);
 	// -[ PERFECT TREE OF 3 LVL ]-----------------------------------------------
@@ -151,6 +154,7 @@ int	main()
 	t_btree *tpc7 = create_tbtree_node("07");
 	tpc3->left = tpc6;
 	tpc3->right = tpc7;
+	ft_printf("ft_btreeprint():\n");
 	ft_btreeprint(tpc1, print_btree_char, MAX_LEN);
 	ft_btreeclear(&tpc1, free);
 	// -[ NOT PERFECT TREE OF 3 LVL ]-------------------------------------------
@@ -173,6 +177,7 @@ int	main()
 	tua2->right = tua5;
 	t_btree *tua6 = create_tbtree_node("06");
 	tua3->left = tua6;
+	ft_printf("ft_btreeprint():\n");
 	ft_btreeprint(tua1, print_btree_char, MAX_LEN);
 	ft_btreeclear(&tua1, free);
 	// -[ NOT PERFECT TREE OF 3 LVL ]-------------------------------------------
@@ -191,6 +196,7 @@ int	main()
 	tub1->left = tub2;
 	t_btree *tub4 = create_tbtree_node("04");
 	tub2->left = tub4;
+	ft_printf("ft_btreeprint():\n");
 	ft_btreeprint(tub1, print_btree_char, MAX_LEN);
 	ft_btreeclear(&tub1, free);
 	// -[ NOT PERFECT TREE OF 3 LVL ]-------------------------------------------
@@ -209,6 +215,7 @@ int	main()
 	tuc1->left = tuc2;
 	t_btree *tuc5 = create_tbtree_node("05");
 	tuc2->right = tuc5;
+	ft_printf("ft_btreeprint():\n");
 	ft_btreeprint(tuc1, print_btree_char, MAX_LEN);
 	ft_btreeclear(&tuc1, free);
 	// -[ PERFECT TREE OF 4 LVL ]-----------------------------------------------
@@ -252,6 +259,7 @@ int	main()
 	t_btree *tpd15 = create_tbtree_node("15");
 	tpd7->left = tpd14;
 	tpd7->right = tpd15;
+	ft_printf("ft_btreeprint():\n");
 	ft_btreeprint(tpd1, print_btree_char, MAX_LEN);
 	ft_btreeclear(&tpd1, free);
 	// -[ UNPERFECT TREE OF 4 LVL ]---------------------------------------------
@@ -279,6 +287,7 @@ int	main()
 	tud4->right = tud9;
 	t_btree *tud15 = create_tbtree_node("15");
 	tud7->right = tud15;
+	ft_printf("ft_btreeprint():\n");
 	ft_btreeprint(tud1, print_btree_char, MAX_LEN);
 	ft_btreeclear(&tud1, free);
 	// -[ PERFECT TREE OF 5 LVL ]-----------------------------------------------
@@ -355,6 +364,7 @@ int	main()
 	t_btree *tpe31 = create_tbtree_node("31");
 	tpe15->left = tpe30;
 	tpe15->right = tpe31;
+	ft_printf("ft_btreeprint():\n");
 	ft_btreeprint(tpe1, print_btree_char, MAX_LEN);
 	ft_btreeclear(&tpe1, free);
 	return (nb_err);
