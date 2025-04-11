@@ -1,4 +1,4 @@
-#include "libft.h"    // ft_print_str_arrey
+#include "libft.h"    // ft_print_str_array
 #include <fcntl.h>    // open, close
 #include <stdio.h>    // fprintf, printf, fopen, fclose
 #include <errno.h>    // perror, errno
