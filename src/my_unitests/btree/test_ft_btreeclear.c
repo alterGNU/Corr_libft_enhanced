@@ -66,6 +66,16 @@ int	print_btree_char(void *ptr)
 	return (ft_printf("|%s|", ((char *)((t_btree *)ptr)->content)));
 }
 
+void	print_obj(const char **str)
+{
+	ft_printf("OBJECTIF:\n{\n");
+	while (*str)
+	{
+		ft_printf("%s\n", *str);
+		str++;
+	}
+	ft_printf("}\n");
+}
 // test iteration
 //void	print_btree_char_void(void *ptr)
 //{
@@ -83,7 +93,9 @@ int	main()
  	 * 0  |XX
 	 */
 	print_title("Clear on empty tree == NULL");
-	t_btree *t0 = create_tbtree_node(NULL);
+	const char *a0[2] = {"XX", NULL};
+	print_obj(a0);
+	t_btree *t0 = NULL;
 	ft_btreeprint(t0, print_btree_char, MAX_LEN);
 	ft_btreeclear(&t0, free);
 	// -[ PERFECT TREE OF 1 LVL ]-----------------------------------------------
@@ -93,6 +105,8 @@ int	main()
  	 *  1 |XX  XX
  	 */
 	print_title("Clear on tree of one lvl");
+	const char *a1[3] = {"  01", "XX  XX", NULL};
+	print_obj(a1);
 	t_btree *tpa1 = create_tbtree_node("01");
 	ft_btreeprint(tpa1, print_btree_char, MAX_LEN);
 	ft_btreeclear(&tpa1, free);
@@ -104,6 +118,8 @@ int	main()
  	 *  2 |XX  XX  XX  XX sep: 1
  	 */
 	print_title("Clear on perfect tree of 2 levels == 3nodes");
+	const char *a2[4] = {"    01", "  02      03","XX  XX  XX  XX", NULL};
+	print_obj(a2);
 	t_btree *tpb1 = create_tbtree_node("01");
 	t_btree *tpb2 = create_tbtree_node("02");
 	t_btree *tpb3 = create_tbtree_node("03");
@@ -120,6 +136,8 @@ int	main()
  	 *  3 |XX  XX  XX  XX  XX  XX  XX  XX  sep: 1
  	 */
 	print_title("Clear on perfect tree of 2 levels == 7nodes");
+	const char *a3[5] = {"              01", "      02              03","  04      05      06      07","XX  XX  XX  XX  XX  XX  XX  XX", NULL};
+	print_obj(a3);
 	t_btree *tpc1 = create_tbtree_node("01");
 	t_btree *tpc2 = create_tbtree_node("02");
 	t_btree *tpc3 = create_tbtree_node("03");
@@ -144,6 +162,8 @@ int	main()
  	 *  3 |XX  XX  XX  XX  XX  XX  XX  XX  sep: 1
  	 */
 	print_title("Clear on NOT perfect tree of 3 levels == 5nodes");
+	const char *a4[6] = {"              01              ", "      02              03      ", "  XX      05      06      XX  ", "XX  XX  XX  XX  XX  XX  XX  XX", NULL};
+	print_obj(a4);
 	t_btree *tua1 = create_tbtree_node("01");
 	t_btree *tua2 = create_tbtree_node("02");
 	t_btree *tua3 = create_tbtree_node("03");
@@ -164,6 +184,8 @@ int	main()
  	 *  3 |XX  XX  XX  XX  XX  XX  XX  XX  sep: 1
  	 */
 	print_title("Clear on perfect tree of 3 levels == 3nodes");
+	const char *a5[6] = { "              01              ", "      02              XX      ", "  04      XX      XX      XX  ", "XX  XX  XX  XX  XX  XX  XX  XX", NULL};
+	print_obj(a5);
 	t_btree *tub1 = create_tbtree_node("01");
 	t_btree *tub2 = create_tbtree_node("02");
 	tub1->left = tub2;
@@ -180,6 +202,8 @@ int	main()
  	 *  3 |XX  XX  XX  XX  XX  XX  XX  XX  sep: 1
  	 */
 	print_title("Clear on perfect tree of 3 levels == 3nodes");
+	const char *a6[6] = { "              01              ", "      02              XX      ", "  XX      05      XX      XX  ", "XX  XX  XX  XX  XX  XX  XX  XX", NULL};
+	print_obj(a6);
 	t_btree *tuc1 = create_tbtree_node("01");
 	t_btree *tuc2 = create_tbtree_node("02");
 	tuc1->left = tuc2;
@@ -197,6 +221,8 @@ int	main()
  	 *  4 |XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX sep:1
  	 */
 	print_title("Clear on perfect tree of 4 levels == 15nodes");
+	const char *a7[6] = { "                              01                              ", "              02                              03              ", "      04              05              06              07      ", "  08      09      10      11      12      13      14      15  ", "XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX", NULL};
+	print_obj(a7);
 	t_btree *tpd1 = create_tbtree_node("01");
 	t_btree *tpd2 = create_tbtree_node("02");
 	t_btree *tpd3 = create_tbtree_node("03");
@@ -238,6 +264,8 @@ int	main()
  	 *  4 |XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX sep:1
  	 */
 	print_title("Clear on UNPERFECT tree of 4 levels == 7nodes");
+	const char *a8[6] = { "                              01                              ", "              02                              03              ", "      04              XX              XX              07      ", "  XX      09      XX      XX      XX      XX      XX      15  ", "XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX", NULL};
+	print_obj(a8);
 	t_btree *tud1 = create_tbtree_node("01");
 	t_btree *tud2 = create_tbtree_node("02");
 	t_btree *tud3 = create_tbtree_node("03");
@@ -264,6 +292,8 @@ int	main()
  	 *  5 |XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX sep:1
  	*/
 	print_title("Clear on perfect tree of 5 levels == 15nodes");
+	const char *a9[7] = { "                                                              01                                                              ", "                              02                                                                  03                          ", "              04                              05                              06                              07              ", "      08              09              10              11              12              13              14              15      ", "  16      17      18      19      20      21      22      23      24      25      26      27      28      29      30      31  ", "XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX  XX", NULL};
+	print_obj(a9);
 	t_btree *tpe1 = create_tbtree_node("01");
 	t_btree *tpe2 = create_tbtree_node("02");
 	t_btree *tpe3 = create_tbtree_node("03");
