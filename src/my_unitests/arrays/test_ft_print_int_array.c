@@ -271,9 +271,10 @@ int	main(int ac, char **av, char **ev)
 	ft_free_int_array(&tab2);
 	print_sep(S2);
 	// Close
+	fflush(stdout);
 	close(fd);
 	if (!is_a_file(ft))
 		return (fprintf(stderr, "ERROR:\"%s\" Not created\n%s", ft, USAGE), free(ft), free(real), 1);
-	nb_err = compare_files(ft,real);
+	nb_err += compare_files(ft,real);
 	return (free(ft), free(real), nb_err);
 }
