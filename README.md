@@ -1,16 +1,16 @@
 # Corr_libft_enhanced
 
-Corrector for the static library **libft.a** where get_next_line(), ft_printf() and other personnal functions has been added.
+Corrector for the static library **libft.a** where `get_next_line()`, `ft_printf()`, and other personal functions have been added.
 
-This corrector uses and runs [@Tripouille](https://github.com/Tripouille)'s testers for libft, get_next_line and ft_printf functions, covering both mandatory and bonus parts.
+This corrector uses and runs [@Tripouille](https://github.com/Tripouille)'s testers for libft, get_next_line, and ft_printf functions, covering both mandatory and bonus parts.
 
-I have also written my own tests, grouped under and referred to as my_unitests, which, unlike Tripouille's testers, can test 42's project functions as listed before, but also any personal function added to the libft.a as long as its unitests are added to src/my_unitests/ folder. (Any sub-folder works as find cmd is used).
+I have also written my own tests, grouped under and referred to as **my_unitests**, which, unlike Tripouille's testers, can test 42's project functions as listed above, but also any personal function added to libft.a as long as its unit tests are added to the `src/my_unitests/` folder. (Any sub-folder works since the `find` command is used).
 
-## Pre-requise
-- The `find`, `nm`, `cc` and `valgrind` commands are needed.
-- The corrector must be cloned :
+## Prerequisites
+- The `find`, `nm`, `clang`, `cc`, `norminette`, and `valgrind` commands are required.
+- The corrector must be cloned:
     - inside the **path/libft/** folder of the project to be tested.
-    - with the git option   `--recurse-submodules` since submodules are used.
+    - with the git option `--recurse-submodules` since submodules are used.
 - `path/libft/**/libft.a` must be compiled before running `./launch_tests.sh`
 
 ## Usage
@@ -18,71 +18,91 @@ I have also written my own tests, grouped under and referred to as my_unitests, 
     ```c
     git clone --recurse-submodules -j8 https://github.com/alterGNU/Corr_libft_enhanced.git
     ```
-    - ⚠️  Must be cloned inside libft.
-    - ⚠️  The `--recurse-submodules` option is requires due to submodules.
+    - ⚠️ Must be cloned inside libft.
+    - ⚠️ The `--recurse-submodules` option is required due to submodules.
 - 2: **Compile `libft.a`** using its own Makefile: `make`
-- 3: **Run the tests** (cf. below for <ARGS> values):
-    ```c
+- 3: **Run the tests** (see below for available arguments):
+    ```bash
     ./launch_tests.sh <ARGS>
     ```
-- 4: If **My_unitests** is run, you can check its log files:
-    - log folder is created at `./log/<date>/<time>/` with all the tests outputs sort by function's name:
-        - `./log/<date>/<time>/list_errors.log`            --> File contains list of all encountred errors, format="<fun_name>\t<error_type>"
-        - `./log/<date>/<time>/<fun_name>/comp_stderr.txt` --> File created only when compilation failed
-        - `./log/<date>/<time>/<fun_name>/exec.log`        --> File contains execution's outputs (stdout && stderr)
-        - `./log/<date>/<time>/<fun_name>/leaks.log`       --> File contains valgrind's outputs (stdout && stderr)
+- 4: If **my_unitests** is run, you can check its log files:
+    - Log folder is created at `./log/<date>/<time>/` with all test outputs sorted by function name:
+        - `./log/<date>/<time>/list_errors.log` → List of all encountered errors with format `<fun_name>\t<error_type>`
+        - `./log/<date>/<time>/<fun_name>/comp_stderr.txt` → Created only when compilation failed
+        - `./log/<date>/<time>/<fun_name>/exec.log` → Execution outputs (stdout && stderr)
+        - `./log/<date>/<time>/<fun_name>/leaks.log` → Valgrind outputs (stdout && stderr)
 
-## Script arguments availlable:
-| Argument                        | Description                                                                                        |
-| ------------------------------- | -------------------------------------------------------------------------------------------------- |
-| (none)                          | Enables all My_unitests tests for libft, gnl, printf and other functions                           |
-| `-h`, `--help`                  | Displays help and script usage                                                                     |
-| `-n`, `--no-norm`               | Desable the norminette-checker step                                                                |
-| `-b`, `--bonus`                 | Enable Bonus tests for any activated testers                                                       |
-| `-a`, `--all`                   | Enable all testers (tripouille and my_unitests) on any function detected in libft.a                |
-| `-t`, `--tripouille`            | Enable ONLY tripouille tester (disable my_unitests)                                                |
-| `-l`, `--libft`, `-lft`         | Enable all testers for the libft's functions (tripouille and my_unitests)                          |
-| `-f`, `--ft_printf`             | Enable all testers tester for the ft_printf function (tripouille and my_unitests)                  |
-| `-g`, `--get_next_line`, `-gnl` | Enable all testers tester for the get_next_line function (tripouille and my_unitests)              |
-| `-o`, `--other`                 | Enable ONLY My_unitest tester for others functions found (anything but a libft+gnl+ft_printf fun.) |
- 
-## Script main's steps:
-- **STEP 0. :** Display enabled options and functions present in libft.a (home-made and built-in).
-- **STEP 1. :** Norminette-check (if enabled).
-- **STEP 2. :** Run Tripouille tests (libft, printf, gnl, with bonus support if enabled).
-- **STEP 3. :** Run My_unitests tests (libft, printf, gnl, other personal functions with matching tests).
+## Available Script Arguments
+- ⚠️ Arguments use a specific syntax: `+` is used to **ENABLE** an option, while `-` is used to **DISABLE** (except for `h` option where `-h` also enables help)
+    - `+n`: Enable **Norminette_checker** option → script will launch my_unitests tests
+    - `-n`: Disable **Norminette_checker** option → script will NOT launch my_unitests tests
 
-## Examples:
-#### `./launch_tests.sh` : (DEFAULT BEHAVIOR)
-- **STEP 0.:** Display enabled options and functions present in libft.a (home-made and built-in).
-- **STEP 1.:** Run **norminette-checker**
-- **~~STEP 2.~~: Tripouille testert NOT ENABLE**
-- **STEP 3.:** Run **My_unitest libft mandatory part** unitests.
-    - If any libft bonus part function is detected in libft.a, run **My_unitest libft bonus part** unitests.
-    - If get_next_line() function detected in libft.a, run **My_unitest get_next_line mandatory part** unitests.
-    - If ft_printf() function detected in libft.a, run **My_unitest ft_printf mandatory part** unitests.
-#### `./launch_tests.sh -v` : 
-- **Display script usage (~man)**
-- **~~STEP 0.~~: Desable**
-- **~~STEP 1.~~: Desable**
-- **~~STEP 2.~~: Not enable**
-- **~~STEP 3.~~: Desable**
-#### `./launch_tests.sh -n -t -b` :
-- **STEP 0.:** Display enabled options and functions present in libft.a (home-made and built-in).
-- **~~STEP 1.:~~ Desable norminette-checker** step.
-- **STEP 2.: Enable All Tripouille tester with bonus part**
-    - Run **Tripouille libft mandatory AND bonus parts**
-    - If ft_printf() found in static library, Run **Tripouille ft_printf mandatory and bonus part**
-    - If get_next_line() found in static library, Run **Tripouille get_next_line mandatory and bonus part**
-- **~~STEP 3.:~~ Desable My-unitests** testers.
-#### `./launch_tests.sh -a -b` :
-- **STEP 0.:** Display enabled options and functions present in libft.a (home-made and built-in).
-- **STEP 1.:** Run **norminette-checker**
-- **STEP 2.:** Enable All  **Tripouille tester with bonus part**
-    - Run **Tripouille libft mandatory AND bonus parts**
-    - If ft_printf() found in static library, Run **Tripouille ft_printf mandatory and bonus part**
-    - If get_next_line() found in static library, Run **Tripouille get_next_line mandatory and bonus part**
-- **STEP 3.:** Enable All  **My_unitests tester with bonus part**
-    - Run **My_unitests libft mandatory AND bonus parts**
-    - If ft_printf() found in static library, Run **My_unitest ft_printf mandatory and bonus part**
-    - If get_next_line() found in static library, Run **My_unitest get_next_line mandatory and bonus part**
+| Argument                        | Description                                                                                                 |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| (none)                          | **Default Settings**: Norminette_Checker+Forbidden_fun_checker+My_unitests+Other functions                  |
+| `+a`/`-a`                       | Enable/Disable **all options**                                                                              |
+| `+bi`/`-bi`                     | Enable/Disable **builtin-checker** step (checks for no forbidden functions used)                            |
+| `+bo`/`-bo`                     | Enable/Disable **bonus part** (enables libft, gnl, and ft_printf bonus part checker)                        |
+| `+c`                            | Enable **forced compilation** (force recompilation of unit tests even if binary exists in bin folder)       |
+| `+g`/`-g`                       | Enable/Disable all testers for the **get_next_line** function (tripouille and my_unitests)                 |
+| `+h` or `-h`                    | **Display help** (print script's usage)                                                                     |
+| `+l`/`-l`                       | Enable/Disable all testers for **libft's functions** (tripouille and my_unitests)                           |
+| `+n`/`-n`                       | Enable/Disable the **norminette-checker** (display a colored tree of folder structure)                      |
+| `+o`/`-o`                       | Enable/Disable **my other unitests** (unit tests for functions not required by libft project)               |
+| `+p`/`-p`                       | Enable/Disable all testers for the **ft_printf** function (tripouille and my_unitests)                      |
+| `+t`/`-t`                       | Enable/Disable **tripouille** tester                                                                        |
+
+## Script Main Steps
+- **STEP 0:** Display enabled options and functions present in libft.a (home-made and built-in).
+- **STEP 1:** Forbidden-function-check.
+- **STEP 2:** Norminette-check.
+- **STEP 3:** Run Tripouille tests (libft, printf, gnl, with bonus support).
+- **STEP 4:** Run my_unitests tests (libft, printf, gnl, and other personal functions with matching tests).
+
+## Example Option Combinations
+
+### `./launch_tests.sh -h`
+- **Display script usage (like man page)**
+
+### `./launch_tests.sh` (DEFAULT BEHAVIOR)
+- **STEP 0:** Display enabled options and functions present in libft.a (home-made and built-in).
+- **STEP 1:** Forbidden-function-check
+- **STEP 2:** Norminette-check
+- ~~**STEP 3:** Run Tripouille tests~~
+- **STEP 4:** Run my_unitests tests
+    - If any libft bonus function is detected in libft.a, run **my_unitests libft bonus part** tests.
+    - If `get_next_line()` is detected in libft.a, run **my_unitests get_next_line mandatory part** tests.
+    - If `ft_printf()` is detected in libft.a, run **my_unitests ft_printf mandatory part** tests.
+
+### `./launch_tests.sh -a +t +bo`
+- **STEP 0:** Display enabled options and functions present in libft.a (home-made and built-in).
+- ~~**STEP 1:** Forbidden-function-check~~
+- ~~**STEP 2:** Norminette-check~~
+- **STEP 3:** Run Tripouille tests with bonus
+- ~~**STEP 4:** Run my_unitests tests~~
+
+## Integration in libft's Makefile
+- To call this tester from the libft `make` command, add two rules to libft's Makefile:
+    - First rule to git clone this repo:
+        ```Makefile
+        clone_test_repo:
+            if [ ! -d My_tester ]; then git clone --recurse-submodules -j8 https://github.com/alterGNU/Corr_libft_enhanced.git My_tester; fi
+        ```
+    - Second rule to launch this script with `$OPT` as its arguments:
+        ```Makefile
+        test: libft.a | clone_test_repo
+        	@echo "$(GREEN)🔘 $(TITLE)make test$(END)"
+        	@My_tester/launch_tests.sh $(OPT)
+        ```
+    - Of course, if you want your `make fclean` rule to remove this folder add to fclean rule:
+        ```Makefile
+        fclean:
+            rm -rf My_tester
+        ```
+
+- Now, this tester can be cloned and launched from libft:
+    - **Examples (inside libft folder):**
+        - `$> make test` → run `./launch_tests.sh` without options (default behavior)
+        - `$> make test OPT="-a +n"` → run `./launch_tests.sh -a +n` (only norminette_checker step)
+    - **Example (outside libft folder):**
+        - `$> make -C path/libft test OPT="-a +bi"` → run `./launch_tests.sh -a +bi` (only forbidden_fun_checker step)
