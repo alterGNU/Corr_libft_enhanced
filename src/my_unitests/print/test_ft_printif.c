@@ -64,7 +64,7 @@ static int compare_files(const char *file1, const char *file2)
 		return (perror("ERROR compare_file()->fopen(f1)"), 1);
     FILE *f2 = fopen(file2, "r");
 	if (!f2)
-		return (perror("ERROR compare_file()->fopen(f2)"), 1);
+		return (fclose(f1), perror("ERROR compare_file()->fopen(f2)"), 1);
 
     while (1)
 	{
@@ -191,7 +191,6 @@ int	main(int ac, char **av)
 		printf(FAIL);
 	}
 	print_sep(S2);
-	fflush(stdout);
 
 	print_subtitle("A.1| empty str");
 	printf("ft  :<");
@@ -210,7 +209,6 @@ int	main(int ac, char **av)
 		printf(FAIL);
 	}
 	print_sep(S2);
-	fflush(stdout);
 
 	print_subtitle("A.2| str without args format");
 	printf("ft  :<");
@@ -229,14 +227,13 @@ int	main(int ac, char **av)
 		printf(FAIL);
 	}
 	print_sep(S2);
-	fflush(stdout);
 
 	print_subtitle("A.3| str with args format");
 	printf("ft  :<");
 	fflush(stdout);
-	r_ft = ft_printif(-1, "%s is a char %c == %d, and a pointer=%p", "This", 'c', 'c', (void *)&r_ft);
+	r_ft = ft_printif(-1, "%s is a char %c == %d, and a free() fun add.=%p", "This", 'c', 'c', (void *)0x12345678);
 	printf(">\nreal:<");
-	r_real = printf("%s is a char %c == %d, and a pointer=%p", "This", 'c', 'c', (void *)&r_ft);
+	r_real = printf("%s is a char %c == %d, and a free() fun add.=%p", "This", 'c', 'c', (void *)0x12345678);
 	printf(">\n");
 	psf = printf("ft:[%d] == real:[%d]", r_ft, r_real);
 	printntime(S3, LEN - psf - 3);
@@ -250,7 +247,6 @@ int	main(int ac, char **av)
 	print_sep(S2);
 
 	print_sep(S1);
-	fflush(stdout);
 	
     // -[ "B| test < 0, SHOULD PRINT" ]-----------------------------------------
 	print_title("B| test == 0, SHOULD NOT PRINT");
@@ -272,7 +268,6 @@ int	main(int ac, char **av)
 		printf(FAIL);
 	}
 	print_sep(S2);
-	fflush(stdout);
 
 	print_subtitle("B.1| empty str");
 	printf("ft  :<");
@@ -291,7 +286,6 @@ int	main(int ac, char **av)
 		printf(FAIL);
 	}
 	print_sep(S2);
-	fflush(stdout);
 
 	print_subtitle("B.2| str without args format");
 	printf("ft  :<");
@@ -310,12 +304,11 @@ int	main(int ac, char **av)
 		printf(FAIL);
 	}
 	print_sep(S2);
-	fflush(stdout);
 
 	print_subtitle("B.3| str with args format");
 	printf("ft  :<");
 	fflush(stdout);
-	r_ft = ft_printif(0, "%s is a char %c == %d, and a pointer=%p", "This", 'c', 'c', (void *)&r_ft);
+	r_ft = ft_printif(0, "%s is a char %c == %d, and a free() fun add.=%p", "This", 'c', 'c', (void *)0x12345678);
 	printf(">\nreal:<");
 	r_real = 0;
 	printf(">\n");
@@ -331,7 +324,6 @@ int	main(int ac, char **av)
 	print_sep(S2);
 
 	print_sep(S1);
-	fflush(stdout);
 	
     // -[ "C| test > 0, SHOULD PRINT" ]-----------------------------------------
 	print_title("C| test > 0, SHOULD PRINT");
@@ -353,7 +345,6 @@ int	main(int ac, char **av)
 		printf(FAIL);
 	}
 	print_sep(S2);
-	fflush(stdout);
 
 	print_subtitle("C.1| empty str");
 	printf("ft  :<");
@@ -372,7 +363,6 @@ int	main(int ac, char **av)
 		printf(FAIL);
 	}
 	print_sep(S2);
-	fflush(stdout);
 
 	print_subtitle("C.2| str without args format");
 	printf("ft  :<");
@@ -391,14 +381,13 @@ int	main(int ac, char **av)
 		printf(FAIL);
 	}
 	print_sep(S2);
-	fflush(stdout);
 
 	print_subtitle("C.3| str with args format");
 	printf("ft  :<");
 	fflush(stdout);
-	r_ft = ft_printif(42, "%s is a char %c == %d, and a pointer=%p", "This", 'c', 'c', (void *)&r_ft);
+	r_ft = ft_printif(42, "%s is a char %c == %d, and a free() fun add.=%p", "This", 'c', 'c', (void *)0x12345678);
 	printf(">\nreal:<");
-	r_real = printf("%s is a char %c == %d, and a pointer=%p", "This", 'c', 'c', (void *)&r_ft);
+	r_real = printf("%s is a char %c == %d, and a free() fun add.=%p", "This", 'c', 'c', (void *)0x12345678);
 	printf(">\n");
 	psf = printf("ft:[%d] == real:[%d]", r_ft, r_real);
 	printntime(S3, LEN - psf - 3);
@@ -413,11 +402,11 @@ int	main(int ac, char **av)
 	
 	print_sep(S1);
 
-	fflush(stdout);
 	
 
 // =[  ]========================================================================
 	fflush(stdout);
+	close(STDOUT_FILENO);  // Close the redirected stdout
 	close(fd);
 	if (!is_a_file(ft))
 		return (fprintf(stderr, "ERROR:\"%s\" Not created\n%s", ft, USAGE), free(ft), free(real), 1);
