@@ -39,30 +39,45 @@ static int	create_file(const char *filename, char *txt)
 	return (0);
 }
 
-static int compare_files(const char *file1, const char *file2)
+// -[ COMPARE_FILES ]-----------------------------------------------------------
+/**
+ * open files <file1> and <file2>, compare them bytes by bytes then closes them.
+ * @param file1	: const char *, path to file 1.
+ * @param file2	: const char *, path to file 2.
+ * @return		: 0 if files identical, 1 else.
+ * @secreflist	: fopen, fclose, fgetc, fprintf, stderr, perror
+ */
+static int	compare_files(const char *file1, const char *file2)
 {
-    FILE *f1 = fopen(file1, "r");
+	FILE	*f1;
+	FILE	*f2;
+	int		byte1;
+	int		byte2;
+
+	f1 = fopen(file1, "r");
 	if (!f1)
 		return (perror("ERROR compare_file()->fopen(f1)"), 1);
-    FILE *f2 = fopen(file2, "r");
+	f2 = fopen(file2, "r");
 	if (!f2)
-		return (perror("ERROR compare_file()->fopen(f2)"), 1);
+		return (fclose(f1), perror("ERROR compare_file()->fopen(f2)"), 1);
 
-    while (1)
+	while (1)
 	{
-        int byte1 = fgetc(f1);
-        int byte2 = fgetc(f2);
+		byte1 = fgetc(f1);
+		byte2 = fgetc(f2);
 
-        if (byte1 != byte2)
-			return (fprintf(stderr,"File '%s' != '%s' [differ by containt]\n", file1, file2), fclose(f1), fclose(f2), 1);
+		if (byte1 != byte2)
+			return (fprintf(stderr, "File '%s' != '%s' [diff. by containt]\n", \
+				file1, file2), fclose(f1), fclose(f2), 1);
 
-        if (byte1 == EOF || byte2 == EOF)
+		if (byte1 == EOF || byte2 == EOF)
 		{
-            if (byte1 != EOF || byte2 != EOF)
-				return (fprintf(stderr,"File '%s' != '%s' [differ by size]\n", file1, file2), fclose(f1), fclose(f2), 1);
-            break;
-        }
-    }
+			if (byte1 != EOF || byte2 != EOF)
+				return (fprintf(stderr, "File '%s' != '%s' [diff. by size]\n", \
+					file1, file2), fclose(f1), fclose(f2), 1);
+			break ;
+		}
+	}
 	return (fclose(f1), fclose(f2), 0);
 }
 
